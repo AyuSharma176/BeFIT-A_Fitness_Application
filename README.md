@@ -1,6 +1,12 @@
-# befit
+# вє ƒιт
 
-A new Flutter project.
+BeFit is your personal fitness companion designed to guide you towards a healthier lifestyle. Whether you’re tracking your BMI, planning your meals, or following your workout progress, BeFit empowers you every step of the way.
+
+Developed By:
+Team вєƒιт
+
+Version
+1.0.0
 
 ## Getting Started
 

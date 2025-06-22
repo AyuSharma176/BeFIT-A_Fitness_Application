@@ -61,6 +61,7 @@ flutter:
     - assets/Drawer_images/
     - assets/SuggestedWorkout_images/
     - assets/intake_images/
+    - assets/navbar_icons/
   #   - Drawer_images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

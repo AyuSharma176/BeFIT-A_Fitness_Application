@@ -1,7 +1,10 @@
+import 'package:befit/main.dart';
 import 'package:befit/pages/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:befit/pages/app_theme.dart';
 import 'package:befit/pages/login_page.dart';
+
+import 'home_page.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -148,7 +151,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ElevatedButton(
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  // Handle sign up
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(builder: (context) =>  HomeScreen()),
+                                  );
                                 }
                               },
                               style: ElevatedButton.styleFrom(

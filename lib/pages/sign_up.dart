@@ -1,6 +1,8 @@
+import 'package:befit/main.dart';
 import 'package:flutter/material.dart';
 import 'package:befit/pages/login_page.dart';
 import 'package:befit/pages/app_theme.dart';
+import 'package:befit/pages/home_page.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -170,9 +172,13 @@ class _SignInScreenState extends State<SignInScreen> {
                             ElevatedButton(
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  // Login logic
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(builder: (context) =>  HomeScreen()),
+                                  );
                                 }
                               },
+
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppTheme.appBarBg,
                                 padding: const EdgeInsets.symmetric(

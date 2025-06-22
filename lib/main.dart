@@ -194,6 +194,7 @@
 // }
 import 'package:befit/pages/app_theme.dart';
 import 'package:befit/pages/premium_page.dart';
+import 'package:befit/pages/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:befit/pages/About_page.dart';
 import 'package:befit/pages/BMI_calculator.dart';
@@ -218,7 +219,7 @@ class BeFitApp extends StatelessWidget {
       title: 'Be 𝓯𝓲𝓽',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
-      home: HomeScreen(),
+      home: SignUpScreen(),
     );
   }
 }
@@ -394,10 +395,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ListTile(
                   leading: Icon(Icons.logout, color: AppTheme.logoutColor),
                   title: Text('Logout', style: TextStyle(color: Colors.black)),
-                  // onTap: () => Navigator.push(
-                  //   context,
-                  //   // MaterialPageRoute(builder: (context) => loginpage()),
-                  // ),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignInScreen()),
+                  ),
                 ),
               ],
             ),

@@ -22,7 +22,7 @@ class BeFitApp extends StatelessWidget {
       title: 'Be 𝓯𝓲𝓽',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
-      home: HomeScreen(),
+      home: SignUpScreen(),
     );
   }
 }
@@ -144,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Text('Logout', style: TextStyle(color: Colors.black)),
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => loginpage()),
+                    MaterialPageRoute(builder: (context) => SignUpScreen()),
                   ),
                 ),
               ],

@@ -94,7 +94,7 @@ class _SettingsPageState extends State<SettingsPage> {
               // Handle logout logic
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => loginpage()),
+                MaterialPageRoute(builder: (context) => SignUpScreen()),
               );
             },
           ),

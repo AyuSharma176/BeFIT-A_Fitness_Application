@@ -2,7 +2,7 @@
 
 BeFit is your personal fitness companion designed to guide you towards a healthier lifestyle. Whether you’re tracking your BMI, planning your meals, or following your workout progress, BeFit empowers you every step of the way.
 
-Developed By
+Developed By:
 Team вєƒιт
 
 Version

@@ -219,7 +219,7 @@ class BeFitApp extends StatelessWidget {
       title: 'Be 𝓯𝓲𝓽',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
-      home: SignUpScreen(),
+      home: HomeScreen(),
     );
   }
 }
@@ -317,7 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: Text(
-            'вє ƒιт',
+            _selectedIndex == 2 ? '' : 'вє ƒιт',
             style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.w800,

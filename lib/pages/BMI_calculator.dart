@@ -4,8 +4,12 @@ class  BMIcalculatorPage extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();// remove this before writing your code
+    return Scaffold(
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: Text("Coming soon!!", style: TextStyle(fontSize: 24),),
+      ),
+    );
   }
 
 }

@@ -233,6 +233,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 2;
+  bool _showSettings = false;
 
   Widget _buildNavItem(IconData icon, IconData activeIcon, String label, int index) {
     final bool isSelected = index == _selectedIndex;
@@ -334,13 +335,23 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           actions: [
             IconButton(
-              icon: Icon(Icons.settings_outlined),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsPage()),
-              ),
+              icon: const Icon(Icons.settings_outlined),
+              onPressed: () {
+                setState(() {
+                  _showSettings = !_showSettings;
+                });
+              },
             ),
           ],
+          // actions: [
+          //   IconButton(
+          //     icon: Icon(Icons.settings_outlined),
+          //     onPressed: () => Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => SettingsPage()),
+          //     ),
+          //   ),
+          // ],
         ),
         drawer: Drawer(
           child: Container(
@@ -404,16 +415,38 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-        body: _pages[_selectedIndex],
+        // body: _pages[_selectedIndex],
+        body: Stack(
+          children: [
+            _pages[_selectedIndex],
+            if (_showSettings)
+              Positioned(
+                top: kToolbarHeight,
+                right: 16,
+                left: 16,
+                child: Material(
+                  elevation: 8,
+                  borderRadius: BorderRadius.circular(8),
+                  child: SettingsDropdown(
+                    onClose: () {
+                      setState(() {
+                        _showSettings = false;
+                      });
+                    },
+                  ),
+                ),
+              ),
+          ],
+        ),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
+            color: AppTheme.appBarBg,
+            // borderRadius: const BorderRadius.only(
+            //   topLeft: Radius.circular(20),
+            //   topRight: Radius.circular(20),
+            // ),
           ),
-          padding: const EdgeInsets.symmetric(vertical: 4),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           height: 70,
           child: LayoutBuilder(
             builder: (context, constraints) {

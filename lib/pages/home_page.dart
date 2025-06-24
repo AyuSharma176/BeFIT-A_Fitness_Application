@@ -1,5 +1,11 @@
+import 'package:befit/pages/frostedGlassEffect.dart';
+import 'package:befit/pages/profile_page.dart';
+import 'package:befit/pages/stopWatch.dart';
 import 'package:flutter/material.dart';
 import 'package:befit/pages/app_theme.dart';
+
+import '../main.dart';
+import 'Suggested_page.dart';
 
 class MainHomePage extends StatelessWidget {
   @override
@@ -9,15 +15,17 @@ class MainHomePage extends StatelessWidget {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
               AppTheme.appBarBg,
               AppTheme.backgroundColor,
+              // AppTheme.appBarBg.withAlpha(160),
+              AppTheme.appBarBg
             ],
-            stops: [0.0, 1.0],
+            stops: [0.0,  1, 1.0],
           ),
         ),
         child: SafeArea(
@@ -114,10 +122,12 @@ class MainHomePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '𝓦𝓮𝓵𝓬𝓸𝓶𝓮',
+                      'Welcome',
                       style: TextStyle(
-                        color: AppTheme.drawerIconColor,
+                        color: AppTheme.primaryColor,
                         fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        // fontFamily: 'Mono',
                         shadows: [
                           Shadow(
                             offset: Offset(0,0),
@@ -138,7 +148,7 @@ class MainHomePage extends StatelessWidget {
                         stops: [0.3, 1]
                       ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
                       child: Text(
-                        'Jatin Kumar',
+                        'User Name',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 50,
@@ -164,13 +174,61 @@ class MainHomePage extends StatelessWidget {
                         ),
                       ),
                     ),
+                    Text(
+                      'The Spotlight\'s on you ✨',
+                      style: TextStyle(
+                        color: AppTheme.backgroundColor,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        // fontFamily: 'Mono',
+                        shadows: [
+                          Shadow(
+                              offset: Offset(0,0),
+                              blurRadius: 10,
+                              color: AppTheme.primaryColor.withAlpha(167)
+                          )
+                        ]
+                      ),
+                    ),
                   ],
                 ),
-              )
+              ),
+              SizedBox(height: 20,),
+              Center(
+                child: FrostedGlassBox(
+                  height: 200,
+                  width: 360,
+                  // child: Text('data'),
+                  child: Center(
+                    child: SimpleStopwatch(),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
       ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: () {
+      //     Navigator.pushReplacement(
+      //       context,
+      //       MaterialPageRoute(builder: (context) =>  SuggestedPage()),
+      //     );
+      //   },
+      //   icon: Icon(
+      //     Icons.fitbit,
+      //     color: AppTheme.primaryColor,
+      //   ),
+      //   label: Text(
+      //       "Start Workout",
+      //     style: TextStyle(
+      //       color: AppTheme.primaryColor,
+      //     ),
+      //   ),
+      //   backgroundColor: AppTheme.drawerHeaderBg,
+      //   elevation: 10,
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

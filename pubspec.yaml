@@ -61,7 +61,10 @@ flutter:
     - assets/Drawer_images/
     - assets/SuggestedWorkout_images/
     - assets/intake_images/
-    - assets/navbar_icons/
+#    - assets/gradients/gradient_bg.png
+    - assets/navbar_icons/dumbell_outlined.svg
+    - assets/navbar_icons/dumbell.svg
+
   #   - Drawer_images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

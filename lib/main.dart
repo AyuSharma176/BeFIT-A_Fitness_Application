@@ -9,7 +9,7 @@
 // import 'package:befit/pages/home_page.dart';
 // import 'package:befit/pages/intake_page.dart';
 // import 'package:befit/pages/login_page.dart';
-// import 'package:befit/pages/profile_page.dart';
+
 //
 // void main() => runApp(BeFitApp());
 //

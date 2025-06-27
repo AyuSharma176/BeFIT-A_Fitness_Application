@@ -33,7 +33,7 @@ dependencies:
   google_fonts: ^6.1.0
   shared_preferences: ^2.2.2
   flutter_svg: ^2.0.7
-
+  fl_chart: ^0.66.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8

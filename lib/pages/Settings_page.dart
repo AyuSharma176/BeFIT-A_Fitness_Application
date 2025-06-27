@@ -2,7 +2,7 @@
 // import 'package:befit/pages/app_theme.dart';
 //
 // import 'About_page.dart';
-// import 'login_page.dart';
+// import 'SignUp_screen.dart';
 //
 // class SettingsPage extends StatefulWidget {
 //   const SettingsPage({super.key});
@@ -106,9 +106,9 @@
 //above code saved as backup
 
 import 'package:flutter/material.dart';
-import 'package:befit/pages/app_theme.dart';
+import 'package:befit/services/app_theme.dart';
 import 'About_page.dart';
-import 'login_page.dart';
+import 'SignUp_screen.dart';
 
 class SettingsDropdown extends StatefulWidget {
   const SettingsDropdown({super.key, required this.onClose});

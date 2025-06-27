@@ -8,7 +8,7 @@
 // import 'package:befit/pages/Suggested_page.dart';
 // import 'package:befit/pages/home_page.dart';
 // import 'package:befit/pages/intake_page.dart';
-// import 'package:befit/pages/login_page.dart';
+// import 'package:befit/pages/SignUp_screen.dart';
 
 //
 // void main() => runApp(BeFitApp());
@@ -192,9 +192,10 @@
 //     );
 //   }
 // }
-import 'package:befit/pages/app_theme.dart';
+
+import 'package:befit/services/app_theme.dart';
 import 'package:befit/pages/premium_page.dart';
-import 'package:befit/pages/sign_up.dart';
+import 'package:befit/pages/Login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:befit/pages/About_page.dart';
 import 'package:befit/pages/BMI_calculator.dart';
@@ -203,12 +204,17 @@ import 'package:befit/pages/Settings_page.dart';
 import 'package:befit/pages/Suggested_page.dart';
 import 'package:befit/pages/home_page.dart';
 import 'package:befit/pages/intake_page.dart';
-import 'package:befit/pages/login_page.dart';
+import 'package:befit/pages/SignUp_screen.dart';
 import 'package:befit/pages/profile_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-
-void main() => runApp(BeFitApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(BeFitApp());
+}
 
 class BeFitApp extends StatelessWidget {
   BeFitApp({super.key});
@@ -219,7 +225,7 @@ class BeFitApp extends StatelessWidget {
       title: 'Be 𝓯𝓲𝓽',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
-      home: HomeScreen(),
+      home: SignInScreen(),
     );
   }
 }
@@ -248,14 +254,6 @@ class _HomeScreenState extends State<HomeScreen> {
               isSelected ? activeIcon : icon,
               color: Colors.white,
             ),
-            // const SizedBox(height: 4),
-            // Text(
-            //   label,
-            //   style: TextStyle(
-            //     color: Colors.white,
-            //     fontSize: 10,
-            //   ),
-            // ),
           ],
         ),
       ),
@@ -276,20 +274,11 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 24,
               color: Colors.white,
             ),
-            // const SizedBox(height: 4),
-            // Text(
-            //   label,
-            //   style: TextStyle(
-            //     color: Colors.white,
-            //     fontSize: 10,
-            //   ),
-            // ),
           ],
         ),
       ),
     );
   }
-
 
   final List<Widget> _pages = [
     BMIcalculatorPage(),
@@ -343,15 +332,6 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ],
-          // actions: [
-          //   IconButton(
-          //     icon: Icon(Icons.settings_outlined),
-          //     onPressed: () => Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => SettingsPage()),
-          //     ),
-          //   ),
-          // ],
         ),
         drawer: Drawer(
           child: Container(
@@ -415,7 +395,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-        // body: _pages[_selectedIndex],
         body: Stack(
           children: [
             _pages[_selectedIndex],
@@ -441,10 +420,6 @@ class _HomeScreenState extends State<HomeScreen> {
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
             color: AppTheme.appBarBg,
-            // borderRadius: const BorderRadius.only(
-            //   topLeft: Radius.circular(20),
-            //   topRight: Radius.circular(20),
-            // ),
           ),
           padding: const EdgeInsets.symmetric(vertical: 8),
           height: 70,

@@ -1,24 +1,26 @@
 import 'package:befit/main.dart';
-import 'package:befit/pages/sign_up.dart';
 import 'package:flutter/material.dart';
-import 'package:befit/pages/app_theme.dart';
-import 'package:befit/pages/login_page.dart';
+import 'package:befit/pages/SignUp_screen.dart';
+import 'package:befit/services/app_theme.dart';
+import 'package:befit/pages/home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import 'home_page.dart';
+import '../services/authentication.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
-  final fullNameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool isPasswordVisible = false;
+  bool rememberMe = false;
+  final authService = AuthenticationService();
 
   @override
   Widget build(BuildContext context) {
@@ -65,29 +67,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     const SizedBox(height: 10),
 
-                    // Toggle
+                    // Sign up/in toggle
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: AppTheme.appBarBg,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: const Text('Sign up',
-                              style: TextStyle(color: Colors.white, fontSize: 16)),
-                        ),
-                        const SizedBox(width: 20),
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const SignInScreen()),
+                              MaterialPageRoute(
+                                  builder: (context) => const SignUpScreen()),
                             );
                           },
                           child: const Text(
-                            'Sign in',
+                            'Sign up',
                             style: TextStyle(
                               color: Colors.black54,
                               fontSize: 16,
@@ -96,13 +89,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ),
                         ),
+                        const SizedBox(width: 20),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: AppTheme.appBarBg,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: const Text(
+                            'Sign in',
+                            style:
+                            TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        ),
                       ],
                     ),
 
                     const SizedBox(height: 20),
-
                     const Text(
-                      'Create An Account',
+                      'Welcome back..!',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
@@ -118,12 +124,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         child: Column(
                           children: [
                             _buildInputField(
-                              icon: Icons.person_outline,
-                              label: 'Full Name',
-                              controller: fullNameController,
-                            ),
-                            const SizedBox(height: 15),
-                            _buildInputField(
                               icon: Icons.email_outlined,
                               label: 'Email',
                               controller: emailController,
@@ -137,7 +137,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               obscureText: !isPasswordVisible,
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                  isPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
                                   color: Colors.black,
                                 ),
                                 onPressed: () {
@@ -147,24 +149,68 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 },
                               ),
                             ),
-                            const SizedBox(height: 25),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: rememberMe,
+                                  activeColor: AppTheme.primaryColor,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      rememberMe = val!;
+                                    });
+                                  },
+                                ),
+                                const Text('Remember password'),
+                                const Spacer(),
+                                const Text(
+                                  'Forgot password?',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 15),
                             ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(builder: (context) =>  HomeScreen()),
-                                  );
+                                  try {
+                                    final user = await authService.signInWithEmailPassword(
+                                      email: emailController.text.trim(),
+                                      password: passwordController.text.trim(),
+                                    );
+                                    if (user != null) {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                                      );
+                                    }
+                                  } on FirebaseAuthException catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(e.message ?? 'Login failed')),
+                                    );
+                                  }
                                 }
                               },
+                              // onPressed: () {
+                              //   if (_formKey.currentState!.validate()) {
+                              //     Navigator.pushReplacement(
+                              //       context,
+                              //       MaterialPageRoute(builder: (context) =>  HomeScreen()),
+                              //     );
+                              //   }
+                              // },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppTheme.appBarBg,
-                                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 50, vertical: 12),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),
                                 ),
                               ),
-                              child: const Text('Sign up', style: TextStyle(fontSize: 18)),
+                              child: const Text('Sign in', style: TextStyle(fontSize: 18)),
                             ),
                           ],
                         ),
@@ -172,9 +218,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
 
                     const SizedBox(height: 100),
-
                     const Text(
-                      '────────  Or sign up with  ────────',
+                      '────────  Or sign in with  ────────',
                       style: TextStyle(fontSize: 14, color: Colors.black87),
                     ),
                     const SizedBox(height: 15),
@@ -186,7 +231,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         _socialButton('Facebook', Icons.facebook),
                       ],
                     ),
-
                     const SizedBox(height: 40),
 
                     // Footer Bar
@@ -230,14 +274,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
         labelStyle: const TextStyle(color: Colors.black),
         filled: true,
         fillColor: Colors.grey.shade200,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        contentPadding:
+        const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide.none,
         ),
       ),
       style: const TextStyle(color: Colors.black),
-      validator: (value) => value == null || value.isEmpty ? 'Enter $label' : null,
+      validator: (value) =>
+      value == null || value.isEmpty ? 'Enter $label' : null,
     );
   }
 

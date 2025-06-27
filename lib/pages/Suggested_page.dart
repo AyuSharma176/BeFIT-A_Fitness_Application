@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'day_workout_page.dart';
-import 'package:befit/pages/app_theme.dart';
+import 'package:befit/services/app_theme.dart';
 
 class SuggestedPage extends StatelessWidget {
   SuggestedPage({super.key});

@@ -1,8 +1,8 @@
-import 'package:befit/pages/frostedGlassEffect.dart';
+import 'package:befit/services/frostedGlassEffect.dart';
 import 'package:befit/pages/profile_page.dart';
-import 'package:befit/pages/stopWatch.dart';
+import 'package:befit/services/stopWatch.dart';
 import 'package:flutter/material.dart';
-import 'package:befit/pages/app_theme.dart';
+import 'package:befit/services/app_theme.dart';
 
 import '../main.dart';
 import 'Suggested_page.dart';
@@ -22,7 +22,6 @@ class MainHomePage extends StatelessWidget {
             colors: [
               AppTheme.appBarBg,
               AppTheme.backgroundColor,
-              // AppTheme.appBarBg.withAlpha(160),
               AppTheme.appBarBg
             ],
             stops: [0.0,  1, 1.0],
@@ -127,7 +126,6 @@ class MainHomePage extends StatelessWidget {
                         color: AppTheme.primaryColor,
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
-                        // fontFamily: 'Mono',
                         shadows: [
                           Shadow(
                             offset: Offset(0,0),
@@ -170,7 +168,7 @@ class MainHomePage extends StatelessWidget {
                               color: Colors.black,
                               blurRadius: 15,
                             )
-                          ]// must be white or solid
+                          ]
                         ),
                       ),
                     ),
@@ -208,27 +206,6 @@ class MainHomePage extends StatelessWidget {
           ),
         ),
       ),
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: () {
-      //     Navigator.pushReplacement(
-      //       context,
-      //       MaterialPageRoute(builder: (context) =>  SuggestedPage()),
-      //     );
-      //   },
-      //   icon: Icon(
-      //     Icons.fitbit,
-      //     color: AppTheme.primaryColor,
-      //   ),
-      //   label: Text(
-      //       "Start Workout",
-      //     style: TextStyle(
-      //       color: AppTheme.primaryColor,
-      //     ),
-      //   ),
-      //   backgroundColor: AppTheme.drawerHeaderBg,
-      //   elevation: 10,
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

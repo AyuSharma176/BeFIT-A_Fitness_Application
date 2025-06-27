@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'app_theme.dart';
+import '../services/app_theme.dart';
 
 class DietPage extends StatelessWidget {
   @override

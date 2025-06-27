@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:befit/pages/app_theme.dart';
+import 'package:befit/services/app_theme.dart';
 
 class DayWorkoutPage extends StatelessWidget {
   final String day;

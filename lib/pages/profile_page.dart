@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'app_theme.dart'; // Make sure this import path is correct
-import 'edit.dart';
+import '../services/app_theme.dart'; // Make sure this import path is correct
+import '../services/edit.dart';
 
 class ProfilePage extends StatefulWidget {
   @override

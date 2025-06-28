@@ -4,8 +4,9 @@ import 'package:befit/pages/SignUp_screen.dart';
 import 'package:befit/services/app_theme.dart';
 import 'package:befit/pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import '../services/authentication.dart';
+import 'package:befit/services/google_auth_service.dart';
+import 'package:befit/services/facebook_auth_service.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -21,7 +22,8 @@ class _SignInScreenState extends State<SignInScreen> {
   bool isPasswordVisible = false;
   bool rememberMe = false;
   final authService = AuthenticationService();
-
+  final googleAuthService = GoogleAuthService();
+  final facebookAuthService = FacebookAuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +36,6 @@ class _SignInScreenState extends State<SignInScreen> {
               child: IntrinsicHeight(
                 child: Column(
                   children: [
-                    // Header
                     Stack(
                       children: [
                         Container(
@@ -58,16 +59,12 @@ class _SignInScreenState extends State<SignInScreen> {
                                   color: Colors.white,
                                 ),
                               ),
-
                             ],
                           ),
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 10),
-
-                    // Sign up/in toggle
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -105,7 +102,6 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 20),
                     const Text(
                       'Welcome back..!',
@@ -116,7 +112,6 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Form(
@@ -194,14 +189,6 @@ class _SignInScreenState extends State<SignInScreen> {
                                   }
                                 }
                               },
-                              // onPressed: () {
-                              //   if (_formKey.currentState!.validate()) {
-                              //     Navigator.pushReplacement(
-                              //       context,
-                              //       MaterialPageRoute(builder: (context) =>  HomeScreen()),
-                              //     );
-                              //   }
-                              // },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppTheme.appBarBg,
                                 padding: const EdgeInsets.symmetric(
@@ -216,14 +203,12 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 100),
                     const Text(
                       '────────  Or sign in with  ────────',
                       style: TextStyle(fontSize: 14, color: Colors.black87),
                     ),
                     const SizedBox(height: 15),
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -232,18 +217,6 @@ class _SignInScreenState extends State<SignInScreen> {
                       ],
                     ),
                     const SizedBox(height: 40),
-
-                    // Footer Bar
-                    // Container(
-                    //   height: 100,
-                    //   decoration: const BoxDecoration(
-                    //     color: AppTheme.primaryColor,
-                    //     borderRadius: BorderRadius.only(
-                    //       topLeft: Radius.circular(60),
-                    //       topRight: Radius.circular(60),
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
@@ -288,18 +261,40 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   Widget _socialButton(String label, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade300,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, size: 22),
-          const SizedBox(width: 6),
-          Text(label),
-        ],
+    return GestureDetector(
+      onTap: () async {
+        try {
+          User? user;
+          if (label == 'Google') {
+            user = await googleAuthService.signInWithGoogle();
+          } else if (label == 'Facebook') {
+            user = await facebookAuthService.signInWithFacebook();
+          }
+          if (user != null) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('$label Sign-In Failed: \$e')),
+          );
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 22),
+            const SizedBox(width: 6),
+            Text(label),
+          ],
+        ),
       ),
     );
   }

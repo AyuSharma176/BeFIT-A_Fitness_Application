@@ -5,8 +5,9 @@ import 'package:befit/services/app_theme.dart';
 import 'package:befit/pages/SignUp_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:befit/services/authentication.dart';
-
 import 'home_page.dart';
+import 'package:befit/services/google_auth_service.dart';
+import 'package:befit/services/facebook_auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -22,6 +23,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final passwordController = TextEditingController();
   bool isPasswordVisible = false;
   final authService = AuthenticationService();
+  final googleAuthService = GoogleAuthService();
+  final facebookAuthService = FacebookAuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +38,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: IntrinsicHeight(
                 child: Column(
                   children: [
-                    // Header
                     Stack(
                       children: [
                         Container(
@@ -59,16 +61,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   color: Colors.white,
                                 ),
                               ),
-
                             ],
                           ),
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 10),
-
-                    // Toggle
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -101,9 +99,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 20),
-
                     const Text(
                       'Create An Account',
                       style: TextStyle(
@@ -113,7 +109,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Form(
@@ -173,14 +168,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   }
                                 }
                               },
-                              // onPressed: () {
-                              //   if (_formKey.currentState!.validate()) {
-                              //     Navigator.pushReplacement(
-                              //       context,
-                              //       MaterialPageRoute(builder: (context) =>  HomeScreen()),
-                              //     );
-                              //   }
-                              // },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppTheme.appBarBg,
                                 padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 12),
@@ -194,15 +181,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 100),
-
                     const Text(
                       '────────  Or sign up with  ────────',
                       style: TextStyle(fontSize: 14, color: Colors.black87),
                     ),
                     const SizedBox(height: 15),
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -210,20 +194,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         _socialButton('Facebook', Icons.facebook),
                       ],
                     ),
-
                     const SizedBox(height: 40),
-
-                    // Footer Bar
-                    // Container(
-                    //   height: 100,
-                    //   decoration: const BoxDecoration(
-                    //     color: AppTheme.primaryColor,
-                    //     borderRadius: BorderRadius.only(
-                    //       topLeft: Radius.circular(60),
-                    //       topRight: Radius.circular(60),
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
@@ -266,18 +237,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget _socialButton(String label, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade300,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, size: 22),
-          const SizedBox(width: 6),
-          Text(label),
-        ],
+    return GestureDetector(
+      onTap: () async {
+        try {
+          User? user;
+          if (label == 'Google') {
+            user = await googleAuthService.signInWithGoogle();
+          } else if (label == 'Facebook') {
+            user = await facebookAuthService.signInWithFacebook();
+          }
+
+          if (user != null) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('$label Sign-In Failed: $e')),
+          );
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 22),
+            const SizedBox(width: 6),
+            Text(label),
+          ],
+        ),
       ),
     );
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../services/app_theme.dart'; // Make sure this import path is correct
+import '../services/app_theme.dart';
 import '../services/edit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -9,10 +11,35 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   int selectedTabIndex = 0;
+  bool isLoading = true;
+  Map<String, dynamic>? userData;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      setState(() {
+        userData = doc.data();
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -23,12 +50,18 @@ class _ProfilePageState extends State<ProfilePage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.edit, color: Colors.white),
-            onPressed: () {
-              Navigator.push(
+            icon: const Icon(Icons.edit, color: Colors.white),
+            onPressed: () async {
+              final updated = await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => EditProfilePage()),
               );
+              if (updated == true) {
+                await fetchUserData();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Profile updated successfully!')),
+                );
+              }
             },
           ),
         ],
@@ -69,6 +102,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildProfileHeader(ThemeData theme) {
+    final photoUrl = userData?['profileImageUrl'];
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -84,7 +118,6 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       child: Column(
         children: [
-          // Profile Image
           Container(
             width: 100,
             height: 100,
@@ -94,18 +127,15 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(50),
-              child: Image.network(
-                'https://t4.ftcdn.net/jpg/09/55/69/87/360_F_955698734_605ipMO6Jrvh7ETAZpzfD9InRwnpOkVh.jpg',
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  color: Colors.grey[300],
-                  child: Icon(Icons.person, size: 50, color: Colors.grey[600]),
-                ),
-              ),
+              child: photoUrl != null
+                  ? Image.network(photoUrl, fit: BoxFit.cover)
+                  : const Icon(Icons.person, size: 50, color: Colors.grey),
             ),
           ),
           const SizedBox(height: 16),
-          Text('Dinah Gray', style: theme.textTheme.titleLarge),
+          Text(userData?['fullName'] ?? 'No Name', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 4),
+          Text(userData?['email'] ?? 'No Email', style: theme.textTheme.labelMedium),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -160,9 +190,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     tabs[index],
                     style: TextStyle(
                       color: isActive ? Colors.purple : Colors.grey[600],
-                      fontWeight: isActive
-                          ? FontWeight.bold
-                          : FontWeight.normal,
+                      fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                 ),
@@ -226,14 +254,14 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildActivityItem(
-    ThemeData theme, {
-    required IconData icon,
-    required String title,
-    required String duration,
-    required String distance,
-    required String calories,
-    required Color color,
-  }) {
+      ThemeData theme, {
+        required IconData icon,
+        required String title,
+        required String duration,
+        required String distance,
+        required String calories,
+        required Color color,
+      }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

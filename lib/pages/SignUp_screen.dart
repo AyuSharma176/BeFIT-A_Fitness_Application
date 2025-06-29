@@ -8,6 +8,7 @@ import 'package:befit/services/authentication.dart';
 import 'home_page.dart';
 import 'package:befit/services/google_auth_service.dart';
 import 'package:befit/services/facebook_auth_service.dart';
+import 'package:befit/services/firestore_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -25,6 +26,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final authService = AuthenticationService();
   final googleAuthService = GoogleAuthService();
   final facebookAuthService = FacebookAuthService();
+  final firestoreService = FirestoreService();
 
   @override
   Widget build(BuildContext context) {
@@ -154,6 +156,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       email: emailController.text.trim(),
                                       password: passwordController.text.trim(),
                                       fullName: fullNameController.text.trim(),
+                                    );
+                                    await firestoreService.saveUserProfile(
+                                      fullName: fullNameController.text.trim(),
+                                      email: emailController.text.trim(),
                                     );
                                     if (user != null) {
                                       Navigator.pushReplacement(

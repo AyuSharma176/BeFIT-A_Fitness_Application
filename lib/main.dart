@@ -297,12 +297,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/gradients/gradient_bg.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
+      // decoration: BoxDecoration(
+      //   // image: DecorationImage(
+      //   //   image: AssetImage('assets/gradients/gradient_bg.png'),
+      //   //   fit: BoxFit.cover,
+      //   // ),
+      // ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(

@@ -42,6 +42,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   firebase_core: ^3.14.0
   firebase_auth: ^5.6.0
+  animated_text_kit: ^4.2.1
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +70,7 @@ flutter:
 #    - assets/gradients/gradient_bg.png
     - assets/navbar_icons/dumbell_outlined.svg
     - assets/navbar_icons/dumbell.svg
+    - assets/bmi_images/images/
 
   #   - Drawer_images/a_dot_ham.jpeg
 

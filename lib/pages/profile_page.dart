@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/app_theme.dart'; // Make sure this import path is correct
-import '../services/edit.dart';
+import '../services/edit.dart'; // Make sure this import is correct
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -41,27 +40,144 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 20),
             _buildTabBar(theme),
             const SizedBox(height: 20),
-            _buildDateSelector(theme),
-            const SizedBox(height: 20),
-            _buildActivityItem(
-              theme,
-              icon: Icons.directions_run,
-              title: 'Indoor Run',
-              duration: '24 min',
-              distance: '5.56 km',
-              calories: '348 kcal',
-              color: Colors.pink,
-            ),
-            const SizedBox(height: 12),
-            _buildActivityItem(
-              theme,
-              icon: Icons.directions_bike,
-              title: 'Outdoor Cycle',
-              duration: '24 min',
-              distance: '4.22 km',
-              calories: '248 kcal',
-              color: Colors.blue,
-            ),
+            if (selectedTabIndex == 0) ...[
+              _buildDateSelector(theme),
+              const SizedBox(height: 20),
+              _buildActivityItem(
+                icon: Icons.directions_run,
+                title: 'Indoor Run',
+                duration: '24 min',
+                distance: '5.56 km',
+                calories: '348 kcal',
+                color: Colors.pink,
+              ),
+              const SizedBox(height: 12),
+              _buildActivityItem(
+                icon: Icons.directions_bike,
+                title: 'Outdoor Cycle',
+                duration: '24 min',
+                distance: '4.22 km',
+                calories: '248 kcal',
+                color: Colors.blue,
+              ),
+            ] else if (selectedTabIndex == 1) ...[
+              const SizedBox(height: 20),
+              const Text(
+                "1200",
+                style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+              ),
+              const Text("Kcal Burned", style: TextStyle(fontSize: 16)),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: const [
+                  Column(
+                    children: [
+                      Icon(Icons.favorite_border),
+                      SizedBox(height: 5),
+                      Text("246 Kcal"),
+                      Text("Last 7 days"),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Icon(Icons.local_fire_department),
+                      SizedBox(height: 5),
+                      Text("84k Kcal"),
+                      Text("All Time"),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Icon(Icons.bolt),
+                      SizedBox(height: 5),
+                      Text("72 Kcal"),
+                      Text("Average"),
+                    ],
+                  ),
+                ],
+              ),
+            ] else if (selectedTabIndex == 2) ...[
+              Container(
+                margin: const EdgeInsets.only(top: 20),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: const [
+                        CircleAvatar(
+                          radius: 24,
+                          backgroundImage: NetworkImage(
+                              'https://t4.ftcdn.net/jpg/09/55/69/87/360_F_955698734_605ipMO6Jrvh7ETAZpzfD9InRwnpOkVh.jpg'),
+                        ),
+                        SizedBox(width: 12),
+                        Icon(Icons.bolt, color: Colors.grey),
+                        SizedBox(width: 12),
+                        CircleAvatar(
+                          radius: 24,
+                          backgroundImage: NetworkImage(
+                              'https://t3.ftcdn.net/jpg/10/24/11/58/360_F_1024115848_VTfuHjHj9UVVvrUOaDQqm2clMspgRnGs.jpg'),
+                        ),
+                        SizedBox(width: 12),
+                        Text(
+                          "You vs Alexa",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        Spacer(),
+                        Text("3 workouts", style: TextStyle(color: Colors.grey)),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    const Text("Today, 14 Jul",
+                        style: TextStyle(fontSize: 12, color: Colors.grey)),
+                    const SizedBox(height: 12),
+                    Stack(
+                      children: [
+                        Container(
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        Container(
+                          height: 10,
+                          width: 200,
+                          decoration: BoxDecoration(
+                            color: Colors.purple,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("2246",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text("vs"),
+                        Text("6468",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ]
           ],
         ),
       ),
@@ -69,164 +185,68 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildProfileHeader(ThemeData theme) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
+    return Column(
+      children: const [
+        CircleAvatar(
+          radius: 50,
+          backgroundImage: NetworkImage(
+            'https://via.placeholder.com/150',
           ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Profile Image
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppTheme.primaryColor, width: 4),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              child: Image.network(
-                'https://t4.ftcdn.net/jpg/09/55/69/87/360_F_955698734_605ipMO6Jrvh7ETAZpzfD9InRwnpOkVh.jpg',
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  color: Colors.grey[300],
-                  child: Icon(Icons.person, size: 50, color: Colors.grey[600]),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text('Dinah Gray', style: theme.textTheme.titleLarge),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildStatItem(
-                icon: Icons.flash_on,
-                value: '200',
-                label: 'Calories',
-                color: Colors.orange,
-                theme: theme,
-              ),
-              _buildStatItem(
-                icon: Icons.local_dining,
-                value: '150g',
-                label: 'Protein',
-                color: Colors.teal,
-                theme: theme,
-              ),
-            ],
-          ),
-        ],
-      ),
+        ),
+        SizedBox(height: 10),
+        Text("John Doe", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Text("johndoe@example.com", style: TextStyle(color: Colors.grey)),
+      ],
     );
   }
 
   Widget _buildTabBar(ThemeData theme) {
-    List<String> tabs = ['Timeline', 'Stats', 'Duels'];
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: Row(
-        children: List.generate(tabs.length, (index) {
-          bool isActive = selectedTabIndex == index;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  selectedTabIndex = index;
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color: isActive ? Colors.purple[100] : Colors.transparent,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Center(
-                  child: Text(
-                    tabs[index],
-                    style: TextStyle(
-                      color: isActive ? Colors.purple : Colors.grey[600],
-                      fontWeight: isActive
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ),
-                  ),
-                ),
-              ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _buildTabItem("Stats", 0),
+        _buildTabItem("Kcal", 1),
+        _buildTabItem("Duels", 2),
+      ],
+    );
+  }
+
+  Widget _buildTabItem(String label, int index) {
+    final bool isSelected = selectedTabIndex == index;
+    return GestureDetector(
+      onTap: () {
+        setState(() => selectedTabIndex = index);
+      },
+      child: Column(
+        children: [
+          Text(label,
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isSelected ? Colors.black : Colors.grey)),
+          if (isSelected)
+            Container(
+              margin: const EdgeInsets.only(top: 4),
+              height: 2,
+              width: 40,
+              color: Colors.blue,
             ),
-          );
-        }),
+        ],
       ),
     );
   }
 
   Widget _buildDateSelector(ThemeData theme) {
-    List<String> dates = ['5', '6', '7', 'Today, 8 Jul', '9', '10', '11'];
-    return SizedBox(
-      height: 50,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: dates.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
-        itemBuilder: (context, index) {
-          bool isToday = index == 3;
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: isToday ? Colors.purple[100] : Colors.transparent,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isToday ? Colors.purple : Colors.grey[300]!,
-              ),
-            ),
-            child: Center(
-              child: Text(
-                dates[index],
-                style: TextStyle(
-                  color: isToday ? Colors.purple : Colors.grey[700],
-                  fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildStatItem({
-    required IconData icon,
-    required String value,
-    required String label,
-    required Color color,
-    required ThemeData theme,
-  }) {
-    return Column(
-      children: [
-        Icon(icon, color: color),
-        const SizedBox(height: 6),
-        Text(value, style: theme.textTheme.titleLarge),
-        Text(label, style: theme.textTheme.labelSmall),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: const [
+        Text("Today, 14 Jul", style: TextStyle(fontSize: 14, color: Colors.grey)),
+        Icon(Icons.calendar_today, size: 16, color: Colors.grey),
       ],
     );
   }
 
-  Widget _buildActivityItem(
-    ThemeData theme, {
+  Widget _buildActivityItem({
     required IconData icon,
     required String title,
     required String duration,
@@ -237,42 +257,23 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.cardColor,
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
       ),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: color),
-          ),
+          Icon(icon, size: 40, color: color),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: theme.textTheme.titleLarge),
-                Text(duration, style: theme.textTheme.labelSmall),
+                Text(title,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text('$duration · $distance · $calories',
+                    style: const TextStyle(color: Colors.black54)),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(distance, style: theme.textTheme.titleLarge),
-              Text(calories, style: theme.textTheme.labelSmall),
-            ],
           ),
         ],
       ),

@@ -193,6 +193,7 @@
 //   }
 // }
 
+import 'package:befit/pages/wrapper.dart';
 import 'package:befit/services/app_theme.dart';
 import 'package:befit/pages/premium_page.dart';
 import 'package:befit/pages/Login_screen.dart';
@@ -225,7 +226,7 @@ class BeFitApp extends StatelessWidget {
       title: 'Be 𝓯𝓲𝓽',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
-      home: SignInScreen(),
+      home: Wrapper(),
     );
   }
 }

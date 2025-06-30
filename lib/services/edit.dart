@@ -13,6 +13,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final _phoneController = TextEditingController(text: '+1 234 567 8900');
   final _bioController = TextEditingController(text: 'Fitness enthusiast and runner');
 
+  bool isPublic = true;
+  bool isSharing = true;
+  bool pushNotifications = false;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -21,8 +25,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Edit Profile'),
+        backgroundColor: Colors.white,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
@@ -54,7 +60,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           key: _formKey,
           child: Column(
             children: [
-              _buildProfileHeader(),
+              _buildProfilePhotoSection(),
               const SizedBox(height: 20),
               _buildFormFields(theme),
               const SizedBox(height: 20),
@@ -66,7 +72,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget _buildProfileHeader() {
+  Widget _buildProfilePhotoSection() {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -84,10 +90,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
         children: [
           Stack(
             children: [
-              CircleAvatar(
+              const CircleAvatar(
                 radius: 50,
-                backgroundColor: AppTheme.primaryColor.withOpacity(0.8),
-                child: const Icon(Icons.person, size: 50, color: Colors.white),
+                backgroundColor: Colors.orange,
+                child: Icon(Icons.person, size: 50, color: Colors.white),
               ),
               Positioned(
                 bottom: 0,
@@ -104,7 +110,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ],
           ),
           const SizedBox(height: 16),
-          Text(
+          const Text(
             'Change Profile Photo',
             style: TextStyle(
               color: AppTheme.primaryColor,
@@ -136,8 +142,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             controller: _nameController,
             label: 'Full Name',
             icon: Icons.person,
-            validator: (value) =>
-            value == null || value.isEmpty ? 'Please enter your name' : null,
+            validator: (value) => value == null || value.isEmpty ? 'Please enter your name' : null,
           ),
           const SizedBox(height: 16),
           _buildTextField(
@@ -187,25 +192,25 @@ class _EditProfilePageState extends State<EditProfilePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Privacy Settings',
-            style: theme.textTheme.titleLarge,
-          ),
+          Text('Privacy Settings', style: theme.textTheme.titleLarge),
           const SizedBox(height: 16),
           _buildSwitchTile(
             title: 'Public Profile',
             subtitle: 'Allow others to view your profile',
-            value: true,
+            value: isPublic,
+            onChanged: (val) => setState(() => isPublic = val),
           ),
           _buildSwitchTile(
             title: 'Activity Sharing',
             subtitle: 'Share your workouts with followers',
-            value: true,
+            value: isSharing,
+            onChanged: (val) => setState(() => isSharing = val),
           ),
           _buildSwitchTile(
             title: 'Push Notifications',
             subtitle: 'Receive workout reminders',
-            value: false,
+            value: pushNotifications,
+            onChanged: (val) => setState(() => pushNotifications = val),
           ),
         ],
       ),
@@ -228,6 +233,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: AppTheme.primaryColor),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        filled: true,
+        fillColor: Colors.grey[50],
       ),
     );
   }
@@ -236,22 +246,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
     required String title,
     required String subtitle,
     required bool value,
+    required Function(bool) onChanged,
   }) {
     return SwitchListTile(
-      title: Text(
-        title,
-        style: const TextStyle(fontWeight: FontWeight.w600),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: const TextStyle(fontSize: 12, color: Colors.grey),
-      ),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+      subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: Colors.grey)),
       value: value,
-      onChanged: (bool newValue) {
-        setState(() {
-          // Logic to change setting
-        });
-      },
+      onChanged: onChanged,
       activeColor: AppTheme.primaryColor,
     );
   }

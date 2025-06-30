@@ -192,7 +192,6 @@
 //     );
 //   }
 // }
-
 import 'package:befit/pages/wrapper.dart';
 import 'package:befit/services/app_theme.dart';
 import 'package:befit/pages/premium_page.dart';
@@ -209,6 +208,7 @@ import 'package:befit/pages/SignUp_screen.dart';
 import 'package:befit/pages/profile_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -222,7 +222,7 @@ class BeFitApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Be 𝓯𝓲𝓽',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
@@ -298,12 +298,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/gradients/gradient_bg.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
+      // decoration: BoxDecoration(
+      //   // image: DecorationImage(
+      //   //   image: AssetImage('assets/gradients/gradient_bg.png'),
+      //   //   fit: BoxFit.cover,
+      //   // ),
+      // ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -462,3 +462,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+// helow

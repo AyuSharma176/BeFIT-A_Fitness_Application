@@ -1,9 +1,4 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'app_theme.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -13,95 +8,42 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  File? _imageFile;
-  String? _photoURL;
-  final _picker = ImagePicker();
+  final _nameController = TextEditingController(text: 'Dinah Gray');
+  final _emailController = TextEditingController(text: 'dinah.gray@email.com');
+  final _phoneController = TextEditingController(text: '+1 234 567 8900');
+  final _bioController = TextEditingController(text: 'Fitness enthusiast and runner');
 
-  final uid = FirebaseAuth.instance.currentUser?.uid;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserData();
-  }
-
-  Future<void> _loadUserData() async {
-    final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    final data = doc.data();
-    if (data != null) {
-      _nameController.text = data['fullName'] ?? '';
-      _emailController.text = data['email'] ?? '';
-      setState(() {
-        _photoURL = data['photoUrl'];
-      });
-    }
-  }
-
-  Future<void> _pickImage() async {
-    final picked = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
-    if (picked != null) {
-      setState(() {
-        _imageFile = File(picked.path);
-      });
-    }
-  }
-
-  Future<String?> _uploadImage(File file) async {
-    final ref = FirebaseStorage.instance.ref().child('profile_pics/$uid.jpg');
-    await ref.putFile(file);
-    return await ref.getDownloadURL();
-  }
-
-  Future<void> _saveProfile() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    try {
-      String? imageUrl = _photoURL;
-
-      if (_imageFile != null) {
-        imageUrl = await _uploadImage(_imageFile!);
-      }
-
-      await FirebaseFirestore.instance.collection('users').doc(uid).update({
-        'fullName': _nameController.text.trim(),
-        'email': _emailController.text.trim(),
-        'photoUrl': imageUrl ?? '',
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Profile updated successfully!'),
-          backgroundColor: AppTheme.primaryColor,
-        ),
-      );
-
-      Navigator.pop(context, true);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Update failed: $e')),
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    super.dispose();
-  }
+  bool isPublic = true;
+  bool isSharing = true;
+  bool pushNotifications = false;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Edit Profile'),
-        leading: BackButton(),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           TextButton(
-            onPressed: _saveProfile,
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Profile updated successfully!'),
+                    backgroundColor: AppTheme.primaryColor,
+                  ),
+                );
+                Navigator.pop(context);
+              }
+            },
             child: const Text(
               'Save',
               style: TextStyle(
@@ -120,21 +62,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
             children: [
               _buildProfilePhotoSection(),
               const SizedBox(height: 20),
-              _buildTextField(
-                controller: _nameController,
-                label: 'Full Name',
-                icon: Icons.person,
-                validator: (value) =>
-                value == null || value.isEmpty ? 'Enter name' : null,
-              ),
-              const SizedBox(height: 16),
-              _buildTextField(
-                controller: _emailController,
-                label: 'Email',
-                icon: Icons.email,
-                validator: (value) =>
-                value != null && !value.contains('@') ? 'Enter valid email' : null,
-              ),
+              _buildFormFields(theme),
+              const SizedBox(height: 20),
+              _buildSettingsSection(theme),
             ],
           ),
         ),
@@ -143,27 +73,144 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Widget _buildProfilePhotoSection() {
-    return GestureDetector(
-      onTap: _pickImage,
-      child: Stack(
-        alignment: Alignment.bottomRight,
-        children: [
-          CircleAvatar(
-            radius: 50,
-            backgroundImage: _imageFile != null
-                ? FileImage(_imageFile!)
-                : (_photoURL != null
-                ? NetworkImage(_photoURL!)
-                : const AssetImage('assets/default_user.png')) as ImageProvider,
-            backgroundColor: Colors.grey[300],
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: const BoxDecoration(
+        ],
+      ),
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              const CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.orange,
+                child: Icon(Icons.person, size: 50, color: Colors.white),
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: const BoxDecoration(
+                    color: AppTheme.primaryColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Change Profile Photo',
+            style: TextStyle(
               color: AppTheme.primaryColor,
-              shape: BoxShape.circle,
+              fontWeight: FontWeight.w600,
             ),
-            child: const Icon(Icons.camera_alt, size: 18, color: Colors.white),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormFields(ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          _buildTextField(
+            controller: _nameController,
+            label: 'Full Name',
+            icon: Icons.person,
+            validator: (value) => value == null || value.isEmpty ? 'Please enter your name' : null,
+          ),
+          const SizedBox(height: 16),
+          _buildTextField(
+            controller: _emailController,
+            label: 'Email',
+            icon: Icons.email,
+            keyboardType: TextInputType.emailAddress,
+            validator: (value) {
+              if (value == null || value.isEmpty) return 'Please enter your email';
+              if (!value.contains('@')) return 'Enter a valid email';
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+          _buildTextField(
+            controller: _phoneController,
+            label: 'Phone Number',
+            icon: Icons.phone,
+            keyboardType: TextInputType.phone,
+          ),
+          const SizedBox(height: 16),
+          _buildTextField(
+            controller: _bioController,
+            label: 'Bio',
+            icon: Icons.info,
+            maxLines: 3,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingsSection(ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Privacy Settings', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 16),
+          _buildSwitchTile(
+            title: 'Public Profile',
+            subtitle: 'Allow others to view your profile',
+            value: isPublic,
+            onChanged: (val) => setState(() => isPublic = val),
+          ),
+          _buildSwitchTile(
+            title: 'Activity Sharing',
+            subtitle: 'Share your workouts with followers',
+            value: isSharing,
+            onChanged: (val) => setState(() => isSharing = val),
+          ),
+          _buildSwitchTile(
+            title: 'Push Notifications',
+            subtitle: 'Receive workout reminders',
+            value: pushNotifications,
+            onChanged: (val) => setState(() => pushNotifications = val),
           ),
         ],
       ),
@@ -174,15 +221,48 @@ class _EditProfilePageState extends State<EditProfilePage> {
     required TextEditingController controller,
     required String label,
     required IconData icon,
+    TextInputType? keyboardType,
+    int maxLines = 1,
     String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      validator: validator,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: AppTheme.primaryColor),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        filled: true,
+        fillColor: Colors.grey[50],
       ),
-      validator: validator,
     );
+  }
+
+  Widget _buildSwitchTile({
+    required String title,
+    required String subtitle,
+    required bool value,
+    required Function(bool) onChanged,
+  }) {
+    return SwitchListTile(
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+      subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+      value: value,
+      onChanged: onChanged,
+      activeColor: AppTheme.primaryColor,
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _bioController.dispose();
+    super.dispose();
   }
 }

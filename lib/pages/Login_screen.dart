@@ -1,7 +1,10 @@
 import 'package:befit/pages/Wrapper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
 import '../services/app_theme.dart';
 import 'SignUp_screen.dart';
 import 'forgot.dart';
@@ -18,31 +21,87 @@ class _SignInState extends State<SignInScreen> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   bool isPasswordVisible = false;
-  bool isloading=false;
-  signIn() async {
-    setState(() {
-      isloading=true;
-    });
+  bool isloading = false;
+
+  Future<void> signIn() async {
+    setState(() => isloading = true);
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      UserCredential credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email.text.trim(),
         password: password.text.trim(),
       );
 
-      Get.offAll(() => Wrapper()); // This line is important
+      final uid = credential.user!.uid;
+
+      DocumentSnapshot userDoc =
+      await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      if (userDoc.exists) {
+        final data = userDoc.data() as Map<String, dynamic>;
+        print("Name: ${data['name']}");
+        print("Email: ${data['email']}");
+        print("Photo: ${data['photoUrl']}");
+      } else {
+        print("⚠️ No user data found in Firestore");
+      }
+
+      Get.offAll(() => Wrapper());
     } on FirebaseAuthException catch (e) {
       Get.snackbar("Invalid Credentials", e.message ?? "Something went wrong");
     } catch (e) {
-      Get.snackbar("Invalid Credentials", e.toString());
+      Get.snackbar("Error", e.toString());
     }
-    setState(() {
-      isloading=false;
-    });
+
+    setState(() => isloading = false);
   }
+
+  Future<void> signInWithGoogle() async {
+    setState(() => isloading = true);
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) {
+        // User cancelled sign-in
+        setState(() => isloading = false);
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential userCredential =
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      final uid = userCredential.user!.uid;
+      final userDoc = FirebaseFirestore.instance.collection('users').doc(uid);
+      final snapshot = await userDoc.get();
+
+      if (!snapshot.exists) {
+        await userDoc.set({
+          'name': userCredential.user?.displayName ?? '',
+          'email': userCredential.user?.email ?? '',
+          'photoUrl': userCredential.user?.photoURL ?? '',
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
+
+      Get.offAll(() => Wrapper());
+    } catch (e) {
+      Get.snackbar("Google Sign-In Error", e.toString());
+    }
+    setState(() => isloading = false);
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    return isloading?Center(child: CircularProgressIndicator(),):Scaffold(
+    return isloading
+        ? const Center(child: CircularProgressIndicator())
+        : Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -52,7 +111,6 @@ class _SignInState extends State<SignInScreen> {
               child: IntrinsicHeight(
                 child: Column(
                   children: [
-                    // Header
                     Stack(
                       children: [
                         Container(
@@ -81,7 +139,6 @@ class _SignInState extends State<SignInScreen> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 20),
                     const Text(
                       'Welcome back..!',
@@ -92,7 +149,6 @@ class _SignInState extends State<SignInScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Form(
@@ -130,8 +186,8 @@ class _SignInState extends State<SignInScreen> {
                               alignment: Alignment.centerRight,
                               child: TextButton(
                                 onPressed: () {
-                                  // Add your forgot password screen route here
-                                  Navigator.push(context, MaterialPageRoute(builder: (_) => Forgot()));
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (_) => Forgot()));
                                 },
                                 child: const Text(
                                   'Forgot Password?',
@@ -159,6 +215,25 @@ class _SignInState extends State<SignInScreen> {
                               ),
                               child: const Text('Sign In', style: TextStyle(fontSize: 18)),
                             ),
+                            const SizedBox(height: 10),
+                            ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.black,
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  side: const BorderSide(color: Colors.black26),
+                                ),
+                              ),
+                              icon: Image.asset(
+                                'assets/images/img.png',
+                                height: 24,
+                                width: 24,
+                              ),
+                              label: const Text('Sign in with Google'),
+                              onPressed: signInWithGoogle,
+                            ),
                             const SizedBox(height: 15),
                             GestureDetector(
                               onTap: () {
@@ -180,7 +255,6 @@ class _SignInState extends State<SignInScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 40),
                   ],
                 ),

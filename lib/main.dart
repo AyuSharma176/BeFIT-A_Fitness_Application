@@ -99,7 +99,7 @@
 //                   decoration: BoxDecoration(
 //                     color: AppTheme.drawerHeaderBg,
 //                     image: DecorationImage(
-//                       image: AssetImage('assets/Drawer_images/img.png'),
+//                       image: AssetImage('assets/Drawer_images/bmi1.png'),
 //                       fit: BoxFit.cover,
 //                       opacity: 0.6,
 //                     ),

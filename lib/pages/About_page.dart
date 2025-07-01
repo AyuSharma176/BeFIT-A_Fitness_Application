@@ -27,7 +27,7 @@ class Aboutpage extends StatelessWidget {
         child: ListView(
           children: [
             Center(
-              child: Image.asset('assets/Drawer_images/img.png', height: 100),
+              child: Image.asset('assets/Drawer_images/bmi1.png', height: 100),
             ),
             SizedBox(height: 20),
             Text(

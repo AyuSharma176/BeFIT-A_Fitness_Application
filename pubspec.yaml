@@ -33,10 +33,16 @@ dependencies:
   google_fonts: ^6.1.0
   shared_preferences: ^2.2.2
   flutter_svg: ^2.0.7
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  fl_chart: ^0.66.0
+  google_sign_in: ^6.2.1 # 👈 Downgrade to stable version
+  cloud_firestore: ^4.13.5 # 👈 Firebase packages must be compatible
   cupertino_icons: ^1.0.8
+  firebase_core: ^2.27.1
+  firebase_auth: ^4.17.5
+  animated_text_kit: ^4.2.1
+  firebase_storage: ^11.6.8
+  image_picker: ^1.1.0
+  get: ^4.6.6
 
 dev_dependencies:
   flutter_test:
@@ -58,12 +64,15 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/
+    - assets/images/
     - assets/Drawer_images/
     - assets/SuggestedWorkout_images/
     - assets/intake_images/
-#    - assets/gradients/gradient_bg.png
+    #    - assets/gradients/gradient_bg.png
     - assets/navbar_icons/dumbell_outlined.svg
     - assets/navbar_icons/dumbell.svg
+    - assets/bmi_images/
 
   #   - Drawer_images/a_dot_ham.jpeg
 

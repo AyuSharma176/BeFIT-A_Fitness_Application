@@ -1,34 +1,92 @@
-import 'package:befit/main.dart';
-import 'package:befit/pages/Login_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:befit/services/app_theme.dart';
-import 'package:befit/pages/SignUp_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:befit/services/authentication.dart';
-import 'home_page.dart';
-import 'package:befit/services/google_auth_service.dart';
-import 'package:befit/services/facebook_auth_service.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+import '../services/app_theme.dart';
+import 'Wrapper.dart';
+import 'Login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<StatefulWidget> createState() => _SignUpState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
-  final fullNameController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final email = TextEditingController();
+  final password = TextEditingController();
+  final name = TextEditingController();
   bool isPasswordVisible = false;
-  final authService = AuthenticationService();
-  final googleAuthService = GoogleAuthService();
-  final facebookAuthService = FacebookAuthService();
+  bool isloading = false;
+
+  signup() async {
+    setState(() {
+      isloading = true;
+    });
+
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email.text.trim(),
+        password: password.text.trim(),
+      );
+
+      Get.offAll(() => Wrapper());
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar("Signup Failed", e.message ?? "Something went wrong");
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    }
+
+    setState(() {
+      isloading = false;
+    });
+  }
+
+  Future<void> signUpWithGoogle() async {
+    setState(() => isloading = true);
+
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) {
+        setState(() => isloading = false);
+        return; // User canceled
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+      // ✅ Optional: Save user data in Firestore
+      // await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+      //   'name': userCredential.user!.displayName,
+      //   'email': userCredential.user!.email,
+      //   'photoUrl': userCredential.user!.photoURL,
+      // });
+
+      Get.offAll(() => Wrapper());
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar("Google Sign-In Failed", e.message ?? "Something went wrong");
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    }
+
+    setState(() => isloading = false);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return isloading
+        ? const Center(child: CircularProgressIndicator())
+        : Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -66,39 +124,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: AppTheme.appBarBg,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: const Text('Sign up',
-                              style: TextStyle(color: Colors.white, fontSize: 16)),
-                        ),
-                        const SizedBox(width: 20),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const SignInScreen()),
-                            );
-                          },
-                          child: const Text(
-                            'Sign in',
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                     const SizedBox(height: 20),
                     const Text(
                       'Create An Account',
@@ -118,24 +143,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             _buildInputField(
                               icon: Icons.person_outline,
                               label: 'Full Name',
-                              controller: fullNameController,
+                              controller: name,
                             ),
                             const SizedBox(height: 15),
                             _buildInputField(
                               icon: Icons.email_outlined,
                               label: 'Email',
-                              controller: emailController,
+                              controller: email,
                               keyboardType: TextInputType.emailAddress,
                             ),
                             const SizedBox(height: 15),
                             _buildInputField(
                               icon: Icons.lock_outline,
                               label: 'Password',
-                              controller: passwordController,
+                              controller: password,
                               obscureText: !isPasswordVisible,
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                  isPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
                                   color: Colors.black,
                                 ),
                                 onPressed: () {
@@ -147,25 +174,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                             const SizedBox(height: 25),
                             ElevatedButton(
-                              onPressed: () async {
+                              onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  try {
-                                    final user = await authService.signUpWithEmailPassword(
-                                      email: emailController.text.trim(),
-                                      password: passwordController.text.trim(),
-                                      fullName: fullNameController.text.trim(),
-                                    );
-                                    if (user != null) {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => HomeScreen()),
-                                      );
-                                    }
-                                  } on FirebaseAuthException catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(e.message ?? 'Authentication failed')),
-                                    );
-                                  }
+                                  signup();
                                 }
                               },
                               style: ElevatedButton.styleFrom(
@@ -175,24 +186,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   borderRadius: BorderRadius.circular(30),
                                 ),
                               ),
-                              child: const Text('Sign up', style: TextStyle(fontSize: 18)),
+                              child: const Text('Sign Up', style: TextStyle(fontSize: 18)),
+                            ),
+                            const SizedBox(height: 10),
+                            ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.black,
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  side: const BorderSide(color: Colors.black26),
+                                ),
+                              ),
+                              icon: Image.asset(
+                                'assets/images/img.png', // Ensure this asset exists
+                                height: 24,
+                                width: 24,
+                              ),
+                              label: const Text('Sign up with Google'),
+                              onPressed: signUpWithGoogle,
+                            ),
+                            const SizedBox(height: 15),
+                            GestureDetector(
+                              onTap: () {
+                                Get.to(() => const SignInScreen());
+                              },
+                              child: const Text(
+                                'Already have an account? SignIN',
+                                style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  fontSize: 14,
+                                  color: Colors.black54,
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 100),
-                    const Text(
-                      '────────  Or sign up with  ────────',
-                      style: TextStyle(fontSize: 14, color: Colors.black87),
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _socialButton('Google', Icons.g_mobiledata),
-                        _socialButton('Facebook', Icons.facebook),
-                      ],
                     ),
                     const SizedBox(height: 40),
                   ],
@@ -233,46 +264,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
       style: const TextStyle(color: Colors.black),
       validator: (value) => value == null || value.isEmpty ? 'Enter $label' : null,
-    );
-  }
-
-  Widget _socialButton(String label, IconData icon) {
-    return GestureDetector(
-      onTap: () async {
-        try {
-          User? user;
-          if (label == 'Google') {
-            user = await googleAuthService.signInWithGoogle();
-          } else if (label == 'Facebook') {
-            user = await facebookAuthService.signInWithFacebook();
-          }
-
-          if (user != null) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
-            );
-          }
-        } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('$label Sign-In Failed: $e')),
-          );
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 22),
-            const SizedBox(width: 6),
-            Text(label),
-          ],
-        ),
-      ),
     );
   }
 }

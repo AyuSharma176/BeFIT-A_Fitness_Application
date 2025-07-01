@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../services/app_theme.dart';
 import 'Wrapper.dart';
-import 'Login_screen.dart'; // Adjust the path if needed
+import 'Login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -19,31 +20,73 @@ class _SignUpState extends State<SignUpScreen> {
   final password = TextEditingController();
   final name = TextEditingController();
   bool isPasswordVisible = false;
-  bool isloading=true;
+  bool isloading = false;
+
   signup() async {
     setState(() {
-      isloading=true;
+      isloading = true;
     });
+
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email.text.trim(),
         password: password.text.trim(),
       );
 
-      Get.offAll(() => Wrapper()); // This line is important
+      Get.offAll(() => Wrapper());
     } on FirebaseAuthException catch (e) {
-      Get.snackbar("Invalid Credentials", e.message ?? "Something went wrong");
+      Get.snackbar("Signup Failed", e.message ?? "Something went wrong");
     } catch (e) {
-      Get.snackbar("Invalid Credentials", e.toString());
+      Get.snackbar("Error", e.toString());
     }
+
     setState(() {
-      isloading=false;
+      isloading = false;
     });
+  }
+
+  Future<void> signUpWithGoogle() async {
+    setState(() => isloading = true);
+
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) {
+        setState(() => isloading = false);
+        return; // User canceled
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+      // ✅ Optional: Save user data in Firestore
+      // await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+      //   'name': userCredential.user!.displayName,
+      //   'email': userCredential.user!.email,
+      //   'photoUrl': userCredential.user!.photoURL,
+      // });
+
+      Get.offAll(() => Wrapper());
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar("Google Sign-In Failed", e.message ?? "Something went wrong");
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    }
+
+    setState(() => isloading = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return isloading?Center(child: CircularProgressIndicator(),):Scaffold(
+    return isloading
+        ? const Center(child: CircularProgressIndicator())
+        : Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -53,7 +96,6 @@ class _SignUpState extends State<SignUpScreen> {
               child: IntrinsicHeight(
                 child: Column(
                   children: [
-                    // Header
                     Stack(
                       children: [
                         Container(
@@ -82,7 +124,6 @@ class _SignUpState extends State<SignUpScreen> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 20),
                     const Text(
                       'Create An Account',
@@ -93,7 +134,6 @@ class _SignUpState extends State<SignUpScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Form(
@@ -120,7 +160,9 @@ class _SignUpState extends State<SignUpScreen> {
                               obscureText: !isPasswordVisible,
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                  isPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
                                   color: Colors.black,
                                 ),
                                 onPressed: () {
@@ -131,7 +173,6 @@ class _SignUpState extends State<SignUpScreen> {
                               ),
                             ),
                             const SizedBox(height: 25),
-
                             ElevatedButton(
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
@@ -147,7 +188,25 @@ class _SignUpState extends State<SignUpScreen> {
                               ),
                               child: const Text('Sign Up', style: TextStyle(fontSize: 18)),
                             ),
-
+                            const SizedBox(height: 10),
+                            ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.black,
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  side: const BorderSide(color: Colors.black26),
+                                ),
+                              ),
+                              icon: Image.asset(
+                                'assets/images/img.png', // Ensure this asset exists
+                                height: 24,
+                                width: 24,
+                              ),
+                              label: const Text('Sign up with Google'),
+                              onPressed: signUpWithGoogle,
+                            ),
                             const SizedBox(height: 15),
                             GestureDetector(
                               onTap: () {
@@ -166,7 +225,6 @@ class _SignUpState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 40),
                   ],
                 ),
@@ -209,4 +267,3 @@ class _SignUpState extends State<SignUpScreen> {
     );
   }
 }
-//signup

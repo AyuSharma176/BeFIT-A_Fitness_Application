@@ -171,6 +171,14 @@ class _SignUpState extends State<SignUpScreen> {
                                   });
                                 },
                               ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Enter Password';
+                                } else if (value.length < 6) {
+                                  return 'Password must be at least 6 characters';
+                                }
+                                return null;
+                              },
                             ),
                             const SizedBox(height: 25),
                             ElevatedButton(
@@ -186,7 +194,7 @@ class _SignUpState extends State<SignUpScreen> {
                                   borderRadius: BorderRadius.circular(30),
                                 ),
                               ),
-                              child: const Text('Sign Up', style: TextStyle(fontSize: 18)),
+                              child: const Text('Continue', style: TextStyle(fontSize: 18)),
                             ),
                             const SizedBox(height: 10),
                             ElevatedButton.icon(
@@ -212,13 +220,27 @@ class _SignUpState extends State<SignUpScreen> {
                               onTap: () {
                                 Get.to(() => const SignInScreen());
                               },
-                              child: const Text(
-                                'Already have an account? SignIN',
-                                style: TextStyle(
-                                  decoration: TextDecoration.underline,
-                                  fontSize: 14,
-                                  color: Colors.black54,
-                                ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    'Already have an account? ',
+                                    style: TextStyle(
+                                      // decoration: TextDecoration.underline,
+                                      fontSize: 14,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                  const Text(
+                                    'Login',
+                                    style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: Colors.blueAccent,
+                                      fontSize: 15,
+                                      color: Colors.blueAccent,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -243,6 +265,7 @@ class _SignUpState extends State<SignUpScreen> {
     bool obscureText = false,
     TextInputType keyboardType = TextInputType.text,
     Widget? suffixIcon,
+    String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
@@ -252,8 +275,8 @@ class _SignUpState extends State<SignUpScreen> {
       decoration: InputDecoration(
         prefixIcon: Icon(icon, color: Colors.black),
         suffixIcon: suffixIcon,
-        labelText: '$label :',
-        labelStyle: const TextStyle(color: Colors.black),
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.black54),
         filled: true,
         fillColor: Colors.grey.shade200,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -263,7 +286,7 @@ class _SignUpState extends State<SignUpScreen> {
         ),
       ),
       style: const TextStyle(color: Colors.black),
-      validator: (value) => value == null || value.isEmpty ? 'Enter $label' : null,
+      validator: validator ?? (value) => value == null || value.isEmpty ? 'Enter $label' : null,
     );
   }
 }

@@ -192,7 +192,7 @@
 //     );
 //   }
 // }
-import 'package:befit/pages/Wrapper.dart';
+import 'package:befit/pages/SplashScreen.dart';
 import 'package:befit/services/app_theme.dart';
 import 'package:befit/pages/premium_page.dart';
 import 'package:befit/pages/Login_screen.dart';
@@ -204,7 +204,6 @@ import 'package:befit/pages/Settings_page.dart';
 import 'package:befit/pages/Suggested_page.dart';
 import 'package:befit/pages/home_page.dart';
 import 'package:befit/pages/intake_page.dart';
-import 'package:befit/pages/SignUp_screen.dart';
 import 'package:befit/pages/profile_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -226,7 +225,7 @@ class BeFitApp extends StatelessWidget {
       title: 'Be 𝓯𝓲𝓽',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
-      home: Wrapper(),
+      home: SplashScreen(),
     );
   }
 }
@@ -297,166 +296,159 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // decoration: BoxDecoration(
-      //   // image: DecorationImage(
-      //   //   image: AssetImage('assets/gradients/gradient_bg.png'),
-      //   //   fit: BoxFit.cover,
-      //   // ),
-      // ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: Text(
-            _selectedIndex == 2 ? '' : 'вє ƒιт',
-            style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 2,
-              color: Colors.white,
-              fontFamily: 'Segoe UI',
-            ),
-          ),
-          leading: Builder(
-            builder: (context) => IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () => Scaffold.of(context).openDrawer(),
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.settings_outlined),
-              onPressed: () {
-                setState(() {
-                  _showSettings = !_showSettings;
-                });
-              },
-            ),
-          ],
-        ),
-        drawer: Drawer(
-          child: Container(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: Text(
+          'вє ƒιт',
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 2,
             color: Colors.white,
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: AppTheme.drawerHeaderBg,
-                    image: DecorationImage(
-                      image: AssetImage('assets/Drawer_images/img.png'),
-                      fit: BoxFit.cover,
-                      opacity: 0.6,
-                    ),
-                  ),
-                  child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Text(
-                      'Welcome, Champ! 💪',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.bar_chart, color: AppTheme.drawerIconColor),
-                  title: Text('Progress', style: TextStyle(color: Colors.black)),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Progresspage()),
-                  ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.money, color: AppTheme.drawerIconColor),
-                  title: Text('вєƒιт Premium', style: TextStyle(color: Colors.black)),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => premiumpage()),
-                  ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.info_outline, color: AppTheme.drawerIconColor),
-                  title: Text('About Us', style: TextStyle(color: Colors.black)),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Aboutpage()),
-                  ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.logout, color: AppTheme.logoutColor),
-                  title: Text('Logout', style: TextStyle(color: Colors.black)),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SignInScreen()),
-                  ),
-                ),
-              ],
-            ),
+            fontFamily: 'Segoe UI',
           ),
         ),
-        body: Stack(
-          children: [
-            _pages[_selectedIndex],
-            if (_showSettings)
-              Positioned(
-                top: kToolbarHeight,
-                right: 16,
-                left: 16,
-                child: Material(
-                  elevation: 8,
-                  borderRadius: BorderRadius.circular(8),
-                  child: SettingsDropdown(
-                    onClose: () {
-                      setState(() {
-                        _showSettings = false;
-                      });
-                    },
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(Icons.menu),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () {
+              setState(() {
+                _showSettings = !_showSettings;
+              });
+            },
+          ),
+        ],
+        centerTitle: _selectedIndex == 2,
+      ),
+      drawer: Drawer(
+        child: Container(
+          color: Colors.white,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: AppTheme.drawerHeaderBg,
+                  image: DecorationImage(
+                    image: AssetImage('assets/Drawer_images/img.png'),
+                    fit: BoxFit.cover,
+                    opacity: 0.6,
+                  ),
+                ),
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                    'Welcome, Champ! 💪',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-          ],
-        ),
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            color: AppTheme.appBarBg,
+              ListTile(
+                leading: Icon(Icons.bar_chart, color: AppTheme.drawerIconColor),
+                title: Text('Progress', style: TextStyle(color: Colors.black)),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Progresspage()),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.money, color: AppTheme.drawerIconColor),
+                title: Text('вєƒιт Premium', style: TextStyle(color: Colors.black)),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => premiumpage()),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.info_outline, color: AppTheme.drawerIconColor),
+                title: Text('About Us', style: TextStyle(color: Colors.black)),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Aboutpage()),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.logout, color: AppTheme.logoutColor),
+                title: Text('Logout', style: TextStyle(color: Colors.black)),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignInScreen()),
+                ),
+              ),
+            ],
           ),
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          height: 70,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final double itemWidth = constraints.maxWidth / 5;
-              return Stack(
-                children: [
-                  Row(
-                    children: [
-                      _buildNavItem(Icons.calculate_outlined, Icons.calculate, 'Calculator', 0),
-                      _buildNavItem(Icons.egg_alt_outlined, Icons.egg_alt, 'Diet', 1),
-                      _buildNavItem(Icons.home_outlined, Icons.home, 'Home', 2),
-                      _buildSvgNavItem('assets/navbar_icons/dumbell_outlined.svg',
-                          'assets/navbar_icons/dumbell.svg', 'Workout', 3),
-                      _buildNavItem(Icons.person_outline, Icons.person, 'Profile', 4),
-                    ],
-                  ),
-                  AnimatedPositioned(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeOut,
-                    left: _selectedIndex * itemWidth + (itemWidth / 2) - 20,
-                    bottom: 8,
-                    child: Container(
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
+        ),
+      ),
+      body: Stack(
+        children: [
+          _pages[_selectedIndex],
+          if (_showSettings)
+            Positioned(
+              top: kToolbarHeight,
+              right: 16,
+              left: 16,
+              child: Material(
+                elevation: 8,
+                borderRadius: BorderRadius.circular(8),
+                child: SettingsDropdown(
+                  onClose: () {
+                    setState(() {
+                      _showSettings = false;
+                    });
+                  },
+                ),
+              ),
+            ),
+        ],
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: AppTheme.appBarBg,
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        height: 70,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final double itemWidth = constraints.maxWidth / 5;
+            return Stack(
+              children: [
+                Row(
+                  children: [
+                    _buildNavItem(Icons.calculate_outlined, Icons.calculate, 'Calculator', 0),
+                    _buildNavItem(Icons.egg_alt_outlined, Icons.egg_alt, 'Diet', 1),
+                    _buildNavItem(Icons.home_outlined, Icons.home, 'Home', 2),
+                    _buildSvgNavItem('assets/navbar_icons/dumbell_outlined.svg',
+                        'assets/navbar_icons/dumbell.svg', 'Workout', 3),
+                    _buildNavItem(Icons.person_outline, Icons.person, 'Profile', 4),
+                  ],
+                ),
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                  left: _selectedIndex * itemWidth + (itemWidth / 2) - 20,
+                  bottom: 8,
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                ],
-              );
-            },
-          ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

@@ -304,6 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
       //   //   fit: BoxFit.cover,
       //   // ),
       // ),
+
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(

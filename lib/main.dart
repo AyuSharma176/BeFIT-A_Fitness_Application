@@ -241,7 +241,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 2;
   bool _showSettings = false;
 
-  Widget _buildNavItem(IconData icon, IconData activeIcon, String label, int index) {
+  Widget _buildNavItem(IconData icon, IconData activeIcon, String label,
+      int index) {
     final bool isSelected = index == _selectedIndex;
     return Expanded(
       child: GestureDetector(
@@ -260,7 +261,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSvgNavItem(String icon, String activeIcon, String label, int index) {
+  Widget _buildSvgNavItem(String icon, String activeIcon, String label,
+      int index) {
     final bool isSelected = index == _selectedIndex;
     return Expanded(
       child: GestureDetector(
@@ -296,11 +298,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Text(
+        title: _selectedIndex == 2
+            ? null
+            : Text(
           'вє ƒιт',
           style: TextStyle(
             fontSize: 30,
@@ -308,35 +311,14 @@ class _HomeScreenState extends State<HomeScreen> {
             letterSpacing: 2,
             color: Colors.white,
             fontFamily: 'Segoe UI',
-
-    return Container(
-      // decoration: BoxDecoration(
-      //   // image: DecorationImage(
-      //   //   image: AssetImage('assets/gradients/gradient_bg.png'),
-      //   //   fit: BoxFit.cover,
-      //   // ),
-      // ),
-
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: Text(
-            _selectedIndex == 2 ? '' : 'вє ƒιт',
-            style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 2,
-              color: Colors.white,
-              fontFamily: 'Segoe UI',
-            ),
-
           ),
         ),
         leading: Builder(
-          builder: (context) => IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
+          builder: (context) =>
+              IconButton(
+                icon: Icon(Icons.menu),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
         ),
         actions: [
           IconButton(
@@ -369,7 +351,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   alignment: Alignment.bottomLeft,
                   child: Text(
                     'Welcome, Champ! 💪',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -379,34 +365,40 @@ class _HomeScreenState extends State<HomeScreen> {
               ListTile(
                 leading: Icon(Icons.bar_chart, color: AppTheme.drawerIconColor),
                 title: Text('Progress', style: TextStyle(color: Colors.black)),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Progresspage()),
-                ),
+                onTap: () =>
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Progresspage()),
+                    ),
               ),
               ListTile(
                 leading: Icon(Icons.money, color: AppTheme.drawerIconColor),
-                title: Text('вєƒιт Premium', style: TextStyle(color: Colors.black)),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => premiumpage()),
-                ),
+                title: Text(
+                    'вєƒιт Premium', style: TextStyle(color: Colors.black)),
+                onTap: () =>
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => premiumpage()),
+                    ),
               ),
               ListTile(
-                leading: Icon(Icons.info_outline, color: AppTheme.drawerIconColor),
+                leading: Icon(
+                    Icons.info_outline, color: AppTheme.drawerIconColor),
                 title: Text('About Us', style: TextStyle(color: Colors.black)),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Aboutpage()),
-                ),
+                onTap: () =>
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Aboutpage()),
+                    ),
               ),
               ListTile(
                 leading: Icon(Icons.logout, color: AppTheme.logoutColor),
                 title: Text('Logout', style: TextStyle(color: Colors.black)),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignInScreen()),
-                ),
+                onTap: () =>
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignInScreen()),
+                    ),
               ),
             ],
           ),
@@ -447,12 +439,20 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Row(
                   children: [
-                    _buildNavItem(Icons.calculate_outlined, Icons.calculate, 'Calculator', 0),
-                    _buildNavItem(Icons.egg_alt_outlined, Icons.egg_alt, 'Diet', 1),
+                    _buildNavItem(
+                        Icons.calculate_outlined, Icons.calculate, 'Calculator',
+                        0),
+                    _buildNavItem(
+                        Icons.egg_alt_outlined, Icons.egg_alt, 'Diet', 1),
                     _buildNavItem(Icons.home_outlined, Icons.home, 'Home', 2),
-                    _buildSvgNavItem('assets/navbar_icons/dumbell_outlined.svg',
-                        'assets/navbar_icons/dumbell.svg', 'Workout', 3),
-                    _buildNavItem(Icons.person_outline, Icons.person, 'Profile', 4),
+                    _buildSvgNavItem(
+                      'assets/navbar_icons/dumbell_outlined.svg',
+                      'assets/navbar_icons/dumbell.svg',
+                      'Workout',
+                      3,
+                    ),
+                    _buildNavItem(
+                        Icons.person_outline, Icons.person, 'Profile', 4),
                   ],
                 ),
                 AnimatedPositioned(
@@ -477,4 +477,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-// helow

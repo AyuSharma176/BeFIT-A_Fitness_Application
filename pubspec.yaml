@@ -43,7 +43,7 @@ dependencies:
   firebase_storage: ^11.6.8
   image_picker: ^1.1.0
   get: ^4.6.6
-
+  flutter_launcher_icons: ^0.13.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -101,3 +101,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/Drawer_images/img.png"

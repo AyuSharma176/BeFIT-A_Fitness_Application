@@ -43,7 +43,11 @@ dependencies:
   firebase_storage: ^11.6.8
   image_picker: ^1.1.0
   get: ^4.6.6
+
   flutter_launcher_icons: ^0.13.1
+
+  flutter_screenutil: ^5.8.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

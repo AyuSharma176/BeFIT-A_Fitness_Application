@@ -296,6 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -307,6 +308,28 @@ class _HomeScreenState extends State<HomeScreen> {
             letterSpacing: 2,
             color: Colors.white,
             fontFamily: 'Segoe UI',
+
+    return Container(
+      // decoration: BoxDecoration(
+      //   // image: DecorationImage(
+      //   //   image: AssetImage('assets/gradients/gradient_bg.png'),
+      //   //   fit: BoxFit.cover,
+      //   // ),
+      // ),
+
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: Text(
+            _selectedIndex == 2 ? '' : 'вє ƒιт',
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 2,
+              color: Colors.white,
+              fontFamily: 'Segoe UI',
+            ),
+
           ),
         ),
         leading: Builder(

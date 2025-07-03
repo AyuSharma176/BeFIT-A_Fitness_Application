@@ -383,4 +383,7 @@ class _MealCalculatorScreenState extends State<MealCalculatorScreen> {
       ),
     );
   }
+
+
 }
+

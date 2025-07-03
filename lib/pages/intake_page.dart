@@ -2,49 +2,113 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/app_theme.dart';
 
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Intake Calculator',
+      theme: AppTheme.theme,
+      home: DietPage(),
+    );
+  }
+}
+
 class DietPage extends StatelessWidget {
+  const DietPage({super.key});
+
+  Widget customCardButton({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        elevation: 2,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: onTap,
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.brown.shade100,
+                  child: Icon(icon, color: Colors.brown),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.brown.shade800,
+                          fontSize: 16,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.brown.shade400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.arrow_forward_ios, color: Colors.brown.shade300, size: 18),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Choose Calculator'),
-      ),
-      body: Stack(
+      appBar: AppBar(title: Text('Choose Calculator')),
+      body: ListView(
+        padding: EdgeInsets.symmetric(vertical: 24),
         children: [
-          Opacity(
-            opacity: 0.6,
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/intake_images/fitness-man.jpg'),
-                  fit: BoxFit.cover,
-                ),
-              ),
+          customCardButton(
+            icon: Icons.local_fire_department,
+            title: 'Calorie Intake Calculator',
+            subtitle: 'Calculate your daily calorie needs.',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => IntakeCalculatorScreen(isProtein: false)),
             ),
           ),
-          Positioned.fill(
-            child: Column(
-              children: [
-                Spacer(flex: 6),
-                ElevatedButton.icon(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => IntakeCalculatorScreen(isProtein: false)),
-                  ),
-                  icon: Icon(Icons.local_fire_department),
-                  label: Text('Calorie Intake Calculator'),
-                ),
-                SizedBox(height: 20),
-                ElevatedButton.icon(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => IntakeCalculatorScreen(isProtein: true)),
-                  ),
-                  icon: Icon(Icons.restaurant_rounded),
-                  label: Text('Protein Intake Calculator'),
-                ),
-                Spacer(flex: 4),
-              ],
+          customCardButton(
+            icon: Icons.restaurant_rounded,
+            title: 'Protein Intake Calculator',
+            subtitle: 'Estimate your daily protein intake.',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => IntakeCalculatorScreen(isProtein: true)),
+            ),
+          ),
+          customCardButton(
+            icon: Icons.fastfood_rounded,
+            title: 'Meal Calculator',
+            subtitle: 'Check estimated calories in your meal.',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => MealCalculatorScreen()),
             ),
           ),
         ],
@@ -125,13 +189,55 @@ class _IntakeCalculatorScreenState extends State<IntakeCalculatorScreen> {
     );
   }
 
+  Widget buildTextField(String label, TextEditingController controller, String hint, String suffix) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        TextField(
+          controller: controller,
+          decoration: InputDecoration(hintText: hint, suffixText: suffix),
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        ),
+      ],
+    );
+  }
+
+  Widget buildUnitField(String label, TextEditingController controller, String unit, List<String> options, ValueChanged<String> onChanged) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: controller,
+                decoration: InputDecoration(hintText: 'Enter your $label'),
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              ),
+            ),
+            SizedBox(width: 12),
+            DropdownButton<String>(
+              value: unit,
+              onChanged: (String? val) {
+                if (val != null) onChanged(val);
+              },
+              items: options.map((u) => DropdownMenuItem(value: u, child: Text(u))).toList(),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final title = widget.isProtein ? "Protein Intake Calculator" : "Calorie Intake Calculator";
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
+      appBar: AppBar(title: Text(title)),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: ListView(
@@ -140,71 +246,20 @@ class _IntakeCalculatorScreenState extends State<IntakeCalculatorScreen> {
             SizedBox(height: 12),
             Text('Enter your details to calculate your daily needs.', textAlign: TextAlign.center),
             SizedBox(height: 24),
-
-            Text('Age:'),
-            TextField(
-              controller: ageController,
-              decoration: InputDecoration(hintText: 'Enter your age', suffixText: 'Years'),
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            ),
+            buildTextField('Age:', ageController, 'Enter your age', 'Years'),
             SizedBox(height: 16),
-
-            Text('Weight:'),
-            TextField(
-              controller: weightController,
-              decoration: InputDecoration(
-                hintText: 'Enter your weight',
-                suffixIcon: DropdownButton<String>(
-                  value: weightUnit,
-                  onChanged: (val) => setState(() => weightUnit = val!),
-                  items: ['Kg', 'Lbs'].map((u) => DropdownMenuItem(value: u, child: Text(u))).toList(),
-                ),
-              ),
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            ),
+            buildUnitField('Weight:', weightController, weightUnit, ['Kg', 'Lbs'], (val) => setState(() => weightUnit = val)),
             SizedBox(height: 16),
-
-            Text('Height:'),
-            TextField(
-              controller: heightController,
-              decoration: InputDecoration(
-                hintText: 'Enter your height',
-                suffixIcon: DropdownButton<String>(
-                  value: heightUnit,
-                  onChanged: (val) => setState(() => heightUnit = val!),
-                  items: ['Cm', 'Ft'].map((u) => DropdownMenuItem(value: u, child: Text(u))).toList(),
-                ),
-              ),
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            ),
+            buildUnitField('Height:', heightController, heightUnit, ['Cm', 'Ft'], (val) => setState(() => heightUnit = val)),
             SizedBox(height: 16),
-
             Text('Gender:'),
             Row(
               children: [
-                Expanded(
-                  child: RadioListTile(
-                    title: Text('Male'),
-                    value: 'Male',
-                    groupValue: gender,
-                    onChanged: (val) => setState(() => gender = val!),
-                  ),
-                ),
-                Expanded(
-                  child: RadioListTile(
-                    title: Text('Female'),
-                    value: 'Female',
-                    groupValue: gender,
-                    onChanged: (val) => setState(() => gender = val!),
-                  ),
-                ),
+                Expanded(child: RadioListTile(title: Text('Male'), value: 'Male', groupValue: gender, onChanged: (val) => setState(() => gender = val!))),
+                Expanded(child: RadioListTile(title: Text('Female'), value: 'Female', groupValue: gender, onChanged: (val) => setState(() => gender = val!))),
               ],
             ),
             SizedBox(height: 16),
-
             Text('Activity Level:'),
             DropdownButtonFormField<String>(
               value: activityLevel.isEmpty ? null : activityLevel,
@@ -213,7 +268,6 @@ class _IntakeCalculatorScreenState extends State<IntakeCalculatorScreen> {
               items: ['Low', 'Moderate', 'High'].map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(),
             ),
             SizedBox(height: 16),
-
             Text('Goal:'),
             DropdownButtonFormField<String>(
               value: goal.isEmpty ? null : goal,
@@ -222,10 +276,107 @@ class _IntakeCalculatorScreenState extends State<IntakeCalculatorScreen> {
               items: ['Lose Weight', 'Maintain Weight', 'Gain Muscle'].map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(),
             ),
             SizedBox(height: 24),
-
             ElevatedButton(
               onPressed: calculateResult,
               child: Text("Calculate"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MealCalculatorScreen extends StatefulWidget {
+  @override
+  _MealCalculatorScreenState createState() => _MealCalculatorScreenState();
+}
+
+class _MealCalculatorScreenState extends State<MealCalculatorScreen> {
+  final TextEditingController quantityController = TextEditingController();
+  final TextEditingController foodController = TextEditingController();
+
+  final Map<String, double> foodCaloriesPer100g = {
+    'rice': 130,
+    'chapati': 104,
+    'egg': 155,
+    'milk': 42,
+    'chicken': 165,
+    'banana': 89,
+    'apple': 52,
+    'paneer': 265,
+    'dal': 116,
+    'potato': 77,
+  };
+
+  void calculateCalories() {
+    String food = foodController.text.trim().toLowerCase();
+    double quantity = double.tryParse(quantityController.text.trim()) ?? 0;
+
+    if (!foodCaloriesPer100g.containsKey(food)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Food not found in database. Try rice, dal, egg...')),
+      );
+      return;
+    }
+
+    double calPer100g = foodCaloriesPer100g[food]!;
+    double estimatedCalories = (calPer100g / 100) * quantity;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Estimated Calories"),
+        content: Text("$quantity g of $food ≈ ${estimatedCalories.toStringAsFixed(1)} kcal"),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text("OK"))
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Meal Calculator")),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: ListView(
+          children: [
+            Text("Enter Food Details", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            SizedBox(height: 24),
+            DropdownButtonFormField<String>(
+              value: foodController.text.isEmpty ? null : foodController.text,
+              items: foodCaloriesPer100g.keys.map((food) {
+                return DropdownMenuItem(
+                  value: food,
+                  child: Text(food[0].toUpperCase() + food.substring(1)),
+                );
+              }).toList(),
+              onChanged: (val) {
+                setState(() {
+                  foodController.text = val!;
+                });
+              },
+              decoration: InputDecoration(
+                labelText: 'Select Food Item',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 16),
+            TextField(
+              controller: quantityController,
+              decoration: InputDecoration(
+                labelText: 'Quantity in grams',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: calculateCalories,
+              icon: Icon(Icons.calculate),
+              label: Text('Estimate Calories'),
             ),
           ],
         ),

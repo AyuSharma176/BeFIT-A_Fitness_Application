@@ -242,46 +242,34 @@ class _SignUpState extends State<SignUpScreen> {
                               onPressed: signUpWithGoogle,
                             ),
                             const SizedBox(height: 15),
-                            GestureDetector(
-
-                              onTap: () {
-                                Get.to(() => const SignInScreen());
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    'Already have an account? ',
-                                    style: TextStyle(
-                                      // decoration: TextDecoration.underline,
-                                      fontSize: 14,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                  const Text(
-                                    'Login',
-                                    style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: Colors.blueAccent,
-                                      fontSize: 15,
-                                      color: Colors.blueAccent,
-                                    ),
-                                  ),
-                                ],
-
-                              onTap: () => Get.to(() => const SignInScreen()),
-                              child: const Text(
-                                'Already have an account? SignIN',
+                        GestureDetector(
+                          onTap: () {
+                            Get.to(() => const SignInScreen());
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Already have an account? ',
                                 style: TextStyle(
-                                  decoration: TextDecoration.underline,
                                   fontSize: 14,
                                   color: Colors.black54,
                                 ),
-
                               ),
-                            ),
-                          ],
+                              const Text(
+                                'Login',
+                                style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Colors.blueAccent,
+                                  fontSize: 15,
+                                  color: Colors.blueAccent,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
+                      ]
+                      ),
                       ),
                     ),
                     const SizedBox(height: 40),

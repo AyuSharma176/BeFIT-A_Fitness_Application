@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,19 +20,27 @@ class _SignUpState extends State<SignUpScreen> {
   final email = TextEditingController();
   final password = TextEditingController();
   final name = TextEditingController();
+  String gender = "Male";
   bool isPasswordVisible = false;
   bool isloading = false;
 
   signup() async {
-    setState(() {
-      isloading = true;
-    });
+    setState(() => isloading = true);
 
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email.text.trim(),
         password: password.text.trim(),
       );
+
+      final user = userCredential.user;
+
+      await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
+        'name': name.text.trim(),
+        'email': email.text.trim(),
+        'gender': gender,
+        'photoUrl': null,
+      });
 
       Get.offAll(() => Wrapper());
     } on FirebaseAuthException catch (e) {
@@ -40,9 +49,7 @@ class _SignUpState extends State<SignUpScreen> {
       Get.snackbar("Error", e.toString());
     }
 
-    setState(() {
-      isloading = false;
-    });
+    setState(() => isloading = false);
   }
 
   Future<void> signUpWithGoogle() async {
@@ -50,10 +57,9 @@ class _SignUpState extends State<SignUpScreen> {
 
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
       if (googleUser == null) {
         setState(() => isloading = false);
-        return; // User canceled
+        return;
       }
 
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
@@ -64,13 +70,14 @@ class _SignUpState extends State<SignUpScreen> {
       );
 
       final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      final user = userCredential.user;
 
-      // ✅ Optional: Save user data in Firestore
-      // await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
-      //   'name': userCredential.user!.displayName,
-      //   'email': userCredential.user!.email,
-      //   'photoUrl': userCredential.user!.photoURL,
-      // });
+      await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
+        'name': user.displayName ?? '',
+        'email': user.email ?? '',
+        'photoUrl': user.photoURL ?? '',
+        'gender': gender,
+      });
 
       Get.offAll(() => Wrapper());
     } on FirebaseAuthException catch (e) {
@@ -160,16 +167,10 @@ class _SignUpState extends State<SignUpScreen> {
                               obscureText: !isPasswordVisible,
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  isPasswordVisible
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
+                                  isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                                   color: Colors.black,
                                 ),
-                                onPressed: () {
-                                  setState(() {
-                                    isPasswordVisible = !isPasswordVisible;
-                                  });
-                                },
+                                onPressed: () => setState(() => isPasswordVisible = !isPasswordVisible),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -179,6 +180,31 @@ class _SignUpState extends State<SignUpScreen> {
                                 }
                                 return null;
                               },
+                            ),
+                            const SizedBox(height: 15),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("Gender:", style: TextStyle(fontWeight: FontWeight.w500)),
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: RadioListTile(
+                                    title: const Text('Male'),
+                                    value: 'Male',
+                                    groupValue: gender,
+                                    onChanged: (val) => setState(() => gender = val!),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: RadioListTile(
+                                    title: const Text('Female'),
+                                    value: 'Female',
+                                    groupValue: gender,
+                                    onChanged: (val) => setState(() => gender = val!),
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 25),
                             ElevatedButton(
@@ -208,7 +234,7 @@ class _SignUpState extends State<SignUpScreen> {
                                 ),
                               ),
                               icon: Image.asset(
-                                'assets/images/img.png', // Ensure this asset exists
+                                'assets/images/img.png',
                                 height: 24,
                                 width: 24,
                               ),
@@ -217,6 +243,7 @@ class _SignUpState extends State<SignUpScreen> {
                             ),
                             const SizedBox(height: 15),
                             GestureDetector(
+
                               onTap: () {
                                 Get.to(() => const SignInScreen());
                               },
@@ -241,6 +268,16 @@ class _SignUpState extends State<SignUpScreen> {
                                     ),
                                   ),
                                 ],
+
+                              onTap: () => Get.to(() => const SignInScreen()),
+                              child: const Text(
+                                'Already have an account? SignIN',
+                                style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  fontSize: 14,
+                                  color: Colors.black54,
+                                ),
+
                               ),
                             ),
                           ],

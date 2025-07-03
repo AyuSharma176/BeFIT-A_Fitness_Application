@@ -64,6 +64,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/
     - assets/images/
     - assets/Drawer_images/
     - assets/SuggestedWorkout_images/
@@ -71,7 +72,7 @@ flutter:
 #    - assets/gradients/gradient_bg.png
     - assets/navbar_icons/dumbell_outlined.svg
     - assets/navbar_icons/dumbell.svg
-    - assets/bmi_images/images/
+    - assets/bmi_images/
 
   #   - Drawer_images/a_dot_ham.jpeg
 

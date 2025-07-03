@@ -180,8 +180,15 @@ class _SignInState extends State<SignInScreen> {
                                   });
                                 },
                               ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Enter Password';
+                                } else if (value.length < 6) {
+                                  return 'Password must be at least 6 characters';
+                                }
+                                return null;
+                              },
                             ),
-                            const SizedBox(height: 5),
                             Align(
                               alignment: Alignment.centerRight,
                               child: TextButton(
@@ -194,7 +201,7 @@ class _SignInState extends State<SignInScreen> {
                                   style: TextStyle(
                                     fontSize: 13,
                                     color: Colors.redAccent,
-                                    decoration: TextDecoration.underline,
+                                    decoration: TextDecoration.none,
                                   ),
                                 ),
                               ),
@@ -213,7 +220,7 @@ class _SignInState extends State<SignInScreen> {
                                   borderRadius: BorderRadius.circular(30),
                                 ),
                               ),
-                              child: const Text('Sign In', style: TextStyle(fontSize: 18)),
+                              child: const Text('Login', style: TextStyle(fontSize: 18)),
                             ),
                             const SizedBox(height: 10),
                             ElevatedButton.icon(
@@ -242,13 +249,27 @@ class _SignInState extends State<SignInScreen> {
                                   MaterialPageRoute(builder: (context) => const SignUpScreen()),
                                 );
                               },
-                              child: const Text(
-                                'Don’t have an account? Sign Up',
-                                style: TextStyle(
-                                  decoration: TextDecoration.underline,
-                                  fontSize: 14,
-                                  color: Colors.black54,
-                                ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    'Don’t have an account? ',
+                                    style: TextStyle(
+                                      // decoration: TextDecoration.underline,
+                                      fontSize: 14,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                  const Text(
+                                    'Sign up',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.blueAccent,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: Colors.blueAccent,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -273,6 +294,7 @@ class _SignInState extends State<SignInScreen> {
     bool obscureText = false,
     TextInputType keyboardType = TextInputType.text,
     Widget? suffixIcon,
+    String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
@@ -282,8 +304,8 @@ class _SignInState extends State<SignInScreen> {
       decoration: InputDecoration(
         prefixIcon: Icon(icon, color: Colors.black),
         suffixIcon: suffixIcon,
-        labelText: '$label :',
-        labelStyle: const TextStyle(color: Colors.black),
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.black54),
         filled: true,
         fillColor: Colors.grey.shade200,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -293,7 +315,7 @@ class _SignInState extends State<SignInScreen> {
         ),
       ),
       style: const TextStyle(color: Colors.black),
-      validator: (value) => value == null || value.isEmpty ? 'Enter $label' : null,
+      validator: validator ?? (value) => value == null || value.isEmpty ? 'Enter $label' : null,
     );
   }
 }

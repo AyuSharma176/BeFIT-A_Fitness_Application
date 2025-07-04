@@ -105,6 +105,7 @@
 // }
 //above code saved as backup
 
+import 'package:befit/services/frostedGlassEffect.dart';
 import 'package:flutter/material.dart';
 import 'package:befit/services/app_theme.dart';
 import 'About_page.dart';
@@ -125,9 +126,11 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white.withOpacity(0.95),
-      padding: const EdgeInsets.all(16),
+    return FrostedGlassBox(
+      height: 400,
+      width: 400,
+      // color: Colors.white.withOpacity(0.95),
+      // padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -135,12 +138,15 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Settings',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Segoe UI',
+              Align(
+                alignment: Alignment.topCenter,
+                child: Text(
+                  'Settings',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Segoe UI',
+                  ),
                 ),
               ),
               IconButton(

@@ -1,20 +1,117 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class WeightDetailsPage extends StatelessWidget {
+class WeightDetailsPage extends StatefulWidget {
   const WeightDetailsPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final weightController = TextEditingController();
+  State<WeightDetailsPage> createState() => _WeightDetailsPageState();
+}
 
-    final List<Map<String, dynamic>> weightData = [
-      {'month': 'Mar', 'weight': 76.2},
-      {'month': 'Apr', 'weight': 75.8},
-      {'month': 'May', 'weight': 75.3},
-      {'month': 'Jun', 'weight': 75.1},
-      {'month': 'Jul', 'weight': 74.8},
+class _WeightDetailsPageState extends State<WeightDetailsPage> {
+  final TextEditingController weightController = TextEditingController();
+  List<Map<String, dynamic>> weightData = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchWeightData();
+  }
+
+  Future<void> _fetchWeightData() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User not signed in!'))
+      );
+      return;
+    }
+
+
+    final now = DateTime.now();
+    final fiveMonthsAgo = DateTime(now.year, now.month - 4);
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('weight_logs')
+        .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(now))
+        .orderBy('timestamp')
+        .get();
+
+    final tempData = <String, Map<String, dynamic>>{};
+    for (var doc in snapshot.docs) {
+      final data = doc.data();
+      final timestamp = data['timestamp'] as Timestamp?;
+      final date = timestamp?.toDate() ?? DateTime.now();
+      final month = _monthAbbreviation(date.month);
+
+      if (!tempData.containsKey(month) || date.isAfter(DateTime.now().subtract(const Duration(days: 30)))) {
+        tempData[month] = {
+          'month': month,
+          'weight': (data['weight'] as num?)?.toDouble() ?? 0.0,
+        };
+      }
+    }
+
+    final sortedKeys = tempData.keys.toList();
+    sortedKeys.sort((a, b) => _monthIndex(a).compareTo(_monthIndex(b)));
+
+    setState(() {
+      weightData = sortedKeys.map((k) => tempData[k]!).toList();
+    });
+  }
+
+  int _monthIndex(String monthAbbr) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months.indexOf(monthAbbr);
+  }
+
+  String _monthAbbreviation(int month) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
+    return months[month - 1];
+  }
 
+  Future<void> _saveWeight() async {
+    final newWeight = double.tryParse(weightController.text.trim());
+    if (newWeight == null) return;
+
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('weight_logs')
+        .add({
+      'weight': newWeight,
+      'timestamp': Timestamp.now(),
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save weight: $error')),
+      );
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Weight updated to ${newWeight.toStringAsFixed(1)} kg')),
+    );
+
+    weightController.clear();
+    await _fetchWeightData();
+
+    // Navigate back to ProgressPage
+    Navigator.pop(context);
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -23,7 +120,6 @@ class WeightDetailsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Custom Header with Centered Title and Back Button
               Stack(
                 alignment: Alignment.center,
                 children: [
@@ -36,41 +132,29 @@ class WeightDetailsPage extends StatelessWidget {
                   ),
                   const Text(
                     'Weight',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
-
-              // Past 5 Months Label
               const Text(
                 'Past 5 Months',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
-
-              // Weight Chart
               SizedBox(
                 height: 180,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  children: weightData
-                      .map((data) => _WeightBar(
+                  children: weightData.map((data) => _WeightBar(
                     month: data['month'],
-                    height: (data['weight'] - 73) * 20,
+                    height: (data['weight'] - 60) * 5,
                     weight: data['weight'],
-                  ))
-                      .toList(),
+                  )).toList(),
                 ),
               ),
-
               const SizedBox(height: 30),
-
-              // Update Weight Section
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -100,15 +184,7 @@ class WeightDetailsPage extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-                          String newWeight = weightController.text.trim();
-                          if (newWeight.isNotEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Weight updated to $newWeight kg')),
-                            );
-                            // Add Firestore/local update logic here
-                          }
-                        },
+                        onPressed: _saveWeight,
                         child: const Text('Save'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,

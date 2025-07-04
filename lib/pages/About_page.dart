@@ -6,77 +6,115 @@ class Aboutpage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: AppTheme.drawerHeaderBg,
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          'About Us',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontFamily: 'Segoe UI',
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppTheme.appBarBg, AppTheme.backgroundColor, AppTheme.appBarBg],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          iconTheme: const IconThemeData(color: Colors.white),
+          centerTitle: true,
+          title: const Text(
+            'About Us',
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontFamily: 'Segoe UI',
+            ),
           ),
         ),
-        centerTitle: true,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: ListView(
+            children: [
+              const SizedBox(height: 20),
+              Center(
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.white,
+                  backgroundImage: AssetImage('assets/Drawer_images/img.png'),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Center(
+                child: Text(
+                  'вє ƒιт',
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontFamily: 'Segoe UI',
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              _buildInfoCard(
+                title: 'About',
+                content:
+                'BeFit is your personal fitness companion designed to guide you towards a healthier lifestyle. Whether you’re tracking your BMI, planning your meals, or following your workout progress, BeFit empowers you every step of the way.',
+              ),
+              const SizedBox(height: 16),
+              _buildInfoCard(
+                title: 'Developed By',
+                content: 'Team вєƒιт',
+              ),
+              const SizedBox(height: 16),
+              _buildInfoCard(
+                title: 'Version',
+                content: '1.0.0',
+              ),
+              const SizedBox(height: 32),
+              Center(
+                child: Text(
+                  '© 2025 BeFit Inc.',
+                  style: TextStyle(color: Colors.white60, fontSize: 12),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: ListView(
+    );
+  }
+
+  Widget _buildInfoCard({required String title, required String content}) {
+    return Card(
+      color: Colors.black.withOpacity(0.4),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: 6,
+      shadowColor: Colors.black45,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Image.asset('assets/Drawer_images/img.png', height: 100),
-            ),
-            SizedBox(height: 20),
             Text(
-              'вє ƒιт',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-                fontFamily: 'Segoe UI',
+              title,
+              style: const TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 8),
             Text(
-              'BeFit is your personal fitness companion designed to guide you towards a healthier lifestyle. Whether you’re tracking your BMI, planning your meals, or following your workout progress, BeFit empowers you every step of the way.',
-              style: TextStyle(
+              content,
+              style: const TextStyle(
                 fontSize: 16,
-                color: Colors.black87,
-                height: 1.4,
+                color: Colors.white70,
+                height: 1.5,
               ),
               textAlign: TextAlign.justify,
-            ),
-            SizedBox(height: 30),
-            Text(
-              'Developed By',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Team вєƒιт',
-              style: TextStyle(fontSize: 16, color: Colors.black87),
-            ),
-            SizedBox(height: 30),
-            Text(
-              'Version',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              '1.0.0',
-              style: TextStyle(fontSize: 16, color: Colors.black87),
             ),
           ],
         ),

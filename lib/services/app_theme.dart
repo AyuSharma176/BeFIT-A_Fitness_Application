@@ -8,6 +8,7 @@ class AppTheme {
   static const Color drawerHeaderBg = Color(0xFF082B26); // Dark Emerald
   static const Color drawerIconColor = Color(0xFF163832); // Jungle Green
   static const Color logoutColor = Color(0xFF253547); // Deep Teal
+  static const Color titleTextColor = Colors.white;
 
   static ThemeData get theme {
     return ThemeData(

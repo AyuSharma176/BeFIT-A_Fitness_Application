@@ -3,7 +3,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:befit/pages/About_page.dart';
 // import 'package:befit/pages/BMI_calculator.dart';
-// import 'package:befit/pages/Progress_page.dart';
+// import 'package:befit/pages/cardio_section.dart';
 // import 'package:befit/pages/Settings_page.dart';
 // import 'package:befit/pages/Suggested_page.dart';
 // import 'package:befit/pages/home_page.dart';
@@ -194,12 +194,11 @@
 // }
 import 'package:befit/pages/SplashScreen.dart';
 import 'package:befit/services/app_theme.dart';
-import 'package:befit/pages/premium_page.dart';
 import 'package:befit/pages/Login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:befit/pages/About_page.dart';
 import 'package:befit/pages/BMI_calculator.dart';
-import 'package:befit/pages/Progress_page.dart';
+import 'package:befit/pages/cardio_section.dart';
 import 'package:befit/pages/Settings_page.dart';
 import 'package:befit/pages/Suggested_page.dart';
 import 'package:befit/pages/home_page.dart';
@@ -301,9 +300,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: _selectedIndex == 2
-            ? null
-            : Text(
+        title: Text(
           'вє ƒιт',
           style: TextStyle(
             fontSize: 30,
@@ -313,12 +310,12 @@ class _HomeScreenState extends State<HomeScreen> {
             fontFamily: 'Segoe UI',
           ),
         ),
+        centerTitle: true,
         leading: Builder(
-          builder: (context) =>
-              IconButton(
-                icon: Icon(Icons.menu),
-                onPressed: () => Scaffold.of(context).openDrawer(),
-              ),
+          builder: (context) => IconButton(
+            icon: Icon(Icons.menu),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
         ),
         actions: [
           IconButton(
@@ -330,11 +327,17 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
         ],
-        centerTitle: _selectedIndex == 2,
       ),
+
       drawer: Drawer(
         child: Container(
-          color: Colors.white,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppTheme.appBarBg, AppTheme.backgroundColor, AppTheme.appBarBg],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
@@ -351,11 +354,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   alignment: Alignment.bottomLeft,
                   child: Text(
                     'Welcome, Champ! 💪',
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .titleLarge
-                        ?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -363,47 +362,34 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.bar_chart, color: AppTheme.drawerIconColor),
-                title: Text('Progress', style: TextStyle(color: Colors.black)),
-                onTap: () =>
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Progresspage()),
-                    ),
+                leading: Icon(Icons.monitor_heart, color: Colors.white),
+                title: Text('Cardio. Section', style: TextStyle(color: Colors.white)),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Progresspage()),
+                ),
               ),
               ListTile(
-                leading: Icon(Icons.money, color: AppTheme.drawerIconColor),
-                title: Text(
-                    'вєƒιт Premium', style: TextStyle(color: Colors.black)),
-                onTap: () =>
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => premiumpage()),
-                    ),
+                leading: Icon(Icons.info_outline, color: Colors.white),
+                title: Text('About Us', style: TextStyle(color: Colors.white)),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Aboutpage()),
+                ),
               ),
               ListTile(
-                leading: Icon(
-                    Icons.info_outline, color: AppTheme.drawerIconColor),
-                title: Text('About Us', style: TextStyle(color: Colors.black)),
-                onTap: () =>
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Aboutpage()),
-                    ),
-              ),
-              ListTile(
-                leading: Icon(Icons.logout, color: AppTheme.logoutColor),
-                title: Text('Logout', style: TextStyle(color: Colors.black)),
-                onTap: () =>
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SignInScreen()),
-                    ),
+                leading: Icon(Icons.logout, color: Colors.redAccent),
+                title: Text('Logout', style: TextStyle(color: Colors.white)),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignInScreen()),
+                ),
               ),
             ],
           ),
         ),
       ),
+
       body: Stack(
         children: [
           _pages[_selectedIndex],

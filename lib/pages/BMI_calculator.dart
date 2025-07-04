@@ -74,115 +74,182 @@ class _BMICalculatorState extends State<BMICalculator> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('BMI Calculator'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Text(
-                'Please enter your details',
-                textAlign: TextAlign.center,
-                style: theme.textTheme.titleLarge,
-              ),
-              const SizedBox(height: 20),
-              _customTextField(_weightcontroller, 'Enter your weight (kgs)', theme),
-              const SizedBox(height: 20),
-              _customTextField(_heightcontroller, 'Enter your height (meters)', theme),
-              const SizedBox(height: 20),
-              _customTextField(null, 'Enter your age', theme),
-              const SizedBox(height: 20),
-              _buildRadioTile('Male', theme),
-              _buildRadioTile('Female', theme),
-              _buildRadioTile('Other', theme),
-              const SizedBox(height: 30),
-              SizedBox(
-                height: 50,
-                width: 250,
-                child: ElevatedButton(
-                  onPressed: () {
-                    BMIcalculate(_weightcontroller.text, _heightcontroller.text);
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        backgroundColor: _color,
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _image,
-                            const SizedBox(height: 10),
-                            Text(
-                              'Your calculated BMI is ${result.text}',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                            AnimatedTextKit(
-                              animatedTexts: [
-                                TyperAnimatedText(
-                                  _displaytext,
-                                  textStyle: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                              isRepeatingAnimation: false,
-                            ),
-                          ],
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('Close', style: TextStyle(color: Colors.white)),
-                          )
-                        ],
-                      ),
-                    );
-                  },
-                  child: const Text('Calculate'),
-                ),
-              )
-            ],
+  Widget _customInputField(TextEditingController? controller, String hint) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: TextField(
+        controller: controller,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        style: const TextStyle(color: Colors.black),
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.95),
+          hintText: hint,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(18),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.deepPurple, width: 1.5),
+            borderRadius: BorderRadius.circular(18),
           ),
         ),
       ),
     );
   }
 
-  Widget _customTextField(TextEditingController? controller, String hint, ThemeData theme) {
-    return TextField(
-      controller: controller,
-      keyboardType: TextInputType.numberWithOptions(decimal: true),
-      decoration: InputDecoration(hintText: hint),
+
+  Widget _genderSelector() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: ['Male', 'Female', 'Other'].map((g) {
+        final isSelected = gender == g;
+        return GestureDetector(
+          onTap: () => setState(() => gender = g),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+            decoration: BoxDecoration(
+              color: isSelected ? AppTheme.primaryColor : Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: isSelected ? AppTheme.primaryColor : Colors.grey),
+            ),
+            child: Text(
+              g,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 
-  Widget _buildRadioTile(String value, ThemeData theme) {
-    return RadioListTile(
-      activeColor: AppTheme.primaryColor,
-      title: Text(value),
-      value: value,
-      groupValue: gender,
-      onChanged: (val) {
-        setState(() {
-          gender = val!;
-        });
-      },
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppTheme.backgroundColor,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppTheme.appBarBg,
+              AppTheme.backgroundColor,
+              AppTheme.appBarBg,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Top Heading
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.7),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'BMI Calculator',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                Text(
+                  'Please enter your details',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+
+                _customInputField(_weightcontroller, 'Enter your weight (kgs)'),
+                _customInputField(_heightcontroller, 'Enter your height (meters)'),
+                _customInputField(null, 'Enter your age'),
+
+                const SizedBox(height: 10),
+                _genderSelector(),
+                const SizedBox(height: 30),
+
+                SizedBox(
+                  height: 50,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      BMIcalculate(_weightcontroller.text, _heightcontroller.text);
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          backgroundColor: _color,
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _image,
+                              const SizedBox(height: 10),
+                              Text(
+                                'Your calculated BMI is ${result.text}',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 15),
+                              AnimatedTextKit(
+                                animatedTexts: [
+                                  TyperAnimatedText(
+                                    _displaytext,
+                                    textStyle: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                                isRepeatingAnimation: false,
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text('Close', style: TextStyle(color: Colors.white)),
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                    child: const Text('Calculate', style: TextStyle(fontSize: 16)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

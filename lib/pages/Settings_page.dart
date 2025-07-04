@@ -138,11 +138,13 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              SizedBox(height: 1, width: 50),
               Align(
-                alignment: Alignment.topCenter,
+                alignment: Alignment.topRight,
                 child: Text(
                   'Settings',
                   style: TextStyle(
+                    color: Colors.white,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Segoe UI',

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/app_theme.dart';
 
 class WeightDetailsPage extends StatefulWidget {
   const WeightDetailsPage({Key? key}) : super(key: key);
@@ -29,7 +30,6 @@ class _WeightDetailsPageState extends State<WeightDetailsPage> {
       return;
     }
 
-
     final now = DateTime.now();
     final fiveMonthsAgo = DateTime(now.year, now.month - 4);
 
@@ -37,7 +37,7 @@ class _WeightDetailsPageState extends State<WeightDetailsPage> {
         .collection('users')
         .doc(uid)
         .collection('weight_logs')
-        .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(now))
+        .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(fiveMonthsAgo))
         .orderBy('timestamp')
         .get();
 
@@ -105,99 +105,106 @@ class _WeightDetailsPageState extends State<WeightDetailsPage> {
     weightController.clear();
     await _fetchWeightData();
 
-    // Navigate back to ProgressPage
     Navigator.pop(context);
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
-                  const Text(
-                    'Weight',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Past 5 Months',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                height: 180,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: weightData.map((data) => _WeightBar(
-                    month: data['month'],
-                    height: (data['weight'] - 60) * 5,
-                    weight: data['weight'],
-                  )).toList(),
-                ),
-              ),
-              const SizedBox(height: 30),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF2F2F2),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppTheme.appBarBg, AppTheme.backgroundColor, AppTheme.appBarBg],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
                   children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
                     const Text(
-                      'Update Weight',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: weightController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        hintText: 'Enter new weight (kg)',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        prefixIcon: const Icon(Icons.monitor_weight),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _saveWeight,
-                        child: const Text('Save'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
+                      'Weight',
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 20),
+                const Text(
+                  'Past 5 Months',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: 180,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: weightData.map((data) => _WeightBar(
+                      month: data['month'],
+                      height: (data['weight'] - 60) * 5,
+                      weight: data['weight'],
+                    )).toList(),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Update Weight',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: weightController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: 'Enter new weight (kg)',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          prefixIcon: const Icon(Icons.monitor_weight),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _saveWeight,
+                          child: const Text('Save'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.appBarBg,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -220,7 +227,7 @@ class _WeightBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('${weight.toStringAsFixed(1)} kg', style: const TextStyle(fontSize: 12)),
+        Text('${weight.toStringAsFixed(1)} kg', style: const TextStyle(fontSize: 12, color: Colors.white)),
         Container(
           width: 20,
           height: height,
@@ -230,7 +237,7 @@ class _WeightBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(6),
           ),
         ),
-        Text(month, style: const TextStyle(fontSize: 12)),
+        Text(month, style: const TextStyle(fontSize: 12, color: Colors.white)),
       ],
     );
   }

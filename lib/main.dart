@@ -193,6 +193,7 @@
 //   }
 // }
 import 'package:befit/pages/SplashScreen.dart';
+import 'package:befit/pages/chat_page.dart';
 import 'package:befit/services/app_theme.dart';
 import 'package:befit/pages/Login_screen.dart';
 import 'package:flutter/material.dart';
@@ -367,6 +368,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Progresspage()),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.chat, color: Colors.white),
+                title: Text('ASK Be𝓯𝓲𝓽', style: TextStyle(color: Colors.white)),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ChatPage()),
                 ),
               ),
               ListTile(

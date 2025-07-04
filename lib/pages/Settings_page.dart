@@ -144,7 +144,7 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
                 child: Text(
                   'Settings',
                   style: TextStyle(
-                    color: Colors.white,
+                    // color: Colors.white,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Segoe UI',
@@ -196,7 +196,7 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.logout, color: AppTheme.logoutColor),
+            leading: Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () {
               Navigator.push(

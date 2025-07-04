@@ -299,6 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
@@ -329,7 +330,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-
       drawer: Drawer(
         child: Container(
           decoration: BoxDecoration(

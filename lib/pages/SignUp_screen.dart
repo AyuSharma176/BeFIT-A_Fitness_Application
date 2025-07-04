@@ -22,10 +22,10 @@ class _SignUpState extends State<SignUpScreen> {
   final name = TextEditingController();
   String gender = "Male";
   bool isPasswordVisible = false;
-  bool isloading = false;
+  // bool isloading = false;
 
   signup() async {
-    setState(() => isloading = true);
+    // setState(() => isloading = true);
 
     try {
       final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -49,19 +49,18 @@ class _SignUpState extends State<SignUpScreen> {
       Get.snackbar("Error", e.toString());
     }
 
-    setState(() => isloading = false);
+    // setState(() => isloading = false);
   }
 
   Future<void> signUpWithGoogle() async {
-    setState(() => isloading = true);
+    // setState(() => isloading = true);
 
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
-        setState(() => isloading = false);
+        // setState(() => isloading = false);
         return;
       }
-
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
@@ -86,7 +85,7 @@ class _SignUpState extends State<SignUpScreen> {
       Get.snackbar("Error", e.toString());
     }
 
-    setState(() => isloading = false);
+    // setState(() => isloading = false);
   }
 
   InputDecoration buildDarkInputDecoration(String hint) {
@@ -112,9 +111,7 @@ class _SignUpState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return isloading
-        ? const Center(child: CircularProgressIndicator())
-        : Scaffold(
+    return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       body: Container(
         decoration: BoxDecoration(

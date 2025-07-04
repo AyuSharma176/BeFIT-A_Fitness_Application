@@ -407,23 +407,30 @@ class _HomeScreenState extends State<HomeScreen> {
               top: kToolbarHeight,
               right: 16,
               left: 16,
-              child: Material(
-                elevation: 8,
-                borderRadius: BorderRadius.circular(8),
-                child: SettingsDropdown(
-                  onClose: () {
-                    setState(() {
-                      _showSettings = false;
-                    });
-                  },
-                ),
+              child: SettingsDropdown(
+                onClose: () {
+                  setState(() {
+                    _showSettings = false;
+                  });
+                },
               ),
+              // child: Material(
+              //   elevation: 8,
+              //   borderRadius: BorderRadius.circular(8),
+              //   child: SettingsDropdown(
+              //     onClose: () {
+              //       setState(() {
+              //         _showSettings = false;
+              //       });
+              //     },
+              //   ),
+              // ),
             ),
         ],
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: AppTheme.appBarBg,
+          color: Colors.transparent,
         ),
         padding: const EdgeInsets.symmetric(vertical: 8),
         height: 70,

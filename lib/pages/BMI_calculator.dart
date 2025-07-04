@@ -1,3 +1,4 @@
+import 'package:befit/services/frostedGlassEffect.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:befit/services/app_theme.dart';
@@ -144,6 +145,7 @@ class _BMICalculatorState extends State<BMICalculator> {
               AppTheme.backgroundColor,
               AppTheme.appBarBg,
             ],
+            stops: [0, 0.6, 1],
           ),
         ),
         child: SafeArea(
@@ -152,28 +154,42 @@ class _BMICalculatorState extends State<BMICalculator> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Top Heading
-                Container(
+                FrostedGlassBox(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  height: 60,
                   child: const Center(
                     child: Text(
                       'BMI Calculator',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.1,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
+                // Container(
+                //   width: double.infinity,
+                //   padding: const EdgeInsets.symmetric(vertical: 14),
+                //   margin: const EdgeInsets.only(bottom: 16),
+                //   decoration: BoxDecoration(
+                //     color: Colors.black.withOpacity(0.7),
+                //     borderRadius: BorderRadius.circular(16),
+                //   ),
+                //   child: const Center(
+                //     child: Text(
+                //       'BMI Calculator',
+                //       style: TextStyle(
+                //         color: Colors.white,
+                //         fontSize: 20,
+                //         fontWeight: FontWeight.bold,
+                //         letterSpacing: 1.1,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                const SizedBox(height: 20),
 
                 Text(
                   'Please enter your details',
@@ -221,6 +237,7 @@ class _BMICalculatorState extends State<BMICalculator> {
                               AnimatedTextKit(
                                 animatedTexts: [
                                   TyperAnimatedText(
+                                    speed: Duration(milliseconds: 100),
                                     _displaytext,
                                     textStyle: const TextStyle(
                                       fontSize: 20,

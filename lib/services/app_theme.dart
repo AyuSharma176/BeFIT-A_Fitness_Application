@@ -2,12 +2,29 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Color Palette
-  static const Color primaryColor = Color(0xFF8EB69B); // Muted Mint
-  static const Color backgroundColor = Color(0xFFDAF1DE); // Pale Sage
-  static const Color appBarBg = Color(0xFF051F20); // Deep Forest Green
-  static const Color drawerHeaderBg = Color(0xFF082B26); // Dark Emerald
-  static const Color drawerIconColor = Color(0xFF163832); // Jungle Green
-  static const Color logoutColor = Color(0xFF253547); // Deep Teal
+  // static const Color primaryColor = Color(0xFF8EB69B); // Muted Mint
+  // static const Color backgroundColor = Color(0xFFDAF1DE); // Pale Sage
+  // static const Color appBarBg = Color(0xFF051F20); // Deep Forest Green
+  // static const Color drawerHeaderBg = Color(0xFF082B26); // Dark Emerald
+  // static const Color drawerIconColor = Color(0xFF163832); // Jungle Green
+  // static const Color logoutColor = Color(0xFF253547); // Deep Teal
+  // static const Color titleTextColor = Colors.white;
+
+  // static const Color primaryColor = Color(0xFF586D75); // Muted Mint
+  // static const Color backgroundColor = Color(0xFF8A9BA2); // Pale Sage
+  // static const Color appBarBg = Color(0xFF273E47);
+  // static const Color drawerHeaderBg = Color(0xFFBCC8CD); // Dark Emerald
+  // static const Color drawerIconColor = Color(0xFFDFE5E7); // Jungle Green
+  // static const Color logoutColor = Color(0xFFF2F5F6); // Deep Teal
+  // static const Color titleTextColor = Colors.white;
+  //
+  static const Color primaryColor = Color(0xFF333333); // Muted Mint
+  static const Color backgroundColor = Color(0xFFAAAAAA); // Pale Sage
+  static const Color appBarBg = Color(0xFF000000);
+  static const Color drawerHeaderBg = Color(0xFF555555); // Dark Emerald
+  static const Color drawerIconColor = Color(0xFF777777); // Jungle Green
+  static const Color logoutColor = Color(0xFF999999); // Deep Teal
+  static const Color titleTextColor = Colors.white;
 
   static ThemeData get theme {
     return ThemeData(

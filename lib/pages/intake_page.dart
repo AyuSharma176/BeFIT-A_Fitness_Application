@@ -18,104 +18,135 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class DietPage extends StatelessWidget {
-  const DietPage({super.key});
-
-  Widget customCardButton({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Material(
-        color: Colors.white,
+Widget customCardButton({
+  required IconData icon,
+  required String title,
+  required String subtitle,
+  required VoidCallback onTap,
+}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    child: Material(
+      color: Colors.white.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(16),
+      elevation: 0,
+      child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        elevation: 2,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: onTap,
-          child: Container(
-            padding: EdgeInsets.all(16),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.brown.shade100,
-                  child: Icon(icon, color: Colors.brown),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.brown.shade800,
-                          fontSize: 16,
-                        ),
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.all(16),
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: Colors.brown.shade100.withOpacity(0.2),
+                child: Icon(icon, color: Colors.white),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 16,
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        subtitle,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.brown.shade400,
-                        ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.white70,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Icon(Icons.arrow_forward_ios, color: Colors.brown.shade300, size: 18),
-              ],
-            ),
+              ),
+              Icon(Icons.arrow_forward_ios, color: Colors.white38, size: 18),
+            ],
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+class DietPage extends StatelessWidget {
+  const DietPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Choose Calculator')),
-      body: ListView(
-        padding: EdgeInsets.symmetric(vertical: 24),
-        children: [
-          customCardButton(
-            icon: Icons.local_fire_department,
-            title: 'Calorie Intake Calculator',
-            subtitle: 'Calculate your daily calorie needs.',
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => IntakeCalculatorScreen(isProtein: false)),
-            ),
+      extendBody: true,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppTheme.appBarBg,
+              AppTheme.backgroundColor,
+              AppTheme.appBarBg
+            ],
+            stops: [0.0, 1, 1.0],
           ),
-          customCardButton(
-            icon: Icons.restaurant_rounded,
-            title: 'Protein Intake Calculator',
-            subtitle: 'Estimate your daily protein intake.',
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => IntakeCalculatorScreen(isProtein: true)),
+        ),
+        child: ListView(
+          padding: EdgeInsets.symmetric(vertical: 24),
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: Text(
+                'Choose Calculator',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.left,
+              ),
             ),
-          ),
-          customCardButton(
-            icon: Icons.fastfood_rounded,
-            title: 'Meal Calculator',
-            subtitle: 'Check estimated calories in your meal.',
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => MealCalculatorScreen()),
+            customCardButton(
+              icon: Icons.local_fire_department,
+              title: 'Calorie Intake Calculator',
+              subtitle: 'Calculate your daily calorie needs.',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => IntakeCalculatorScreen(isProtein: false)),
+              ),
             ),
-          ),
-        ],
+            customCardButton(
+              icon: Icons.restaurant_rounded,
+              title: 'Protein Intake Calculator',
+              subtitle: 'Estimate your daily protein intake.',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => IntakeCalculatorScreen(isProtein: true)),
+              ),
+            ),
+            customCardButton(
+              icon: Icons.fastfood_rounded,
+              title: 'Meal Calculator',
+              subtitle: 'Check estimated calories in your meal.',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => MealCalculatorScreen()),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
+// ============ Intake Calculator ============
 
 class IntakeCalculatorScreen extends StatefulWidget {
   final bool isProtein;
@@ -136,6 +167,27 @@ class _IntakeCalculatorScreenState extends State<IntakeCalculatorScreen> {
   String activityLevel = '';
   String goal = '';
   String result = '';
+
+  InputDecoration buildDarkInputDecoration(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: TextStyle(color: Colors.white54),
+      filled: true,
+      fillColor: Colors.black.withOpacity(0.2),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.white24),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.white24),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.white60),
+      ),
+    );
+  }
 
   void calculateResult() {
     final age = int.tryParse(ageController.text) ?? 0;
@@ -189,47 +241,23 @@ class _IntakeCalculatorScreenState extends State<IntakeCalculatorScreen> {
     );
   }
 
-  Widget buildTextField(String label, TextEditingController controller, String hint, String suffix) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label),
-        TextField(
-          controller: controller,
-          decoration: InputDecoration(hintText: hint, suffixText: suffix),
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        ),
-      ],
-    );
-  }
-
-  Widget buildUnitField(String label, TextEditingController controller, String unit, List<String> options, ValueChanged<String> onChanged) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: controller,
-                decoration: InputDecoration(hintText: 'Enter your $label'),
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              ),
-            ),
-            SizedBox(width: 12),
-            DropdownButton<String>(
-              value: unit,
-              onChanged: (String? val) {
-                if (val != null) onChanged(val);
-              },
-              items: options.map((u) => DropdownMenuItem(value: u, child: Text(u))).toList(),
-            ),
-          ],
-        ),
-      ],
+  Widget modernInputField({required String label, required Widget field}) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: TextStyle(color: Colors.white70)),
+          SizedBox(height: 8),
+          field,
+        ],
+      ),
     );
   }
 
@@ -238,47 +266,129 @@ class _IntakeCalculatorScreenState extends State<IntakeCalculatorScreen> {
     final title = widget.isProtein ? "Protein Intake Calculator" : "Calorie Intake Calculator";
     return Scaffold(
       appBar: AppBar(title: Text(title)),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
+      body: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppTheme.appBarBg, AppTheme.backgroundColor],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         child: ListView(
           children: [
-            Text(title, style: Theme.of(context).textTheme.titleLarge, textAlign: TextAlign.center),
-            SizedBox(height: 12),
-            Text('Enter your details to calculate your daily needs.', textAlign: TextAlign.center),
+            Text(title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white), textAlign: TextAlign.center),
             SizedBox(height: 24),
-            buildTextField('Age:', ageController, 'Enter your age', 'Years'),
-            SizedBox(height: 16),
-            buildUnitField('Weight:', weightController, weightUnit, ['Kg', 'Lbs'], (val) => setState(() => weightUnit = val)),
-            SizedBox(height: 16),
-            buildUnitField('Height:', heightController, heightUnit, ['Cm', 'Ft'], (val) => setState(() => heightUnit = val)),
-            SizedBox(height: 16),
-            Text('Gender:'),
-            Row(
-              children: [
-                Expanded(child: RadioListTile(title: Text('Male'), value: 'Male', groupValue: gender, onChanged: (val) => setState(() => gender = val!))),
-                Expanded(child: RadioListTile(title: Text('Female'), value: 'Female', groupValue: gender, onChanged: (val) => setState(() => gender = val!))),
-              ],
+
+            modernInputField(
+              label: "Age",
+              field: TextField(
+                controller: ageController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                style: TextStyle(color: Colors.white),
+                decoration: buildDarkInputDecoration("Enter your age"),
+              ),
             ),
-            SizedBox(height: 16),
-            Text('Activity Level:'),
-            DropdownButtonFormField<String>(
-              value: activityLevel.isEmpty ? null : activityLevel,
-              hint: Text('Select Activity Level'),
-              onChanged: (val) => setState(() => activityLevel = val!),
-              items: ['Low', 'Moderate', 'High'].map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(),
+            modernInputField(
+              label: "Weight",
+              field: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: weightController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      style: TextStyle(color: Colors.white),
+                      decoration: buildDarkInputDecoration("Weight"),
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  DropdownButton<String>(
+                    value: weightUnit,
+                    dropdownColor: Colors.grey.shade900,
+                    style: TextStyle(color: Colors.white),
+                    onChanged: (val) => setState(() => weightUnit = val!),
+                    items: ['Kg', 'Lbs'].map((u) => DropdownMenuItem(value: u, child: Text(u))).toList(),
+                  ),
+                ],
+              ),
             ),
-            SizedBox(height: 16),
-            Text('Goal:'),
-            DropdownButtonFormField<String>(
-              value: goal.isEmpty ? null : goal,
-              hint: Text('Select your goal'),
-              onChanged: (val) => setState(() => goal = val!),
-              items: ['Lose Weight', 'Maintain Weight', 'Gain Muscle'].map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(),
+            modernInputField(
+              label: "Height",
+              field: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: heightController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      style: TextStyle(color: Colors.white),
+                      decoration: buildDarkInputDecoration("Height"),
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  DropdownButton<String>(
+                    value: heightUnit,
+                    dropdownColor: Colors.grey.shade900,
+                    style: TextStyle(color: Colors.white),
+                    onChanged: (val) => setState(() => heightUnit = val!),
+                    items: ['Cm', 'Ft'].map((u) => DropdownMenuItem(value: u, child: Text(u))).toList(),
+                  ),
+                ],
+              ),
+            ),
+            modernInputField(
+              label: "Gender",
+              field: Row(
+                children: [
+                  Expanded(child: RadioListTile(
+                    title: Text("Male", style: TextStyle(color: Colors.white)),
+                    value: 'Male',
+                    groupValue: gender,
+                    onChanged: (val) => setState(() => gender = val!),
+                  )),
+                  Expanded(child: RadioListTile(
+                    title: Text("Female", style: TextStyle(color: Colors.white)),
+                    value: 'Female',
+                    groupValue: gender,
+                    onChanged: (val) => setState(() => gender = val!),
+                  )),
+                ],
+              ),
+            ),
+            modernInputField(
+              label: "Activity Level",
+              field: DropdownButtonFormField<String>(
+                value: activityLevel.isEmpty ? null : activityLevel,
+                style: TextStyle(color: Colors.white),
+                dropdownColor: Colors.grey.shade900,
+                decoration: buildDarkInputDecoration("Select Activity Level"),
+                items: ['Low', 'Moderate', 'High'].map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(),
+                onChanged: (val) => setState(() => activityLevel = val!),
+              ),
+            ),
+            modernInputField(
+              label: "Goal",
+              field: DropdownButtonFormField<String>(
+                value: goal.isEmpty ? null : goal,
+                style: TextStyle(color: Colors.white),
+                dropdownColor: Colors.grey.shade900,
+                decoration: buildDarkInputDecoration("Select your goal"),
+                items: ['Lose Weight', 'Maintain Weight', 'Gain Muscle'].map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(),
+                onChanged: (val) => setState(() => goal = val!),
+              ),
             ),
             SizedBox(height: 24),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: calculateResult,
-              child: Text("Calculate"),
+              icon: Icon(Icons.calculate),
+              label: Text("Calculate"),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 14),
+                backgroundColor: Colors.deepPurple,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
             ),
           ],
         ),
@@ -286,6 +396,9 @@ class _IntakeCalculatorScreenState extends State<IntakeCalculatorScreen> {
     );
   }
 }
+
+// MealCalculatorScreen is unchanged; let me know if you want it updated with same dark style.
+
 
 class MealCalculatorScreen extends StatefulWidget {
   @override
@@ -315,7 +428,7 @@ class _MealCalculatorScreenState extends State<MealCalculatorScreen> {
 
     if (!foodCaloriesPer100g.containsKey(food)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Food not found in database. Try rice, dal, egg...')),
+        SnackBar(content: Text('Food not found. Try rice, dal, egg...')),
       );
       return;
     }
@@ -339,11 +452,18 @@ class _MealCalculatorScreenState extends State<MealCalculatorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Meal Calculator")),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
+      body: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppTheme.appBarBg, AppTheme.backgroundColor],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         child: ListView(
           children: [
-            Text("Enter Food Details", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text("Estimate Calories in Your Meal", style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white), textAlign: TextAlign.center),
             SizedBox(height: 24),
             DropdownButtonFormField<String>(
               value: foodController.text.isEmpty ? null : foodController.text,
@@ -354,13 +474,13 @@ class _MealCalculatorScreenState extends State<MealCalculatorScreen> {
                 );
               }).toList(),
               onChanged: (val) {
-                setState(() {
-                  foodController.text = val!;
-                });
+                setState(() => foodController.text = val!);
               },
               decoration: InputDecoration(
                 labelText: 'Select Food Item',
-                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white10,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
             SizedBox(height: 16),
@@ -368,7 +488,9 @@ class _MealCalculatorScreenState extends State<MealCalculatorScreen> {
               controller: quantityController,
               decoration: InputDecoration(
                 labelText: 'Quantity in grams',
-                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white10,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
               keyboardType: TextInputType.number,
             ),
@@ -377,13 +499,15 @@ class _MealCalculatorScreenState extends State<MealCalculatorScreen> {
               onPressed: calculateCalories,
               icon: Icon(Icons.calculate),
               label: Text('Estimate Calories'),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 14),
+                backgroundColor: Colors.orange,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
             ),
           ],
         ),
       ),
     );
   }
-
-
 }
-

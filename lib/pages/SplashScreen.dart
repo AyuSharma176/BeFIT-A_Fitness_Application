@@ -9,15 +9,15 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
-
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
   late AnimationController _progressController;
   late Animation<double> _progressAnimation;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _fadeController = AnimationController(
       vsync: this,
@@ -32,14 +32,16 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       vsync: this,
       duration: Duration(seconds: 3),
     )..forward();
-    _progressAnimation = Tween<double>(begin: 0, end: 1).animate(_progressController);
+    _progressAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(_progressController);
     Future.delayed(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => Wrapper())
+        MaterialPageRoute(builder: (_) => Wrapper()),
       );
-    }
-    );
+    });
   }
 
   @override
@@ -68,9 +70,12 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                         fontWeight: FontWeight.bold,
                         fontSize: 100,
                         foreground: Paint()
-                          ..color = Colors.black.withAlpha(153) // 0.6 opacity
-                          ..maskFilter =
-                          const MaskFilter.blur(BlurStyle.inner, 4),
+                          ..color = Colors.black
+                              .withAlpha(153) // 0.6 opacity
+                          ..maskFilter = const MaskFilter.blur(
+                            BlurStyle.inner,
+                            4,
+                          ),
                       ),
                     ),
                     Text(

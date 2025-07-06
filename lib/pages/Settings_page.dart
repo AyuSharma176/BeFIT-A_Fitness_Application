@@ -107,7 +107,6 @@
 
 import 'package:befit/services/frostedGlassEffect.dart';
 import 'package:flutter/material.dart';
-import 'package:befit/services/app_theme.dart';
 import 'About_page.dart';
 import 'SignUp_screen.dart';
 
@@ -138,15 +137,13 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: Text(
-                  'Settings',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Segoe UI',
-                  ),
+              SizedBox(height: 1, width: 50,),
+              Text(
+                'Settings',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Segoe UI',
                 ),
               ),
               IconButton(
@@ -194,7 +191,7 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.logout, color: AppTheme.logoutColor),
+            leading: Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () {
               Navigator.push(

@@ -3,7 +3,7 @@ import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../services/app_theme.dart';
 
-const String GEMINI_API_KEY = '';//<--- write ur api key here
+const String GEMINI_API_KEY = ''; //<--- write ur api key here
 
 void main() {
   runApp(const MyApp());
@@ -151,7 +151,9 @@ class _ChatPageState extends State<ChatPage> {
                         borderSide: BorderSide.none,
                       ),
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
                     ),
                     inputTextStyle: TextStyle(color: Colors.white),
                     sendButtonBuilder: (send) {

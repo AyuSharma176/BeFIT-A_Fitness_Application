@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class Wrapper extends StatefulWidget {
-   Wrapper({super.key});
+  Wrapper({super.key});
 
   @override
   State<Wrapper> createState() => _WrapperState();
@@ -20,12 +20,12 @@ class _WrapperState extends State<Wrapper> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data!.emailVerified) {
-              return  HomeScreen();
+              return HomeScreen();
             } else {
-              return  Verify();
+              return Verify();
             }
           } else {
-            return  SignInScreen();
+            return SignInScreen();
           }
         },
       ),
@@ -34,7 +34,7 @@ class _WrapperState extends State<Wrapper> {
 }
 
 class Verify extends StatefulWidget {
-   Verify({super.key});
+  Verify({super.key});
 
   @override
   State<Verify> createState() => _VerifyState();
@@ -53,7 +53,7 @@ class _VerifyState extends State<Verify> {
       Get.snackbar(
         'Link sent',
         'A link has been sent to your email',
-        margin:  EdgeInsets.all(30),
+        margin: EdgeInsets.all(30),
         snackPosition: SnackPosition.BOTTOM,
       );
     });
@@ -61,7 +61,7 @@ class _VerifyState extends State<Verify> {
 
   Future<void> reload() async {
     await FirebaseAuth.instance.currentUser!.reload().then((value) {
-      Get.offAll(() =>  Wrapper());
+      Get.offAll(() => Wrapper());
     });
   }
 
@@ -71,30 +71,30 @@ class _VerifyState extends State<Verify> {
       backgroundColor: Colors.white,
       body: Center(
         child: Padding(
-          padding:  EdgeInsets.all(30),
+          padding: EdgeInsets.all(30),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-               Text(
+              Text(
                 'Verify Your Email',
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
-               SizedBox(height: 20),
-               Text(
+              SizedBox(height: 20),
+              Text(
                 'We’ve sent a verification link to your email. Click it and then press the button below.',
                 textAlign: TextAlign.center,
               ),
-               SizedBox(height: 30),
+              SizedBox(height: 30),
               ElevatedButton(
                 onPressed: reload,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepPurple,
-                  padding:  EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child:  Text('I Have Verified', style: TextStyle(fontSize: 16)),
+                child: Text('I Have Verified', style: TextStyle(fontSize: 16)),
               ),
             ],
           ),

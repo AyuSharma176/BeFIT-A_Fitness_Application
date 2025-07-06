@@ -16,14 +16,18 @@ class _ForgotState extends State<Forgot> {
 
   Future<void> reset() async {
     try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email.text.trim());
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: email.text.trim(),
+      );
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Password reset link sent to your email.")),
+        const SnackBar(
+          content: Text("Password reset link sent to your email."),
+        ),
       );
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? "Error occurred.")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message ?? "Error occurred.")));
     }
   }
 
@@ -34,7 +38,11 @@ class _ForgotState extends State<Forgot> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppTheme.appBarBg, AppTheme.backgroundColor, AppTheme.appBarBg],
+            colors: [
+              AppTheme.appBarBg,
+              AppTheme.backgroundColor,
+              AppTheme.appBarBg,
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -50,10 +58,7 @@ class _ForgotState extends State<Forgot> {
                       // Header
                       Stack(
                         children: [
-                          Container(
-                            height: 200,
-                            color: Colors.transparent,
-                          ),
+                          Container(height: 200, color: Colors.transparent),
                           Positioned.fill(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -93,18 +98,29 @@ class _ForgotState extends State<Forgot> {
                                 cursorColor: Colors.white,
                                 decoration: InputDecoration(
                                   hintText: 'Enter your email',
-                                  hintStyle: const TextStyle(color: Colors.white54),
-                                  prefixIcon: const Icon(Icons.email_outlined, color: Colors.white),
+                                  hintStyle: const TextStyle(
+                                    color: Colors.white54,
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.email_outlined,
+                                    color: Colors.white,
+                                  ),
                                   filled: true,
                                   fillColor: Colors.white10,
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 10,
+                                  ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30),
                                     borderSide: BorderSide.none,
                                   ),
                                 ),
                                 style: const TextStyle(color: Colors.white),
-                                validator: (value) => value == null || value.isEmpty ? 'Enter email' : null,
+                                validator: (value) =>
+                                    value == null || value.isEmpty
+                                    ? 'Enter email'
+                                    : null,
                               ),
                               const SizedBox(height: 25),
                               ElevatedButton(
@@ -115,12 +131,18 @@ class _ForgotState extends State<Forgot> {
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppTheme.appBarBg,
-                                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 50,
+                                    vertical: 12,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
                                 ),
-                                child: const Text('Send Reset Link', style: TextStyle(fontSize: 18)),
+                                child: const Text(
+                                  'Send Reset Link',
+                                  style: TextStyle(fontSize: 18),
+                                ),
                               ),
                               const SizedBox(height: 20),
                               TextButton(

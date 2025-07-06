@@ -18,12 +18,12 @@ class FrostedGlassBox extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20.0),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+        filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
         child: Container(
           width: width,
           height: height,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withOpacity(0.1),
             borderRadius: BorderRadius.circular(20.0),
             border: Border.fromBorderSide(BorderSide.none)
           ),

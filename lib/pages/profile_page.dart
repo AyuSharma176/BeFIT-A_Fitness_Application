@@ -23,6 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     fetchUserData();
     fetchTodayStats();
+    fetchStreak();
   }
 
   Future<void> fetchUserData() async {
@@ -79,6 +80,28 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       } catch (e) {
         print("Error fetching today's activity log: $e");
+      }
+    }
+  }
+  Future<void> fetchStreak() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final streakDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('activity_logs')
+            .doc('streak')
+            .get();
+
+        if (streakDoc.exists) {
+          final data = streakDoc.data();
+          setState(() {
+            streakCount = data?['streakCount'] ?? 0;
+          });
+        }
+      } catch (e) {
+        print("Error fetching streak: $e");
       }
     }
   }

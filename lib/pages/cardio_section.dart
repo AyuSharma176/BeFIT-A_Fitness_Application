@@ -351,7 +351,8 @@ class _ProgresspageState extends State<Progresspage> {
             ElevatedButton.icon(
               icon: const Icon(Icons.save),
               label: const Text('Save'),
-              onPressed: _saveProgressAndReset,
+              onPressed: () async {await updateStreakOnWorkout();
+                await _saveProgressAndReset();}
             ),
           ],
         ),
@@ -454,5 +455,48 @@ class _ProgresspageState extends State<Progresspage> {
         ],
       ),
     );
+  }
+}
+Future<void> updateStreakOnWorkout() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+
+  final now = DateTime.now();
+  final todayStr = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
+  final streakDocRef = FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('activity_logs')
+      .doc('streak');
+
+  final streakDoc = await streakDocRef.get();
+
+  if (streakDoc.exists) {
+    final data = streakDoc.data();
+    final lastDateStr = data?['lastWorkoutDate'];
+    final lastDate = DateTime.tryParse(lastDateStr ?? '') ?? DateTime(2000);
+    final streakCount = data?['streakCount'] ?? 0;
+
+    final difference = now.difference(lastDate).inDays;
+
+    if (difference == 1) {
+      await streakDocRef.set({
+        'streakCount': streakCount + 1,
+        'lastWorkoutDate': todayStr,
+      });
+    } else if (difference == 0) {
+      // Already logged today – do nothing
+    } else {
+      await streakDocRef.set({
+        'streakCount': 1,
+        'lastWorkoutDate': todayStr,
+      });
+    }
+  } else {
+    await streakDocRef.set({
+      'streakCount': 1,
+      'lastWorkoutDate': todayStr,
+    });
   }
 }

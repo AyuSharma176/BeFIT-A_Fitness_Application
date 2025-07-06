@@ -32,7 +32,7 @@ class _MainHomePageState extends State<MainHomePage> {
   String? waterIntake; // Fetched from Firestore
   String? stepsCount; // Fetched from Firestore
   String? calorieBurnedToday; // Fetched from Firestore
-
+  int streakCount =0;
   @override
   void initState() {
     super.initState();
@@ -44,6 +44,7 @@ class _MainHomePageState extends State<MainHomePage> {
     loadResults();
     // Load daily activity data (steps, water, calories burned) from Firestore
     loadDailyActivityData();
+    loadStreakCount();
   }
 
   /// Fetches the user's name from Firestore based on their UID.
@@ -162,6 +163,24 @@ class _MainHomePageState extends State<MainHomePage> {
     return value;
   }
 
+  Future<void> loadStreakCount() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('activity_logs')
+        .doc('streak')
+        .get();
+
+    if (doc.exists) {
+      final data = doc.data();
+      setState(() {
+        streakCount = data?['streakCount'] ?? 0;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -354,18 +373,11 @@ class _MainHomePageState extends State<MainHomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(7, (index) {
-                    return index == 6
-                        ? Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppTheme.backgroundColor, width: 2),
-                        color: Colors.white.withOpacity(0.1),
-                      ),
-                      child: const Text('🔥'),
-                    )
-                        : const Text('🔥');
+                    return index < streakCount
+                        ? const Text('🔥')
+                        : const Text('◯' , style: TextStyle(color: Colors.white54),); // or empty or faded
                   }),
+
                 ),
               ),
             ),

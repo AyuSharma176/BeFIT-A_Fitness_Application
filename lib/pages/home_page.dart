@@ -4,15 +4,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:befit/services/app_theme.dart';
-
-import '../main.dart';
-import 'Suggested_page.dart';
+import '../main.dart'; // Assuming GEMINI_API_KEY is defined here
+import 'Suggested_page.dart'; // Assuming Progresspage is defined here
 import 'package:befit/services/motivational_service.dart';
-
-import 'chat_page.dart'; // new import
+import 'chat_page.dart'; // Assuming this is not directly used in MainHomePage but might be part of the app
 import 'package:google_fonts/google_fonts.dart';
-import 'cardio_section.dart';
+import 'cardio_section.dart'; // Assuming this is not directly used in MainHomePage but might be part of the app
 import 'package:shared_preferences/shared_preferences.dart';
+
+// Define GEMINI_API_KEY if it's not in main.dart or pass it as a constructor parameter
+// For this example, I'm assuming it's accessible globally or from main.dart
+// If not, you'll need to define: const String GEMINI_API_KEY = "YOUR_API_KEY_HERE";
 
 class MainHomePage extends StatefulWidget {
   @override
@@ -21,30 +23,53 @@ class MainHomePage extends StatefulWidget {
 
 class _MainHomePageState extends State<MainHomePage> {
   final user = FirebaseAuth.instance.currentUser;
-  String? userName;
-  String chatResponse = '';
   late Future<String> _quoteFuture;
 
-  String? calorieResult;
-  String? proteinResult;
   String name = 'Loading...';
-  Future<void> fetchUserData() async {
+  String chatResponse = ''; // Not directly used in this snippet, but kept from original
+  String? calorieResult; // From SharedPreferences
+  String? proteinResult; // From SharedPreferences
+  String? waterIntake; // Fetched from Firestore
+  String? stepsCount; // Fetched from Firestore
+  String? calorieBurnedToday; // Fetched from Firestore
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the quote future
+    _quoteFuture = MotivationService(GEMINI_API_KEY).getQuote();
+    // Load user's display name from Firestore
+    loadUserData();
+    // Load calorie and protein results from SharedPreferences
+    loadResults();
+    // Load daily activity data (steps, water, calories burned) from Firestore
+    loadDailyActivityData();
+  }
+
+  /// Fetches the user's name from Firestore based on their UID.
+  Future<void> loadUserData() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
-        final doc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get();
+        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
         final data = doc.data();
         setState(() {
-          name = data?['name'] ?? user.displayName ?? 'No Name';
+          name = data?['name'] ?? user.displayName ?? 'User';
         });
       } catch (e) {
         print("Error fetching user data: $e");
+        setState(() {
+          name = 'User'; // Fallback name on error
+        });
       }
+    } else {
+      setState(() {
+        name = 'Guest'; // If no user is logged in
+      });
     }
   }
+
+  /// Loads last saved calorie and protein results from SharedPreferences.
   Future<void> loadResults() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -52,68 +77,118 @@ class _MainHomePageState extends State<MainHomePage> {
       proteinResult = prefs.getString('last_protein_result');
     });
   }
-  String displayValue(String? value) => (value == null || value.isEmpty) ? 'NA' : value;
-  @override
-  void initState() {
-    super.initState();
-    userName = user?.displayName ?? "User";
-    _quoteFuture = MotivationService(GEMINI_API_KEY).getQuote();
-    loadResults();
-    fetchUserData();
+
+  /// Loads daily activity data (stepCount, waterCups, calorieBurned) from Firestore.
+  /// Assumes data is stored under 'users/{uid}/dailyActivity/{YYYY-MM-DD}'.
+  Future<void> loadDailyActivityData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        // Format today's date to match the Firestore document ID format (e.g., "2025-07-06")
+        final today = DateTime.now();
+        final formattedDate = "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+
+        print('Attempting to load daily activity for user: ${user.uid} on date: $formattedDate');
+
+        // Construct the Firestore path to the daily activity document
+        final docSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('activity_logs') // ✅ Corrected from 'dailyActivity'
+            .doc(formattedDate)
+            .get();
+
+        if (docSnapshot.exists) {
+          // If the document exists, retrieve its data
+          final data = docSnapshot.data();
+          print('Daily activity document found. Data: $data');
+
+          setState(() {
+            // Assign fetched values to state variables, defaulting to '0' if null
+            stepsCount = data?['stepCount']?.toString() ?? '0';
+            waterIntake = data?['waterCups']?.toString() ?? '0';
+            calorieBurnedToday = data?['calorieBurned']?.toString() ?? '0';
+          });
+          print('Steps loaded: $stepsCount, Water loaded: $waterIntake, Calories Burned loaded: $calorieBurnedToday');
+        } else {
+          // If the document does not exist for today, set default '0' values
+          print("No daily activity data found for today: $formattedDate (Document does not exist)");
+          setState(() {
+            stepsCount = '0';
+            waterIntake = '0';
+            calorieBurnedToday = '0';
+          });
+        }
+      } catch (e) {
+        // Catch any errors during Firestore fetching and set 'NA'
+        print("Error fetching daily activity data: $e");
+        setState(() {
+          stepsCount = 'Start';
+          waterIntake = 'Start';
+          calorieBurnedToday = 'Start';
+        });
+      }
+    } else {
+      // If no user is logged in, set 'NA'
+      print("No user logged in, cannot load daily activity data.");
+      setState(() {
+        stepsCount = 'Start';
+        waterIntake = 'Start';
+        calorieBurnedToday = 'Start';
+      });
+    }
   }
 
+  /// Refreshes the motivational quote.
   void _refreshQuote() {
     setState(() {
       _quoteFuture = MotivationService(GEMINI_API_KEY).getQuote();
     });
   }
+
+  /// Returns a greeting based on the current time of day.
   String getGreeting() {
     final hour = DateTime.now().hour;
-    if (hour < 12) {
-      return 'Good morning';
-    } else if (hour < 17) {
-      return 'Good afternoon';
-    } else {
-      return 'Good evening';
-    }
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
   }
+
+  /// Helper function to display 'NA' for null, empty, or '0' values.
+  String displayValue(String? value, {String? fallback}) {
+    if (value == null || value.isEmpty || value == '0') {
+      return fallback ?? 'NA'; // Use fallback if provided, else default to 'NA'
+    }
+    return value;
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    String greeting = getGreeting();
     return Scaffold(
       extendBody: true,
       body: Container(
-        width: double.infinity,
-        height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
+            colors: [AppTheme.appBarBg, AppTheme.backgroundColor, AppTheme.appBarBg],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              AppTheme.appBarBg,
-              AppTheme.backgroundColor,
-              AppTheme.appBarBg
-            ],
-            stops: [0.0, 1, 1.0],
           ),
         ),
         child: SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 10),
 
-                // Gemini motivational quote with refresh
+                // Motivational Quote Section
                 FutureBuilder<String>(
                   future: _quoteFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
                       return const Text(
                         "❌ Couldn't load quote",
@@ -121,7 +196,6 @@ class _MainHomePageState extends State<MainHomePage> {
                       );
                     } else {
                       return Container(
-                        width: double.infinity,
                         margin: const EdgeInsets.only(bottom: 16),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
@@ -140,7 +214,7 @@ class _MainHomePageState extends State<MainHomePage> {
                           children: [
                             Expanded(
                               child: Text(
-                                snapshot.data!,
+                                '"${snapshot.data!}"',
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontStyle: FontStyle.italic,
@@ -160,223 +234,251 @@ class _MainHomePageState extends State<MainHomePage> {
                   },
                 ),
 
-                const SizedBox(height: 10),
-                const Text(
-                  'Hi',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.normal,
+                // Greeting and User Name
+                Text(
+                  '${getGreeting()},',
+                  style: GoogleFonts.notoSans(
+                    color: AppTheme.textColor,
+                    fontSize: 18,
                     shadows: [
                       Shadow(
                         offset: Offset(0, 0),
                         blurRadius: 10,
-                        color: Colors.white,
-                      )
+                        color: AppTheme.textShadowColor,
+                      ),
                     ],
                   ),
                 ),
                 Text(
-                  userName!,
-                  style: const TextStyle(color: Colors.white),
-        child: SingleChildScrollView(
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 20),
-                  Text(
-                    '$greeting,',
-                    style: GoogleFonts.notoSans(
-                      color: AppTheme.textColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.normal,
-                      shadows: [
-                        Shadow(
-                          offset: Offset(0, 0),
-                          blurRadius: 10,
-                          color: AppTheme.textShadowColor,
-                        ),
-                      ],
+                  name,
+                  style: GoogleFonts.oswald(
+                    color: AppTheme.textColor,
+                    fontSize: 40,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(0, 0),
+                        blurRadius: 50,
+                        color: AppTheme.textShadowColor.withOpacity(0.5),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // Workout Streak Section
+                buildWorkoutStreak(),
+
+                const SizedBox(height: 10),
+
+                // Daily Goals Card (now includes Firestore data)
+                buildDailyGoals(),
+
+                const SizedBox(height: 20),
+
+                // Start Workout Button
+                Align(
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.75,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(AppTheme.appBarBg),
+                      ),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Progresspage()),
+                      ),
+                      child: const Text('Start Workout'),
                     ),
                   ),
-                  Text(
-                    name,
-                    // 'Jatin Kumar',
-                    style: GoogleFonts.oswald(
-                      color: AppTheme.textColor,
-                      fontSize: 40,
-                      shadows: [
-                        Shadow(
-                          offset: Offset(0, 0),
-                          color: AppTheme.textShadowColor.withOpacity(0.5),
-                          blurRadius: 50,
-                        ),
-                      ],
-                    ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Builds the workout streak display.
+  Widget buildWorkoutStreak() {
+    return Center(
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.84,
+        height: 120,
+        decoration: BoxDecoration(
+          color: AppTheme.appBarBg.withOpacity(0.20),
+          borderRadius: BorderRadius.circular(28.0),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.appBarBg.withOpacity(0.20),
+              blurRadius: 4,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Text(
+              'Workout Streak',
+              style: GoogleFonts.notoSans(
+                color: AppTheme.textColor,
+                fontSize: 22,
+                shadows: [
+                  Shadow(
+                    offset: Offset(0, 0),
+                    blurRadius: 10,
+                    color: AppTheme.textShadowColor,
                   ),
-                  SizedBox(height: 5),
-                  Center(
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.84,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: AppTheme.appBarBg.withOpacity(0.20),
-                        borderRadius: BorderRadius.circular(28.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.appBarBg.withOpacity(0.20),
-                            blurRadius: 4,
-                            offset: Offset(2, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Workout Streak',
-                            style: GoogleFonts.notoSans(
-                              color: AppTheme.textColor,
-                              fontSize: 22,
-                              fontWeight: FontWeight.normal,
-                              shadows: [
-                                Shadow(
-                                  offset: Offset(0, 0),
-                                  blurRadius: 10,
-                                  color: AppTheme.textShadowColor,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppTheme.appBarBg,
-                                  blurRadius: 4,
-                                  offset: Offset(2, 2),
-                                ),
-                              ],
-                            ),
-                            width: MediaQuery.of(context).size.width * 0.76,
-                            height: 50,
-                            child: FrostedGlassBox(
-                              width: double.infinity,
-                              height: double.infinity,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text('🔥'),
-                                  Text('🔥'),
-                                  Text('🔥'),
-                                  Text('🔥'),
-                                  Text('🔥'),
-                                  Text('🔥'),
-                                  Container(
-                                    padding: EdgeInsets.all(6),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: AppTheme.backgroundColor,
-                                        width: 2,
-                                      ),
-                                      color: Colors.white.withOpacity(0.1),
-                                    ),
-                                    child: Text('🔥'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.84,
-                      height: 350,
-                      decoration: BoxDecoration(
-                        // color: Colors.black.withOpacity(0.20),
-                        color: AppTheme.appBarBg.withOpacity(0.35),
-                        borderRadius: BorderRadius.circular(28.0),
-                        boxShadow: [
-                          BoxShadow(
-                            // color: Colors.black.withOpacity(0.20),
-                            color: AppTheme.appBarBg.withOpacity(0.35),
-                            blurRadius: 4,
-                            offset: Offset(2, 2),
-                            // blurStyle: BlurStyle.outer,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Daily Goals',
-                            style: GoogleFonts.notoSans(
-                              color: AppTheme.textColor,
-                              fontSize: 22,
-                              fontWeight: FontWeight.normal,
-                              shadows: [
-                                Shadow(
-                                  offset: Offset(0, 0),
-                                  blurRadius: 10,
-                                  color: AppTheme.textShadowColor,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              dailyGoalsTile(context, 'Protein', displayValue(proteinResult)),
-                              dailyGoalsTile(context, 'Calories', displayValue(calorieResult)),
-                            ],
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              dailyGoalsTile(context, 'Water', '2L'),
-                              dailyGoalsTile(context, 'Steps', '5000'),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20,),
-                  Align(
-                    alignment: Alignment.center,
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.75,
-                      height: 50,
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateColor.resolveWith((states) => AppTheme.appBarBg,)
-                        ),
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Progresspage()),
-                        ),
-                        child: Text('Start Workout')),
-                    ),
-                  )
                 ],
               ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.76,
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.appBarBg,
+                    blurRadius: 4,
+                    offset: Offset(2, 2),
+                  ),
+                ],
+              ),
+              child: FrostedGlassBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(7, (index) {
+                    return index == 6
+                        ? Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppTheme.backgroundColor, width: 2),
+                        color: Colors.white.withOpacity(0.1),
+                      ),
+                      child: const Text('🔥'),
+                    )
+                        : const Text('🔥');
+                  }),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Builds the daily goals display, including data from SharedPreferences and Firestore.
+  Widget buildDailyGoals() {
+    return Align(
+      alignment: Alignment.center,
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.84,
+        height: 350,
+        decoration: BoxDecoration(
+          color: AppTheme.appBarBg.withOpacity(0.35),
+          borderRadius: BorderRadius.circular(28.0),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.appBarBg.withOpacity(0.35),
+              blurRadius: 4,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Text(
+              'Daily Goals',
+              style: GoogleFonts.notoSans(
+                color: AppTheme.textColor,
+                fontSize: 22,
+                shadows: [
+                  Shadow(
+                    offset: Offset(0, 0),
+                    blurRadius: 10,
+                    color: AppTheme.textShadowColor,
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Display Protein from SharedPreferences
+                dailyGoalsTile('Protein', displayValue(proteinResult, fallback:'+/-')),
+                // Display Calories from SharedPreferences
+                dailyGoalsTile('Calories', displayValue(calorieResult, fallback:'+/-')),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Display Water from Firestore (waterCups)
+                dailyGoalsTile('Water', '${displayValue(waterIntake)} cups'),
+                // Display Steps from Firestore (stepCount)
+                dailyGoalsTile('Steps', displayValue(stepsCount)),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// A reusable tile widget for displaying daily goals.
+  Widget dailyGoalsTile(String title, String value) {
+    double height = 130;
+    double radius = height / 2;
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.34,
+      height: height,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(radius),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.appBarBg.withOpacity(0.80),
+            blurRadius: 4,
+            offset: Offset(2, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(radius),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.notoSans(
+                    color: AppTheme.textColor,
+                    fontSize: 20,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  value,
+                  style: GoogleFonts.notoSans(
+                    color: AppTheme.textColor,
+                    fontSize: 28,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -384,370 +486,3 @@ class _MainHomePageState extends State<MainHomePage> {
     );
   }
 }
-
-Widget dailyGoalsTile(context, String title, String? value) {
-  double height = 130;
-  double radius = height / 2;
-  return Container(
-    width: MediaQuery.of(context).size.width * 0.34,
-    height: height,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(radius),
-      boxShadow: [
-        BoxShadow(
-          // color: Colors.black.withOpacity(0.6),
-          color: AppTheme.appBarBg.withOpacity(0.80),
-          blurRadius: 4,
-          offset: Offset(2, 2),
-          // blurStyle: BlurStyle.outer,
-        ),
-      ],
-    ),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(radius),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.4,
-          height: 150,
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(radius),
-            border: Border.fromBorderSide(BorderSide.none),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                title,
-                style: GoogleFonts.notoSans(
-                  color: AppTheme.textColor,
-                  fontSize: 20,
-                  shadows: [
-                    Shadow(
-                      offset: Offset(0, 0),
-                      blurRadius: 1,
-                      color: AppTheme.textShadowColor,
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-                Text(
-                  chatResponse,
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
-              ),
-              SizedBox(height: 5),
-              Text(
-                value!.isEmpty ? 'NA' : value,
-                style: GoogleFonts.notoSans(
-                  color: AppTheme.textColor,
-                  fontSize: 28,
-                  shadows: [
-                    Shadow(
-                      offset: Offset(0, 0),
-                      blurRadius: 6,
-                      color: AppTheme.textShadowColor,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ),
-    // child: FrostedGlassBox(
-    //   width: MediaQuery.of(context).size.width * 0.4,
-    //   height: 150,
-    //   child: Column(
-    //     mainAxisAlignment: MainAxisAlignment.center,
-    //     crossAxisAlignment: CrossAxisAlignment.center,
-    //     children: [
-    //       Text(
-    //         title,
-    //         style: GoogleFonts.notoSans(
-    //           color: AppTheme.textColor,
-    //           fontSize: 20,
-    //           shadows: [
-    //             Shadow(
-    //               offset: Offset(0, 0),
-    //               blurRadius: 1,
-    //               color: AppTheme.textShadowColor,
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //       SizedBox(height: 5),
-    //       Text(
-    //         value,
-    //         style: GoogleFonts.notoSans(
-    //           color: AppTheme.textColor,
-    //           fontSize: 28,
-    //           shadows: [
-    //             Shadow(
-    //               offset: Offset(0, 0),
-    //               blurRadius: 6,
-    //               color: AppTheme.textShadowColor,
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // ),
-  );
-}
-/*
-* things left to implement:
-*   -backend logic for streak registering. (worked for first time and stopped afterwards)
-*   -the Username not fetching from firebase.
-*   -the username doesn't display after signup only works after login.
-*   -protien and caloire intake stored in sharedspecific.
-* */
-
-// Container backup
-// Container(
-//   width: MediaQuery.of(context).size.width * 0.4,
-//   height: 150,
-//   decoration: BoxDecoration(
-//     color: Colors.black.withOpacity(0.20),
-//     borderRadius: BorderRadius.circular(20.0),
-//     boxShadow: [
-//       BoxShadow(
-//         color: Colors.black.withOpacity(0.20),
-//         blurRadius: 4,
-//         offset: Offset(2, 2),
-//         // blurStyle: BlurStyle.outer,
-//       ),
-//     ],
-//   ),
-//   child: Column(
-//     mainAxisAlignment: MainAxisAlignment.center,
-//     crossAxisAlignment: CrossAxisAlignment.center,
-//     children: [
-//       Text(
-//         'Calories',
-//         style: GoogleFonts.notoSans(
-//           color: AppTheme.textColor,
-//           fontSize: 20,
-//           shadows: [
-//             Shadow(
-//               offset: Offset(0, 0),
-//               blurRadius: 1,
-//               color: AppTheme.textShadowColor,
-//             ),
-//           ],
-//         ),
-//       ),
-//       SizedBox(height: 5),
-//       Text(
-//         '2591',
-//         style: GoogleFonts.notoSans(
-//           color: AppTheme.textColor,
-//           fontSize: 28,
-//           shadows: [
-//             Shadow(
-//               offset: Offset(0, 0),
-//               blurRadius: 6,
-//               color: AppTheme.textShadowColor,
-//             ),
-//           ],
-//         ),
-//       ),
-//     ],
-//   ),
-// ),
-
-// import 'package:flutter/material.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:intl/intl.dart';
-// import '../services/app_theme.dart'; // Make sure AppTheme is properly defined
-//
-// class MainHomePage extends StatefulWidget {
-//   const MainHomePage({super.key});
-//
-//   @override
-//   State<MainHomePage> createState() => _MainHomePageState();
-// }
-//
-// class _MainHomePageState extends State<MainHomePage> {
-//   List<bool> weeklyStreak = List.filled(7, false);
-//   int streakCount = 0;
-//   String userName = 'User';
-//   String chatResponse = "Let's build your habits today!";
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     initializeStreak();
-//   }
-//
-//   void initializeStreak() async {
-//     final user = FirebaseAuth.instance.currentUser;
-//     if (user != null) {
-//       userName = user.displayName ?? 'User';
-//       await updateStreakIfNeeded(user.uid);
-//       await loadStreak(user.uid);
-//       setState(() {}); // To update the UI after loading
-//     }
-//   }
-//
-//   Future<void> updateStreakIfNeeded(String userId) async {
-//     final docRef = FirebaseFirestore.instance.collection('users').doc(userId);
-//     final doc = await docRef.get();
-//
-//     final today = DateTime.now();
-//     final todayStr = "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
-//
-//     Map<String, dynamic> data = doc.data() ?? {};
-//
-//     String? lastUpdated = data['streak']?['lastUpdated'];
-//     int currentStreak = data['streak']?['streakCount'] ?? 0;
-//     Map<String, dynamic> history = Map<String, dynamic>.from(data['streak']?['history'] ?? {});
-//
-//     if (lastUpdated == todayStr) return; // Already registered today
-//
-//     final yesterday = today.subtract(Duration(days: 1));
-//     final yesterdayStr = "${yesterday.year}-${yesterday.month.toString().padLeft(2, '0')}-${yesterday.day.toString().padLeft(2, '0')}";
-//
-//     bool maintainedStreak = history[yesterdayStr] == true;
-//
-//     history[todayStr] = true;
-//
-//     await docRef.set({
-//       'streak': {
-//         'lastUpdated': todayStr,
-//         'streakCount': maintainedStreak ? currentStreak + 1 : 1,
-//         'history': history,
-//       }
-//     }, SetOptions(merge: true));
-//   }
-//
-//
-//   Future<List<bool>> loadStreak(String userId) async {
-//     final doc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
-//     final history = Map<String, dynamic>.from(doc.data()?['streak']['history'] ?? {});
-//
-//     List<bool> last7Days = [];
-//     final today = DateTime.now();
-//
-//     for (int i = 6; i >= 0; i--) {
-//       final day = today.subtract(Duration(days: i));
-//       final dayStr = "${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}";
-//       last7Days.add(history[dayStr] == true);
-//     }
-//
-//     return last7Days;
-//   }
-//
-//   Widget buildStreakBar() {
-//     int todayIndex = DateTime.now().weekday - 1;
-//     return Container(
-//       padding: EdgeInsets.symmetric(vertical: 8),
-//       margin: EdgeInsets.only(top: 12),
-//       decoration: BoxDecoration(
-//         color: Colors.white.withOpacity(0.1),
-//         borderRadius: BorderRadius.circular(30),
-//       ),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//         children: List.generate(7, (index) {
-//           final isToday = index == todayIndex;
-//           final isStreak = weeklyStreak[index];
-//
-//           Widget icon = isStreak
-//               ? Text('🔥', style: TextStyle(fontSize: 18))
-//               : Container(
-//             width: 8,
-//             height: 8,
-//             decoration: BoxDecoration(
-//               color: Colors.redAccent,
-//               shape: BoxShape.circle,
-//             ),
-//           );
-//           return Padding(
-//             padding: const EdgeInsets.symmetric(horizontal: 4.0),
-//             child: isToday
-//                 ? Container(
-//               padding: EdgeInsets.all(6),
-//               decoration: BoxDecoration(
-//                 shape: BoxShape.circle,
-//                 border: Border.all(color: Colors.white70, width: 2),
-//                 color: Colors.white.withOpacity(0.15),
-//               ),
-//               child: icon,
-//             )
-//                 : icon,
-//           );
-//         }),
-//       ),
-//     );
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       extendBody: true,
-//       body: Container(
-//         width: double.infinity,
-//         height: double.infinity,
-//         decoration: BoxDecoration(
-//           gradient: LinearGradient(
-//             begin: Alignment.topCenter,
-//             end: Alignment.bottomCenter,
-//             colors: [
-//               AppTheme.appBarBg,
-//               AppTheme.backgroundColor,
-//               AppTheme.appBarBg,
-//             ],
-//             stops: [0, 0.6, 1],
-//           ),
-//         ),
-//         child: SafeArea(
-//           child: Padding(
-//             padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20),
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 SizedBox(height: 10),
-//                 Text(
-//                   'Hi',
-//                   style: TextStyle(
-//                     color: Colors.white,
-//                     fontSize: 26,
-//                     fontWeight: FontWeight.normal,
-//                     shadows: [
-//                       Shadow(
-//                         offset: Offset(0, 0),
-//                         blurRadius: 10,
-//                         color: Colors.white,
-//                       )
-//                     ],
-//                   ),
-//                 ),
-//                 Text(
-//                   userName,
-//                   style: TextStyle(color: Colors.white),
-//                 ),
-//                 SizedBox(height: 20),
-//                 Text(
-//                   chatResponse,
-//                   style: TextStyle(color: Colors.white, fontSize: 16),
-//                 ),
-//                 SizedBox(height: 20),
-//                 Text(
-//                   'Streak: $streakCount 🔥',
-//                   style: TextStyle(color: Colors.orangeAccent, fontSize: 16),
-//                 ),
-//                 buildStreakBar(),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }

@@ -4,6 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:befit/services/app_theme.dart';
+
+import '../main.dart';
+import 'Suggested_page.dart';
+import 'package:befit/services/motivational_service.dart';
+
+import 'chat_page.dart'; // new import
 import 'package:google_fonts/google_fonts.dart';
 import 'cardio_section.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,6 +23,8 @@ class _MainHomePageState extends State<MainHomePage> {
   final user = FirebaseAuth.instance.currentUser;
   String? userName;
   String chatResponse = '';
+  late Future<String> _quoteFuture;
+
   String? calorieResult;
   String? proteinResult;
   String name = 'Loading...';
@@ -48,8 +56,16 @@ class _MainHomePageState extends State<MainHomePage> {
   @override
   void initState() {
     super.initState();
+    userName = user?.displayName ?? "User";
+    _quoteFuture = MotivationService(GEMINI_API_KEY).getQuote();
     loadResults();
     fetchUserData();
+  }
+
+  void _refreshQuote() {
+    setState(() {
+      _quoteFuture = MotivationService(GEMINI_API_KEY).getQuote();
+    });
   }
   String getGreeting() {
     final hour = DateTime.now().hour;
@@ -77,11 +93,92 @@ class _MainHomePageState extends State<MainHomePage> {
             colors: [
               AppTheme.appBarBg,
               AppTheme.backgroundColor,
-              AppTheme.appBarBg,
+              AppTheme.appBarBg
             ],
-            stops: [0.0, 0.6, 1.0],
+            stops: [0.0, 1, 1.0],
           ),
         ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 10),
+
+                // Gemini motivational quote with refresh
+                FutureBuilder<String>(
+                  future: _quoteFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasError) {
+                      return const Text(
+                        "❌ Couldn't load quote",
+                        style: TextStyle(color: Colors.white),
+                      );
+                    } else {
+                      return Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.only(bottom: 16),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppTheme.appBarBg.withOpacity(0.85),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black38,
+                              blurRadius: 8,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                snapshot.data!,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.refresh, color: Colors.white70),
+                              onPressed: _refreshQuote,
+                              tooltip: "Refresh Quote",
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+
+                const SizedBox(height: 10),
+                const Text(
+                  'Hi',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 26,
+                    fontWeight: FontWeight.normal,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(0, 0),
+                        blurRadius: 10,
+                        color: Colors.white,
+                      )
+                    ],
+                  ),
+                ),
+                Text(
+                  userName!,
+                  style: const TextStyle(color: Colors.white),
         child: SingleChildScrollView(
           child: SafeArea(
             child: Padding(
@@ -335,6 +432,11 @@ Widget dailyGoalsTile(context, String title, String? value) {
                     ),
                   ],
                 ),
+
+                const SizedBox(height: 20),
+                Text(
+                  chatResponse,
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
               SizedBox(height: 5),
               Text(

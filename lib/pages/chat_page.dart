@@ -3,7 +3,7 @@ import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../services/app_theme.dart';
 
-const String GEMINI_API_KEY = '';
+const String GEMINI_API_KEY = 'AIzaSyB55-p4bDJoQ_6fclkSCjByc2Zeulhc130';
 
 void main() {
   runApp(const MyApp());
@@ -104,6 +104,15 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Beƒιт AI'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back
+          },
+        ),
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -119,15 +128,6 @@ class _ChatPageState extends State<ChatPage> {
         child: SafeArea(
           child: Column(
             children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                width: double.infinity,
-                child: Text(
-                  'Beƒιт AI',
-                  style: Theme.of(context).appBarTheme.titleTextStyle,
-                  textAlign: TextAlign.center,
-                ),
-              ),
               Expanded(
                 child: DashChat(
                   currentUser: _currentUser,
@@ -153,7 +153,7 @@ class _ChatPageState extends State<ChatPage> {
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 12),
                     ),
-                    inputTextStyle: TextStyle(color: Colors.white),
+                    inputTextStyle: const TextStyle(color: Colors.white),
                     sendButtonBuilder: (send) {
                       return IconButton(
                         icon: const Icon(Icons.send, color: Colors.deepPurple),

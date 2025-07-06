@@ -105,6 +105,7 @@
 // }
 //above code saved as backup
 
+import 'package:befit/pages/forgot.dart';
 import 'package:befit/services/frostedGlassEffect.dart';
 import 'package:flutter/material.dart';
 import 'About_page.dart';
@@ -177,7 +178,10 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
             leading: const Icon(Icons.lock_outline),
             title: const Text('Change Password'),
             onTap: () {
-              // Add your logic here
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Forgot()),
+              );
             },
           ),
           ListTile(

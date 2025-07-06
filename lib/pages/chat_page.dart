@@ -3,7 +3,7 @@ import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../services/app_theme.dart';
 
-const String GEMINI_API_KEY = 'AIzaSyB55-p4bDJoQ_6fclkSCjByc2Zeulhc130';
+const String GEMINI_API_KEY = '';
 
 void main() {
   runApp(const MyApp());

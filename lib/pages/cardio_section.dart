@@ -59,7 +59,8 @@ class _ProgresspageState extends State<Progresspage> {
     if (uid == null) return;
 
     final now = DateTime.now();
-    final docId = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+    final docId =
+        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
 
     final docRef = FirebaseFirestore.instance
         .collection('users')
@@ -94,7 +95,8 @@ class _ProgresspageState extends State<Progresspage> {
   }) async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
     final today = DateTime.now();
-    final docId = "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+    final docId =
+        "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
 
     await FirebaseFirestore.instance
         .collection('users')
@@ -102,17 +104,18 @@ class _ProgresspageState extends State<Progresspage> {
         .collection('activity_logs')
         .doc(docId)
         .set({
-      'calorieBurned': calories,
-      'stepCount': steps,
-      'waterCups': waterCups,
-      'timestamp': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
+          'calorieBurned': calories,
+          'stepCount': steps,
+          'waterCups': waterCups,
+          'timestamp': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
   }
 
   Future<Map<String, dynamic>> fetchTodayProgress() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
     final today = DateTime.now();
-    final docId = "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+    final docId =
+        "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
 
     final doc = await FirebaseFirestore.instance
         .collection('users')
@@ -129,7 +132,6 @@ class _ProgresspageState extends State<Progresspage> {
     final today = DateTime.now();
     final DateTime startOfToday = DateTime(today.year, today.month, today.day);
     final DateTime weekAgo = startOfToday.subtract(const Duration(days: 6));
-
     final snapshot = await FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
@@ -137,14 +139,14 @@ class _ProgresspageState extends State<Progresspage> {
         .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(weekAgo))
         .orderBy('timestamp')
         .get();
-
-    return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+    return snapshot.docs
+        .map((doc) => doc.data() as Map<String, dynamic>)
+        .toList();
   }
 
   Future<void> _fetchLatestWeight() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
-
     final snapshot = await FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
@@ -152,7 +154,6 @@ class _ProgresspageState extends State<Progresspage> {
         .orderBy('timestamp', descending: true)
         .limit(1)
         .get();
-
     if (snapshot.docs.isNotEmpty) {
       final data = snapshot.docs.first.data();
       final weight = (data['weight'] as num?)?.toDouble() ?? 0.0;
@@ -165,7 +166,6 @@ class _ProgresspageState extends State<Progresspage> {
   Future<void> _loadTodayData() async {
     final data = await fetchTodayProgress();
     final weekData = await fetchPast7DaysProgress();
-
     setState(() {
       calories = data['calorieBurned']?.toInt() ?? 0;
       steps = data['stepCount']?.toInt() ?? 0;
@@ -180,7 +180,11 @@ class _ProgresspageState extends State<Progresspage> {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppTheme.appBarBg, AppTheme.backgroundColor, AppTheme.appBarBg],
+          colors: [
+            AppTheme.appBarBg,
+            AppTheme.backgroundColor,
+            AppTheme.appBarBg,
+          ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
@@ -188,7 +192,7 @@ class _ProgresspageState extends State<Progresspage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text('Cardio Section'),
+          title: const Text('Track Workout'),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -207,7 +211,14 @@ class _ProgresspageState extends State<Progresspage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Weekly Summary', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                      const Text(
+                        'Weekly Summary',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                       const SizedBox(height: 10),
                       SizedBox(
                         height: 180,
@@ -217,9 +228,20 @@ class _ProgresspageState extends State<Progresspage> {
                           children: weeklyData.map((data) {
                             final timestamp = data['timestamp'] as Timestamp?;
                             final date = timestamp?.toDate() ?? DateTime.now();
-                            final day = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][date.weekday - 1];
-                            final steps = (data['stepCount'] as num?)?.toDouble() ?? 0.0;
-                            final calories = (data['calorieBurned'] as num?)?.toDouble() ?? 0.0;
+                            final day = [
+                              'Mon',
+                              'Tue',
+                              'Wed',
+                              'Thu',
+                              'Fri',
+                              'Sat',
+                              'Sun',
+                            ][date.weekday - 1];
+                            final steps =
+                                (data['stepCount'] as num?)?.toDouble() ?? 0.0;
+                            final calories =
+                                (data['calorieBurned'] as num?)?.toDouble() ??
+                                0.0;
                             return Column(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -240,15 +262,21 @@ class _ProgresspageState extends State<Progresspage> {
                                   ],
                                 ),
                                 const SizedBox(height: 8),
-                                Text(day, style: const TextStyle(fontSize: 12, color: Colors.white)),
+                                Text(
+                                  day,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ],
                             );
                           }).toList(),
                         ),
-                      )
+                      ),
                     ],
                   ),
-                )
+                ),
             ],
           ),
         ),
@@ -265,7 +293,14 @@ class _ProgresspageState extends State<Progresspage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
             const SizedBox(height: 12),
             child,
           ],
@@ -276,13 +311,18 @@ class _ProgresspageState extends State<Progresspage> {
 
   Widget _buildDailyView(double width) {
     final duration = Duration(seconds: _seconds);
-    final time = "${duration.inMinutes.remainder(60).toString().padLeft(2, '0')}:${duration.inSeconds.remainder(60).toString().padLeft(2, '0')}";
+    final time =
+        "${duration.inMinutes.remainder(60).toString().padLeft(2, '0')}:${duration.inSeconds.remainder(60).toString().padLeft(2, '0')}";
 
     return Column(
       children: [
         Text(
           time,
-          style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.white),
+          style: const TextStyle(
+            fontSize: 48,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
         const SizedBox(height: 16),
         Text(
@@ -311,7 +351,8 @@ class _ProgresspageState extends State<Progresspage> {
             ElevatedButton.icon(
               icon: const Icon(Icons.save),
               label: const Text('Save'),
-              onPressed: _saveProgressAndReset,
+              onPressed: () async {await updateStreakOnWorkout();
+                await _saveProgressAndReset();}
             ),
           ],
         ),
@@ -326,16 +367,26 @@ class _ProgresspageState extends State<Progresspage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Cups: $waterCups', style: const TextStyle(fontSize: 18, color: Colors.white)),
+          Text(
+            'Cups: $waterCups',
+            style: const TextStyle(fontSize: 18, color: Colors.white),
+          ),
           Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.remove_circle_outline, color: Colors.white),
+                icon: const Icon(
+                  Icons.remove_circle_outline,
+                  color: Colors.white,
+                ),
                 onPressed: () {
                   setState(() {
                     if (waterCups > 0) waterCups--;
                   });
-                  saveDailyProgress(calories: calories, steps: steps, waterCups: waterCups);
+                  saveDailyProgress(
+                    calories: calories,
+                    steps: steps,
+                    waterCups: waterCups,
+                  );
                 },
               ),
               IconButton(
@@ -344,7 +395,11 @@ class _ProgresspageState extends State<Progresspage> {
                   setState(() {
                     waterCups++;
                   });
-                  saveDailyProgress(calories: calories, steps: steps, waterCups: waterCups);
+                  saveDailyProgress(
+                    calories: calories,
+                    steps: steps,
+                    waterCups: waterCups,
+                  );
                 },
               ),
             ],
@@ -360,9 +415,15 @@ class _ProgresspageState extends State<Progresspage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Total Calories Burned: $calories kcal', style: const TextStyle(fontSize: 18, color: Colors.white)),
+          Text(
+            'Total Calories Burned: $calories kcal',
+            style: const TextStyle(fontSize: 18, color: Colors.white),
+          ),
           const SizedBox(height: 8),
-          Text('Total Steps: $steps', style: const TextStyle(fontSize: 18, color: Colors.white)),
+          Text(
+            'Total Steps: $steps',
+            style: const TextStyle(fontSize: 18, color: Colors.white),
+          ),
         ],
       ),
     );
@@ -374,13 +435,18 @@ class _ProgresspageState extends State<Progresspage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Current Weight: ${currentWeight.toStringAsFixed(1)} kg', style: const TextStyle(fontSize: 18, color: Colors.white)),
+          Text(
+            'Current Weight: ${currentWeight.toStringAsFixed(1)} kg',
+            style: const TextStyle(fontSize: 18, color: Colors.white),
+          ),
           const SizedBox(height: 12),
           ElevatedButton(
             onPressed: () async {
               await Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const WeightDetailsPage()),
+                MaterialPageRoute(
+                  builder: (context) => const WeightDetailsPage(),
+                ),
               );
               _fetchLatestWeight();
             },
@@ -389,5 +455,48 @@ class _ProgresspageState extends State<Progresspage> {
         ],
       ),
     );
+  }
+}
+Future<void> updateStreakOnWorkout() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+
+  final now = DateTime.now();
+  final todayStr = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
+  final streakDocRef = FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('activity_logs')
+      .doc('streak');
+
+  final streakDoc = await streakDocRef.get();
+
+  if (streakDoc.exists) {
+    final data = streakDoc.data();
+    final lastDateStr = data?['lastWorkoutDate'];
+    final lastDate = DateTime.tryParse(lastDateStr ?? '') ?? DateTime(2000);
+    final streakCount = data?['streakCount'] ?? 0;
+
+    final difference = now.difference(lastDate).inDays;
+
+    if (difference == 1) {
+      await streakDocRef.set({
+        'streakCount': streakCount + 1,
+        'lastWorkoutDate': todayStr,
+      });
+    } else if (difference == 0) {
+      // Already logged today – do nothing
+    } else {
+      await streakDocRef.set({
+        'streakCount': 1,
+        'lastWorkoutDate': todayStr,
+      });
+    }
+  } else {
+    await streakDocRef.set({
+      'streakCount': 1,
+      'lastWorkoutDate': todayStr,
+    });
   }
 }

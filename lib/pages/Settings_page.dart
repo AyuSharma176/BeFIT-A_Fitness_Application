@@ -105,9 +105,9 @@
 // }
 //above code saved as backup
 
+import 'package:befit/pages/forgot.dart';
 import 'package:befit/services/frostedGlassEffect.dart';
 import 'package:flutter/material.dart';
-import 'package:befit/services/app_theme.dart';
 import 'About_page.dart';
 import 'SignUp_screen.dart';
 
@@ -138,17 +138,13 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(height: 1, width: 50),
-              Align(
-                alignment: Alignment.topRight,
-                child: Text(
-                  'Settings',
-                  style: TextStyle(
-                    // color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Segoe UI',
-                  ),
+              SizedBox(height: 1, width: 50,),
+              Text(
+                'Settings',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Segoe UI',
                 ),
               ),
               IconButton(
@@ -182,7 +178,10 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
             leading: const Icon(Icons.lock_outline),
             title: const Text('Change Password'),
             onTap: () {
-              // Add your logic here
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Forgot()),
+              );
             },
           ),
           ListTile(

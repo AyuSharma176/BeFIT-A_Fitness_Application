@@ -24,9 +24,9 @@ class _WeightDetailsPageState extends State<WeightDetailsPage> {
   Future<void> _fetchWeightData() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('User not signed in!'))
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('User not signed in!')));
       return;
     }
 
@@ -37,7 +37,10 @@ class _WeightDetailsPageState extends State<WeightDetailsPage> {
         .collection('users')
         .doc(uid)
         .collection('weight_logs')
-        .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(fiveMonthsAgo))
+        .where(
+          'timestamp',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(fiveMonthsAgo),
+        )
         .orderBy('timestamp')
         .get();
 
@@ -48,7 +51,8 @@ class _WeightDetailsPageState extends State<WeightDetailsPage> {
       final date = timestamp?.toDate() ?? DateTime.now();
       final month = _monthAbbreviation(date.month);
 
-      if (!tempData.containsKey(month) || date.isAfter(DateTime.now().subtract(const Duration(days: 30)))) {
+      if (!tempData.containsKey(month) ||
+          date.isAfter(DateTime.now().subtract(const Duration(days: 30)))) {
         tempData[month] = {
           'month': month,
           'weight': (data['weight'] as num?)?.toDouble() ?? 0.0,
@@ -65,15 +69,37 @@ class _WeightDetailsPageState extends State<WeightDetailsPage> {
   }
 
   int _monthIndex(String monthAbbr) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     return months.indexOf(monthAbbr);
   }
 
   String _monthAbbreviation(int month) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return months[month - 1];
   }
@@ -89,17 +115,17 @@ class _WeightDetailsPageState extends State<WeightDetailsPage> {
         .collection('users')
         .doc(uid)
         .collection('weight_logs')
-        .add({
-      'weight': newWeight,
-      'timestamp': Timestamp.now(),
-    }).catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save weight: $error')),
-      );
-    });
+        .add({'weight': newWeight, 'timestamp': Timestamp.now()})
+        .catchError((error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to save weight: $error')),
+          );
+        });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Weight updated to ${newWeight.toStringAsFixed(1)} kg')),
+      SnackBar(
+        content: Text('Weight updated to ${newWeight.toStringAsFixed(1)} kg'),
+      ),
     );
 
     weightController.clear();
@@ -113,7 +139,11 @@ class _WeightDetailsPageState extends State<WeightDetailsPage> {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppTheme.appBarBg, AppTheme.backgroundColor, AppTheme.appBarBg],
+          colors: [
+            AppTheme.appBarBg,
+            AppTheme.backgroundColor,
+            AppTheme.appBarBg,
+          ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
@@ -138,14 +168,22 @@ class _WeightDetailsPageState extends State<WeightDetailsPage> {
                     ),
                     const Text(
                       'Weight',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
                 const Text(
                   'Past 5 Months',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 SizedBox(
@@ -153,11 +191,15 @@ class _WeightDetailsPageState extends State<WeightDetailsPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    children: weightData.map((data) => _WeightBar(
-                      month: data['month'],
-                      height: (data['weight'] - 60) * 5,
-                      weight: data['weight'],
-                    )).toList(),
+                    children: weightData
+                        .map(
+                          (data) => _WeightBar(
+                            month: data['month'],
+                            height: (data['weight'] - 60) * 5,
+                            weight: data['weight'],
+                          ),
+                        )
+                        .toList(),
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -172,7 +214,10 @@ class _WeightDetailsPageState extends State<WeightDetailsPage> {
                     children: [
                       const Text(
                         'Update Weight',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       TextField(
@@ -227,7 +272,10 @@ class _WeightBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('${weight.toStringAsFixed(1)} kg', style: const TextStyle(fontSize: 12, color: Colors.white)),
+        Text(
+          '${weight.toStringAsFixed(1)} kg',
+          style: const TextStyle(fontSize: 12, color: Colors.white),
+        ),
         Container(
           width: 20,
           height: height,

@@ -9,7 +9,11 @@ class Aboutpage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppTheme.appBarBg, AppTheme.backgroundColor, AppTheme.appBarBg],
+          colors: [
+            AppTheme.appBarBg,
+            AppTheme.backgroundColor,
+            AppTheme.appBarBg,
+          ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
@@ -19,14 +23,14 @@ class Aboutpage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          iconTheme: const IconThemeData(color: Colors.white),
+          iconTheme: IconThemeData(color: AppTheme.iconColor),
           centerTitle: true,
-          title: const Text(
+          title: Text(
             'About Us',
             style: TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: AppTheme.textColor,
               fontFamily: 'Segoe UI',
             ),
           ),
@@ -44,13 +48,13 @@ class Aboutpage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              const Center(
+              Center(
                 child: Text(
                   'вє ƒιт',
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: AppTheme.textColor,
                     fontFamily: 'Segoe UI',
                     letterSpacing: 1.2,
                   ),
@@ -60,23 +64,20 @@ class Aboutpage extends StatelessWidget {
               _buildInfoCard(
                 title: 'About',
                 content:
-                'BeFit is your personal fitness companion designed to guide you towards a healthier lifestyle. Whether you’re tracking your BMI, planning your meals, or following your workout progress, BeFit empowers you every step of the way.',
+                    'BeFit is your personal fitness companion designed to guide you towards a healthier lifestyle. Whether you’re tracking your BMI, planning your meals, or following your workout progress, BeFit empowers you every step of the way.',
               ),
               const SizedBox(height: 16),
-              _buildInfoCard(
-                title: 'Developed By',
-                content: 'Team вєƒιт',
-              ),
+              _buildInfoCard(title: 'Developed By', content: 'Team вєƒιт'),
               const SizedBox(height: 16),
-              _buildInfoCard(
-                title: 'Version',
-                content: '1.0.0',
-              ),
+              _buildInfoCard(title: 'Version', content: '1.0.0'),
               const SizedBox(height: 32),
               Center(
                 child: Text(
                   '© 2025 BeFit Inc.',
-                  style: TextStyle(color: Colors.white60, fontSize: 12),
+                  style: TextStyle(
+                    color: AppTheme.textColor.withAlpha(153),
+                    fontSize: 12,
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -89,10 +90,10 @@ class Aboutpage extends StatelessWidget {
 
   Widget _buildInfoCard({required String title, required String content}) {
     return Card(
-      color: Colors.black.withOpacity(0.4),
+      color: AppTheme.boxColor.withAlpha(102),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 6,
-      shadowColor: Colors.black45,
+      shadowColor: AppTheme.boxColor.withAlpha(115),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         child: Column(
@@ -100,18 +101,18 @@ class Aboutpage extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
-                color: Colors.white,
+                color: AppTheme.textColor,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               content,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
-                color: Colors.white70,
+                color: AppTheme.textColor.withAlpha(179),
                 height: 1.5,
               ),
               textAlign: TextAlign.justify,

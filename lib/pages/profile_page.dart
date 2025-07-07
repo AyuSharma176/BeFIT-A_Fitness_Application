@@ -23,6 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     fetchUserData();
     fetchTodayStats();
+    fetchStreak();
   }
 
   Future<void> fetchUserData() async {
@@ -82,6 +83,28 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     }
   }
+  Future<void> fetchStreak() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final streakDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('activity_logs')
+            .doc('streak')
+            .get();
+
+        if (streakDoc.exists) {
+          final data = streakDoc.data();
+          setState(() {
+            streakCount = data?['streakCount'] ?? 0;
+          });
+        }
+      } catch (e) {
+        print("Error fetching streak: $e");
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
               AppTheme.backgroundColor,
               AppTheme.appBarBg,
             ],
-            stops: [0.0, 1, 1.0],
+            stops: [0, 0.6, 1],
           ),
         ),
         child: SafeArea(
@@ -134,14 +157,33 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                _buildStatCard(Icons.emoji_events, "Streak", "$streakCount days", Colors.amber),
+                _buildStatCard(
+                  Icons.emoji_events,
+                  "Streak",
+                  "$streakCount days",
+                  Colors.amber,
+                ),
                 const SizedBox(height: 16),
-                _buildStatCard(Icons.directions_walk, "Today's Steps", "$totalSteps", Colors.tealAccent),
+                _buildStatCard(
+                  Icons.directions_walk,
+                  "Today's Steps",
+                  "$totalSteps",
+                  Colors.tealAccent,
+                ),
                 const SizedBox(height: 16),
-                _buildStatCard(Icons.local_fire_department, "Calories Burned",
-                    "${calorieBurned.toStringAsFixed(1)} kcal", Colors.redAccent),
+                _buildStatCard(
+                  Icons.local_fire_department,
+                  "Calories Burned",
+                  "${calorieBurned.toStringAsFixed(1)} kcal",
+                  Colors.redAccent,
+                ),
                 const SizedBox(height: 16),
-                _buildStatCard(Icons.local_drink, "Water Intake", "$waterCups cups", Colors.cyanAccent),
+                _buildStatCard(
+                  Icons.local_drink,
+                  "Water Intake",
+                  "$waterCups cups",
+                  Colors.cyanAccent,
+                ),
               ],
             ),
           ),
@@ -171,10 +213,7 @@ class _ProfilePageState extends State<ProfilePage> {
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white24, width: 2),
           ),
-          child: CircleAvatar(
-            radius: 50,
-            backgroundImage: imageProvider,
-          ),
+          child: CircleAvatar(radius: 50, backgroundImage: imageProvider),
         ),
         const SizedBox(height: 12),
         Text(
@@ -188,16 +227,18 @@ class _ProfilePageState extends State<ProfilePage> {
         const SizedBox(height: 4),
         Text(
           email,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey.shade400,
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey.shade400),
         ),
       ],
     );
   }
 
-  Widget _buildStatCard(IconData icon, String label, String value, Color iconColor) {
+  Widget _buildStatCard(
+    IconData icon,
+    String label,
+    String value,
+    Color iconColor,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -238,10 +279,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
+                  style: const TextStyle(color: Colors.white70, fontSize: 14),
                 ),
               ],
             ),

@@ -11,7 +11,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final _nameController = TextEditingController(text: 'Dinah Gray');
   final _emailController = TextEditingController(text: 'dinah.gray@email.com');
   final _phoneController = TextEditingController(text: '+1 234 567 8900');
-  final _bioController = TextEditingController(text: 'Fitness enthusiast and runner');
+  final _bioController = TextEditingController(
+    text: 'Fitness enthusiast and runner',
+  );
 
   bool isPublic = true;
   bool isSharing = true;
@@ -36,7 +38,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                     content: Text('Profile updated successfully!'),
                     backgroundColor: AppTheme.primaryColor,
                   ),
@@ -44,7 +46,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 Navigator.pop(context);
               }
             },
-            child: const Text(
+            child: Text(
               'Save',
               style: TextStyle(
                 color: AppTheme.primaryColor,
@@ -100,17 +102,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 right: 0,
                 child: Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: AppTheme.primaryColor,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
+                  child: const Icon(
+                    Icons.camera_alt,
+                    color: Colors.white,
+                    size: 16,
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Change Profile Photo',
             style: TextStyle(
               color: AppTheme.primaryColor,
@@ -142,7 +148,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
             controller: _nameController,
             label: 'Full Name',
             icon: Icons.person,
-            validator: (value) => value == null || value.isEmpty ? 'Please enter your name' : null,
+            validator: (value) => value == null || value.isEmpty
+                ? 'Please enter your name'
+                : null,
           ),
           const SizedBox(height: 16),
           _buildTextField(
@@ -151,7 +159,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             icon: Icons.email,
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
-              if (value == null || value.isEmpty) return 'Please enter your email';
+              if (value == null || value.isEmpty)
+                return 'Please enter your email';
               if (!value.contains('@')) return 'Enter a valid email';
               return null;
             },
@@ -233,9 +242,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: AppTheme.primaryColor),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         filled: true,
         fillColor: Colors.grey[50],
       ),
@@ -250,7 +257,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }) {
     return SwitchListTile(
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-      subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+      subtitle: Text(
+        subtitle,
+        style: const TextStyle(fontSize: 12, color: Colors.grey),
+      ),
       value: value,
       onChanged: onChanged,
       activeColor: AppTheme.primaryColor,
@@ -266,4 +276,5 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.dispose();
   }
 }
+
 //edit

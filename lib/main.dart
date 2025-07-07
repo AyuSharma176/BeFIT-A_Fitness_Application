@@ -193,6 +193,7 @@
 //   }
 // }
 import 'package:befit/pages/SplashScreen.dart';
+import 'package:befit/pages/chat_page.dart';
 import 'package:befit/services/app_theme.dart';
 import 'package:befit/pages/Login_screen.dart';
 import 'package:flutter/material.dart';
@@ -207,7 +208,6 @@ import 'package:befit/pages/profile_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -220,6 +220,9 @@ class BeFitApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String userHex = "#050505";
+    Color userColor = Color(int.parse(userHex.replaceFirst('#', '0xff')));
+    AppTheme.setCustomColor(userColor);
     return GetMaterialApp(
       title: 'Be 𝓯𝓲𝓽',
       debugShowCheckedModeBanner: false,
@@ -240,8 +243,12 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 2;
   bool _showSettings = false;
 
-  Widget _buildNavItem(IconData icon, IconData activeIcon, String label,
-      int index) {
+  Widget _buildNavItem(
+    IconData icon,
+    IconData activeIcon,
+    String label,
+    int index,
+  ) {
     final bool isSelected = index == _selectedIndex;
     return Expanded(
       child: GestureDetector(
@@ -249,19 +256,18 @@ class _HomeScreenState extends State<HomeScreen> {
         behavior: HitTestBehavior.opaque,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              isSelected ? activeIcon : icon,
-              color: Colors.white,
-            ),
-          ],
+          children: [Icon(isSelected ? activeIcon : icon, color: Colors.white)],
         ),
       ),
     );
   }
 
-  Widget _buildSvgNavItem(String icon, String activeIcon, String label,
-      int index) {
+  Widget _buildSvgNavItem(
+    String icon,
+    String activeIcon,
+    String label,
+    int index,
+  ) {
     final bool isSelected = index == _selectedIndex;
     return Expanded(
       child: GestureDetector(
@@ -298,6 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
@@ -328,12 +335,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-
       drawer: Drawer(
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppTheme.appBarBg, AppTheme.backgroundColor, AppTheme.appBarBg],
+              colors: [
+                AppTheme.appBarBg,
+                AppTheme.backgroundColor,
+                AppTheme.appBarBg,
+              ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -363,10 +373,24 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               ListTile(
                 leading: Icon(Icons.monitor_heart, color: Colors.white),
-                title: Text('Cardio. Section', style: TextStyle(color: Colors.white)),
+                title: Text(
+                  'track Workout',
+                  style: TextStyle(color: Colors.white),
+                ),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Progresspage()),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.chat, color: Colors.white),
+                title: Text(
+                  'ASK Be𝓯𝓲𝓽',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ChatPage()),
                 ),
               ),
               ListTile(
@@ -405,24 +429,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 },
               ),
-              // child: Material(
-              //   elevation: 8,
-              //   borderRadius: BorderRadius.circular(8),
-              //   child: SettingsDropdown(
-              //     onClose: () {
-              //       setState(() {
-              //         _showSettings = false;
-              //       });
-              //     },
-              //   ),
-              // ),
             ),
         ],
       ),
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-        ),
+        decoration: BoxDecoration(color: Colors.transparent),
         padding: const EdgeInsets.symmetric(vertical: 8),
         height: 70,
         child: LayoutBuilder(
@@ -433,10 +444,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   children: [
                     _buildNavItem(
-                        Icons.calculate_outlined, Icons.calculate, 'Calculator',
-                        0),
+                      Icons.calculate_outlined,
+                      Icons.calculate,
+                      'Calculator',
+                      0,
+                    ),
                     _buildNavItem(
-                        Icons.egg_alt_outlined, Icons.egg_alt, 'Diet', 1),
+                      Icons.egg_alt_outlined,
+                      Icons.egg_alt,
+                      'Diet',
+                      1,
+                    ),
                     _buildNavItem(Icons.home_outlined, Icons.home, 'Home', 2),
                     _buildSvgNavItem(
                       'assets/navbar_icons/dumbell_outlined.svg',
@@ -445,7 +463,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       3,
                     ),
                     _buildNavItem(
-                        Icons.person_outline, Icons.person, 'Profile', 4),
+                      Icons.person_outline,
+                      Icons.person,
+                      'Profile',
+                      4,
+                    ),
                   ],
                 ),
                 AnimatedPositioned(

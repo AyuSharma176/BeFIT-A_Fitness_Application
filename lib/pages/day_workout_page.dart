@@ -5,11 +5,7 @@ class DayWorkoutPage extends StatelessWidget {
   final String day;
   final List<Map<String, dynamic>> exercises;
 
-  const DayWorkoutPage({
-    super.key,
-    required this.day,
-    required this.exercises,
-  });
+  const DayWorkoutPage({super.key, required this.day, required this.exercises});
 
   @override
   Widget build(BuildContext context) {

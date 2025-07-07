@@ -169,28 +169,7 @@ class _BMICalculatorState extends State<BMICalculator> {
                     ),
                   ),
                 ),
-                // Container(
-                //   width: double.infinity,
-                //   padding: const EdgeInsets.symmetric(vertical: 14),
-                //   margin: const EdgeInsets.only(bottom: 16),
-                //   decoration: BoxDecoration(
-                //     color: Colors.black.withOpacity(0.7),
-                //     borderRadius: BorderRadius.circular(16),
-                //   ),
-                //   child: const Center(
-                //     child: Text(
-                //       'BMI Calculator',
-                //       style: TextStyle(
-                //         color: Colors.white,
-                //         fontSize: 20,
-                //         fontWeight: FontWeight.bold,
-                //         letterSpacing: 1.1,
-                //       ),
-                //     ),
-                //   ),
-                // ),
                 const SizedBox(height: 20),
-
                 Text(
                   'Please enter your details',
                   textAlign: TextAlign.center,
@@ -199,15 +178,12 @@ class _BMICalculatorState extends State<BMICalculator> {
                     color: Colors.white,
                   ),
                 ),
-
                 _customInputField(_weightcontroller, 'Enter your weight (kgs)'),
                 _customInputField(_heightcontroller, 'Enter your height (meters)'),
                 _customInputField(null, 'Enter your age'),
-
                 const SizedBox(height: 10),
                 _genderSelector(),
                 const SizedBox(height: 30),
-
                 SizedBox(
                   height: 50,
                   width: double.infinity,

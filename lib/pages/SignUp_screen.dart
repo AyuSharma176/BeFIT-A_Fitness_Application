@@ -22,16 +22,17 @@ class _SignUpState extends State<SignUpScreen> {
   final name = TextEditingController();
   String gender = "Male";
   bool isPasswordVisible = false;
-  bool isloading = false;
+  // bool isloading = false;
 
   signup() async {
-    setState(() => isloading = true);
+    // setState(() => isloading = true);
 
     try {
-      final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email.text.trim(),
-        password: password.text.trim(),
-      );
+      final userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: email.text.trim(),
+            password: password.text.trim(),
+          );
 
       final user = userCredential.user;
 
@@ -49,27 +50,29 @@ class _SignUpState extends State<SignUpScreen> {
       Get.snackbar("Error", e.toString());
     }
 
-    setState(() => isloading = false);
+    // setState(() => isloading = false);
   }
 
   Future<void> signUpWithGoogle() async {
-    setState(() => isloading = true);
+    // setState(() => isloading = true);
 
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
-        setState(() => isloading = false);
+        // setState(() => isloading = false);
         return;
       }
-
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
       final user = userCredential.user;
 
       await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
@@ -81,12 +84,15 @@ class _SignUpState extends State<SignUpScreen> {
 
       Get.offAll(() => Wrapper());
     } on FirebaseAuthException catch (e) {
-      Get.snackbar("Google Sign-In Failed", e.message ?? "Something went wrong");
+      Get.snackbar(
+        "Google Sign-In Failed",
+        e.message ?? "Something went wrong",
+      );
     } catch (e) {
       Get.snackbar("Error", e.toString());
     }
 
-    setState(() => isloading = false);
+    // setState(() => isloading = false);
   }
 
   InputDecoration buildDarkInputDecoration(String hint) {
@@ -112,9 +118,7 @@ class _SignUpState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return isloading
-        ? const Center(child: CircularProgressIndicator())
-        : Scaffold(
+    return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       body: Container(
         decoration: BoxDecoration(
@@ -193,10 +197,15 @@ class _SignUpState extends State<SignUpScreen> {
                                 obscureText: !isPasswordVisible,
                                 suffixIcon: IconButton(
                                   icon: Icon(
-                                    isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                    isPasswordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
                                     color: Colors.white,
                                   ),
-                                  onPressed: () => setState(() => isPasswordVisible = !isPasswordVisible),
+                                  onPressed: () => setState(
+                                    () =>
+                                        isPasswordVisible = !isPasswordVisible,
+                                  ),
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -210,7 +219,13 @@ class _SignUpState extends State<SignUpScreen> {
                               const SizedBox(height: 15),
                               Align(
                                 alignment: Alignment.centerLeft,
-                                child: Text("Gender:", style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white)),
+                                child: Text(
+                                  "Gender:",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                               Container(
                                 decoration: BoxDecoration(
@@ -222,19 +237,27 @@ class _SignUpState extends State<SignUpScreen> {
                                   children: [
                                     Expanded(
                                       child: RadioListTile(
-                                        title: const Text('Male', style: TextStyle(color: Colors.white)),
+                                        title: const Text(
+                                          'Male',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
                                         value: 'Male',
                                         groupValue: gender,
-                                        onChanged: (val) => setState(() => gender = val!),
+                                        onChanged: (val) =>
+                                            setState(() => gender = val!),
                                         activeColor: Colors.white,
                                       ),
                                     ),
                                     Expanded(
                                       child: RadioListTile(
-                                        title: const Text('Female', style: TextStyle(color: Colors.white)),
+                                        title: const Text(
+                                          'Female',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
                                         value: 'Female',
                                         groupValue: gender,
-                                        onChanged: (val) => setState(() => gender = val!),
+                                        onChanged: (val) =>
+                                            setState(() => gender = val!),
                                         activeColor: Colors.white,
                                       ),
                                     ),
@@ -250,22 +273,33 @@ class _SignUpState extends State<SignUpScreen> {
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppTheme.appBarBg,
-                                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 50,
+                                    vertical: 12,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
                                 ),
-                                child: const Text('Continue', style: TextStyle(fontSize: 18)),
+                                child: const Text(
+                                  'Continue',
+                                  style: TextStyle(fontSize: 18),
+                                ),
                               ),
                               const SizedBox(height: 10),
                               ElevatedButton.icon(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
                                   foregroundColor: Colors.black,
-                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 10,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
-                                    side: const BorderSide(color: Colors.black26),
+                                    side: const BorderSide(
+                                      color: Colors.black26,
+                                    ),
                                   ),
                                 ),
                                 icon: Image.asset(
@@ -340,14 +374,19 @@ class _SignUpState extends State<SignUpScreen> {
         labelStyle: const TextStyle(color: Colors.white70),
         filled: true,
         fillColor: Colors.white10,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 10,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide.none,
         ),
       ),
       style: const TextStyle(color: Colors.white),
-      validator: validator ?? (value) => value == null || value.isEmpty ? 'Enter $label' : null,
+      validator:
+          validator ??
+          (value) => value == null || value.isEmpty ? 'Enter $label' : null,
     );
   }
 }

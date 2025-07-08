@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../services/app_theme.dart';
+import 'edit_profile_page.dart'; // Make sure to import the edit page
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -83,6 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     }
   }
+
   Future<void> fetchStreak() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -127,20 +129,42 @@ class _ProfilePageState extends State<ProfilePage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             child: Column(
               children: [
-                Text(
-                  "Your Profile",
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    shadows: [
-                      Shadow(
-                        blurRadius: 12,
-                        color: Colors.black45,
-                        offset: Offset(0, 2),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Your Profile",
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 12,
+                              color: Colors.black45,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.edit, color: Colors.white),
+                      onPressed: () async {
+                        final updated = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EditProfilePage(
+                              currentName: name,
+                              currentEmail: email,
+                              currentPhotoUrl: photoUrl,
+                            ),
+                          ),
+                        );
+                        if (updated == true) fetchUserData();
+                      },
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 24),
                 _buildProfileHeader(),
@@ -157,33 +181,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                _buildStatCard(
-                  Icons.emoji_events,
-                  "Streak",
-                  "$streakCount days",
-                  Colors.amber,
-                ),
+                _buildStatCard(Icons.emoji_events, "Streak", "$streakCount days", Colors.amber),
                 const SizedBox(height: 16),
-                _buildStatCard(
-                  Icons.directions_walk,
-                  "Today's Steps",
-                  "$totalSteps",
-                  Colors.tealAccent,
-                ),
+                _buildStatCard(Icons.directions_walk, "Today's Steps", "$totalSteps", Colors.tealAccent),
                 const SizedBox(height: 16),
-                _buildStatCard(
-                  Icons.local_fire_department,
-                  "Calories Burned",
-                  "${calorieBurned.toStringAsFixed(1)} kcal",
-                  Colors.redAccent,
-                ),
+                _buildStatCard(Icons.local_fire_department, "Calories Burned", "${calorieBurned.toStringAsFixed(1)} kcal", Colors.redAccent),
                 const SizedBox(height: 16),
-                _buildStatCard(
-                  Icons.local_drink,
-                  "Water Intake",
-                  "$waterCups cups",
-                  Colors.cyanAccent,
-                ),
+                _buildStatCard(Icons.local_drink, "Water Intake", "$waterCups cups", Colors.cyanAccent),
               ],
             ),
           ),
@@ -233,12 +237,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildStatCard(
-    IconData icon,
-    String label,
-    String value,
-    Color iconColor,
-  ) {
+  Widget _buildStatCard(IconData icon, String label, String value, Color iconColor) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -268,19 +267,14 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                Text(label,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    )),
                 const SizedBox(height: 4),
-                Text(
-                  value,
-                  style: const TextStyle(color: Colors.white70, fontSize: 14),
-                ),
+                Text(value, style: const TextStyle(color: Colors.white70, fontSize: 14)),
               ],
             ),
           ),

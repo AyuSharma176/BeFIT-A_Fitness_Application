@@ -324,61 +324,56 @@ class _MainHomePageState extends State<MainHomePage> {
   Widget buildWorkoutStreak() {
     return Center(
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.84,
-        height: 120,
+        width: MediaQuery.of(context).size.width * 0.88,
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         decoration: BoxDecoration(
-          color: AppTheme.appBarBg.withOpacity(0.20),
+          color: AppTheme.appBarBg.withOpacity(0.25),
           borderRadius: BorderRadius.circular(28.0),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.appBarBg.withOpacity(0.20),
-              blurRadius: 4,
-              offset: Offset(2, 2),
+              color: Colors.black26,
+              blurRadius: 6,
+              offset: Offset(0, 3),
             ),
           ],
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Workout Streak',
+              '🔥 Workout Streak',
               style: GoogleFonts.notoSans(
                 color: AppTheme.textColor,
-                fontSize: 22,
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
                 shadows: [
                   Shadow(
                     offset: Offset(0, 0),
-                    blurRadius: 10,
+                    blurRadius: 8,
                     color: AppTheme.textShadowColor,
                   ),
                 ],
               ),
             ),
-            Container(
-              width: MediaQuery.of(context).size.width * 0.76,
-              height: 50,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.appBarBg,
-                    blurRadius: 4,
-                    offset: Offset(2, 2),
-                  ),
-                ],
-              ),
-              child: FrostedGlassBox(
-                width: double.infinity,
-                height: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: List.generate(7, (index) {
-                    return index < streakCount
-                        ? const Text('🔥')
-                        : const Text('◯' , style: TextStyle(color: Colors.white54),); // or empty or faded
-                  }),
-
-                ),
+            const SizedBox(height: 16),
+            FrostedGlassBox(
+              width: double.infinity,
+              height: 60,
+              color: Colors.white.withOpacity(0.1),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(7, (index) {
+                  return index < streakCount
+                      ? const Text(
+                    '🔥',
+                    style: TextStyle(fontSize: 26),
+                  )
+                      : const Text(
+                    '◯',
+                    style: TextStyle(fontSize: 26, color: Colors.white54),
+                  );
+                }),
               ),
             ),
           ],
@@ -386,6 +381,7 @@ class _MainHomePageState extends State<MainHomePage> {
       ),
     );
   }
+
 
   /// Builds the daily goals display, including data from SharedPreferences and Firestore.
   Widget buildDailyGoals() {

@@ -46,15 +46,15 @@ class _BMICalculatorState extends State<BMICalculator> {
       return;
     }
 
-    double res = squareweight / (squareheight * squareheight);
+    double res = (squareweight*10000) / (squareheight * squareheight);
 
     setState(() {
       result.text = res.toStringAsFixed(2);
 
       if (res < 18.5) {
         _displaytext = "UNDERWEIGHT";
-        _color = Colors.blueAccent;
         _image = Image.asset('assets/bmi_images/bmi1.png');
+        _color = Colors.blueAccent;
       } else if (res <= 24.9) {
         _displaytext = "NORMAL";
         _color = Colors.green;
@@ -68,7 +68,7 @@ class _BMICalculatorState extends State<BMICalculator> {
         _color = Colors.deepOrange;
         _image = Image.asset('assets/bmi_images/bmi4.png');
       } else {
-        _displaytext = "MORBIDITY OBESE";
+        _displaytext = "MORBIDlY OBESE";
         _color = Colors.red;
         _image = Image.asset('assets/bmi_images/bmi5.png');
       }
@@ -178,8 +178,9 @@ class _BMICalculatorState extends State<BMICalculator> {
                     color: Colors.white,
                   ),
                 ),
+                SizedBox(height: 20,),
                 _customInputField(_weightcontroller, 'Enter your weight (kgs)'),
-                _customInputField(_heightcontroller, 'Enter your height (meters)'),
+                _customInputField(_heightcontroller, 'Enter your height (centi-meters)'),
                 _customInputField(null, 'Enter your age'),
                 const SizedBox(height: 10),
                 _genderSelector(),
@@ -194,7 +195,7 @@ class _BMICalculatorState extends State<BMICalculator> {
                         context: context,
                         builder: (context) => AlertDialog(
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                          backgroundColor: _color,
+                          backgroundColor: AppTheme.primaryColor,
                           content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -215,7 +216,29 @@ class _BMICalculatorState extends State<BMICalculator> {
                                   TyperAnimatedText(
                                     speed: Duration(milliseconds: 100),
                                     _displaytext,
-                                    textStyle: const TextStyle(
+                                    textStyle: TextStyle(
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 20,
+                                          offset: const Offset(0,-5),
+                                          color: _color
+                                        ),
+                                        Shadow(
+                                            blurRadius: 20,
+                                            offset: const Offset(-5,0),
+                                            color: _color
+                                        ),
+                                        Shadow(
+                                            blurRadius: 20,
+                                            offset: const Offset(-5,-5),
+                                            color: _color
+                                        ),
+                                        Shadow(
+                                            blurRadius: 20,
+                                            offset: const Offset(-5,-5),
+                                            color: _color
+                                        )
+                                      ],
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
@@ -229,7 +252,9 @@ class _BMICalculatorState extends State<BMICalculator> {
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('Close', style: TextStyle(color: Colors.white)),
+                              child: const Text('Close', style: TextStyle(color: Colors.white,
+                                  decoration: TextDecoration.underline, fontSize: 14
+                              )),
                             )
                           ],
                         ),

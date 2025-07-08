@@ -191,7 +191,7 @@
 //       ),
 //     );
 //   }
-// }
+// }-
 import 'package:befit/pages/SplashScreen.dart';
 import 'package:befit/pages/chat_page.dart';
 import 'package:befit/services/app_theme.dart';
@@ -220,7 +220,7 @@ class BeFitApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String userHex = "#050505";
+    String userHex = "#236758";
     Color userColor = Color(int.parse(userHex.replaceFirst('#', '0xff')));
     AppTheme.setCustomColor(userColor);
     return GetMaterialApp(

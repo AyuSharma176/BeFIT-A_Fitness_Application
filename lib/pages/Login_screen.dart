@@ -300,7 +300,7 @@ class _SignInState extends State<SignInScreen> {
         hintText: 'Enter $label',
         hintStyle: const TextStyle(color: Colors.white54),
         filled: true,
-        fillColor: Colors.white10,
+        fillColor: Colors.white30,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),

@@ -137,7 +137,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         style: TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppTheme.titleTextColor,
                           shadows: [
                             Shadow(
                               blurRadius: 12,
@@ -149,7 +149,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.edit, color: Colors.white),
+                      icon: Icon(Icons.edit, color: AppTheme.titleTextColor),
                       onPressed: () async {
                         final updated = await Navigator.push(
                           context,
@@ -176,7 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white.withOpacity(0.95),
+                      color: AppTheme.titleTextColor,
                     ),
                   ),
                 ),
@@ -215,17 +215,17 @@ class _ProfilePageState extends State<ProfilePage> {
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.white24, width: 2),
+            border: Border.all(color: AppTheme.titleTextColor, width: 2),
           ),
           child: CircleAvatar(radius: 50, backgroundImage: imageProvider),
         ),
         const SizedBox(height: 12),
         Text(
           name,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: AppTheme.titleTextColor,
           ),
         ),
         const SizedBox(height: 4),

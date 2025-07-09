@@ -211,12 +211,12 @@ class _ProgresspageState extends State<Progresspage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                       Text(
                         'Weekly Summary',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppTheme.titleTextColor,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -264,9 +264,9 @@ class _ProgresspageState extends State<Progresspage> {
                                 const SizedBox(height: 8),
                                 Text(
                                   day,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
-                                    color: Colors.white,
+                                    color: AppTheme.titleTextColor,
                                   ),
                                 ),
                               ],
@@ -318,39 +318,39 @@ class _ProgresspageState extends State<Progresspage> {
       children: [
         Text(
           time,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 48,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: AppTheme.titleTextColor,
           ),
         ),
         const SizedBox(height: 16),
         Text(
           "Calories Burned: ${_caloriesBurned.toStringAsFixed(2)} kcal",
-          style: const TextStyle(fontSize: 20, color: Colors.white70),
+          style:  TextStyle(fontSize: 20, color: AppTheme.titleTextColor),
         ),
         const SizedBox(height: 8),
         Text(
           "Steps: $steps",
-          style: const TextStyle(fontSize: 20, color: Colors.white70),
+          style:  TextStyle(fontSize: 20, color: AppTheme.titleTextColor),
         ),
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton.icon(
-              icon: const Icon(Icons.play_arrow),
-              label: const Text('Start'),
+              icon: Icon(Icons.play_arrow, color: AppTheme.titleTextColor),
+              label: Text('Start', style: TextStyle(color: AppTheme.titleTextColor)),
               onPressed: _startTimer,
             ),
             ElevatedButton.icon(
-              icon: const Icon(Icons.pause),
-              label: const Text('Pause'),
+              icon: Icon(Icons.pause, color: AppTheme.titleTextColor),
+              label: Text('Pause', style: TextStyle(color: AppTheme.titleTextColor)),
               onPressed: _pauseTimer,
             ),
             ElevatedButton.icon(
-              icon: const Icon(Icons.save),
-              label: const Text('Save'),
+              icon: Icon(Icons.save, color: AppTheme.titleTextColor),
+              label: Text('Save', style: TextStyle(color: AppTheme.titleTextColor),),
               onPressed: () async {await updateStreakOnWorkout();
                 await _saveProgressAndReset();}
             ),
@@ -450,7 +450,7 @@ class _ProgresspageState extends State<Progresspage> {
               );
               _fetchLatestWeight();
             },
-            child: const Text('View/Add Weight Details'),
+            child: Text('View/Add Weight Details', style: TextStyle(color: AppTheme.titleTextColor),),
           ),
         ],
       ),

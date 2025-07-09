@@ -209,9 +209,9 @@ class _MainHomePageState extends State<MainHomePage> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
-                      return const Text(
+                      return Text(
                         "❌ Couldn't load quote",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: AppTheme.titleTextColor),
                       );
                     } else {
                       return Container(
@@ -234,15 +234,15 @@ class _MainHomePageState extends State<MainHomePage> {
                             Expanded(
                               child: Text(
                                 '"${snapshot.data!}"',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 16,
                                   fontStyle: FontStyle.italic,
-                                  color: Colors.white,
+                                  color: AppTheme.titleTextColor,
                                 ),
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.refresh, color: Colors.white70),
+                              icon: Icon(Icons.refresh, color: AppTheme.titleTextColor),
                               onPressed: _refreshQuote,
                               tooltip: "Refresh Quote",
                             ),
@@ -270,7 +270,8 @@ class _MainHomePageState extends State<MainHomePage> {
                 ),
                 Text(
                   name,
-                  style: GoogleFonts.oswald(
+                  style: GoogleFonts.berkshireSwash
+                    (
                     color: AppTheme.textColor,
                     fontSize: 40,
                     shadows: [
@@ -303,12 +304,14 @@ class _MainHomePageState extends State<MainHomePage> {
                     child: ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor: WidgetStatePropertyAll(AppTheme.appBarBg),
+                        elevation: WidgetStateProperty.all(6)
                       ),
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => Progresspage()),
                       ),
-                      child: const Text('Start Workout'),
+                      child: Text('Start Workout',
+                          style: TextStyle(color: AppTheme.titleTextColor, fontWeight: FontWeight.bold, letterSpacing: 1)),
                     ),
                   ),
                 ),
@@ -327,16 +330,17 @@ class _MainHomePageState extends State<MainHomePage> {
         width: MediaQuery.of(context).size.width * 0.88,
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         decoration: BoxDecoration(
-          color: AppTheme.appBarBg.withOpacity(0.25),
+          // color: AppTheme.appBarBg.withOpacity(0.25),
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(28.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 6,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Colors.black26,
+          //     blurRadius: 6,
+          //     offset: Offset(0, 3),
+          //   ),
+        //   ],
+         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -359,19 +363,19 @@ class _MainHomePageState extends State<MainHomePage> {
             FrostedGlassBox(
               width: double.infinity,
               height: 60,
-              color: Colors.white.withOpacity(0.1),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              color: AppTheme.titleTextColor.withOpacity(0.15),
+              padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(7, (index) {
                   return index < streakCount
                       ? const Text(
                     '🔥',
-                    style: TextStyle(fontSize: 26),
+                    style: TextStyle(fontSize: 28),
                   )
-                      : const Text(
+                      : Text(
                     '◯',
-                    style: TextStyle(fontSize: 26, color: Colors.white54),
+                    style: TextStyle(fontSize: 28, color: AppTheme.titleTextColor),
                   );
                 }),
               ),
@@ -388,16 +392,17 @@ class _MainHomePageState extends State<MainHomePage> {
     return Align(
       alignment: Alignment.center,
       child: Container(
+        padding: EdgeInsets.all(12),
         width: MediaQuery.of(context).size.width * 0.84,
         height: 350,
         decoration: BoxDecoration(
-          color: AppTheme.appBarBg.withOpacity(0.35),
+          color: AppTheme.textShadowColor.withOpacity(0.2),
           borderRadius: BorderRadius.circular(28.0),
           boxShadow: [
             BoxShadow(
               color: AppTheme.appBarBg.withOpacity(0.35),
               blurRadius: 4,
-              offset: Offset(2, 2),
+              offset: Offset(0, 3),
             ),
           ],
         ),
@@ -408,7 +413,8 @@ class _MainHomePageState extends State<MainHomePage> {
               'Daily Goals',
               style: GoogleFonts.notoSans(
                 color: AppTheme.textColor,
-                fontSize: 22,
+                fontSize: 24,
+                letterSpacing: 1,
                 shadows: [
                   Shadow(
                     offset: Offset(0, 0),
@@ -422,18 +428,18 @@ class _MainHomePageState extends State<MainHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Display Protein from SharedPreferences
-                dailyGoalsTile('Protein', displayValue(proteinResult, fallback:'+/-')),
+                dailyGoalsTile('Protein', displayValue(proteinResult, fallback:'+/-'), Colors.teal.shade400),
                 // Display Calories from SharedPreferences
-                dailyGoalsTile('Calories', displayValue(calorieResult, fallback:'+/-')),
+                dailyGoalsTile('Calories', displayValue(calorieResult, fallback:'+/-'), Colors.red.shade400),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Display Water from Firestore (waterCups)
-                dailyGoalsTile('Water', '${displayValue(waterIntake)} cups'),
+                dailyGoalsTile('Water', '${displayValue(waterIntake)} cups', Colors.blueAccent),
                 // Display Steps from Firestore (stepCount)
-                dailyGoalsTile('Steps', displayValue(stepsCount)),
+                dailyGoalsTile('Steps', displayValue(stepsCount), Colors.orange),
               ],
             ),
           ],
@@ -443,18 +449,18 @@ class _MainHomePageState extends State<MainHomePage> {
   }
 
   /// A reusable tile widget for displaying daily goals.
-  Widget dailyGoalsTile(String title, String value) {
-    double height = 130;
+  Widget dailyGoalsTile(String title, String value, Color color) {
+    double height = 120;
     double radius = height / 2;
     return Container(
-      width: MediaQuery.of(context).size.width * 0.34,
+      width: MediaQuery.of(context).size.width * 0.32,
       height: height,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(radius),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.appBarBg.withOpacity(0.80),
-            blurRadius: 4,
+            color: color.withOpacity(0.6),
+            blurRadius: 20,
             offset: Offset(2, 2),
           ),
         ],
@@ -462,11 +468,12 @@ class _MainHomePageState extends State<MainHomePage> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(radius),
         child: BackdropFilter(
+          blendMode: BlendMode.luminosity,
           filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(radius),
+              color: Colors.grey.shade300.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(radius+2),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -475,7 +482,8 @@ class _MainHomePageState extends State<MainHomePage> {
                   title,
                   style: GoogleFonts.notoSans(
                     color: AppTheme.textColor,
-                    fontSize: 20,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold
                   ),
                 ),
                 const SizedBox(height: 5),
@@ -483,7 +491,8 @@ class _MainHomePageState extends State<MainHomePage> {
                   value,
                   style: GoogleFonts.notoSans(
                     color: AppTheme.textColor,
-                    fontSize: 28,
+                    fontSize: 24,
+                      fontWeight: FontWeight.bold
                   ),
                 ),
               ],

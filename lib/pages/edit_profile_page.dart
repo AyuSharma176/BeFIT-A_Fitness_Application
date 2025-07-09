@@ -1,3 +1,4 @@
+import 'package:befit/services/app_theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -65,29 +66,46 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Edit Profile"),
-        backgroundColor: Colors.black,
+        title: Text("Edit Profile", style: TextStyle(color: AppTheme.titleTextColor),),
+        backgroundColor: AppTheme.appBarBg,
       ),
-      backgroundColor: Colors.black87,
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _buildTextField("Name", _nameController),
-            const SizedBox(height: 16),
-            _buildTextField("Email", _emailController),
-            const SizedBox(height: 16),
-            _buildTextField("Photo URL", _photoUrlController),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: isSaving ? null : saveChanges,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-              child: isSaving
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text("Save Changes"),
-            ),
-          ],
+      backgroundColor: AppTheme.backgroundColor,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppTheme.appBarBg,
+              AppTheme.backgroundColor,
+              AppTheme.appBarBg,
+            ],
+            stops: [0, 0.6, 1],
+          ),
         ),
+        child:
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                _buildTextField("Name", _nameController),
+                const SizedBox(height: 16),
+                _buildTextField("Email", _emailController),
+                const SizedBox(height: 16),
+                _buildTextField("Photo URL", _photoUrlController),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: isSaving ? null : saveChanges,
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                  child: isSaving
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text("Save Changes"),
+                ),
+              ],
+            ),
+          ),
       ),
     );
   }
@@ -95,12 +113,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget _buildTextField(String label, TextEditingController controller) {
     return TextField(
       controller: controller,
-      style: const TextStyle(color: Colors.white),
+      style: TextStyle(color: AppTheme.titleTextColor),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.white70),
+        labelStyle: TextStyle(color: AppTheme.titleTextColor),
         filled: true,
-        fillColor: Colors.white12,
+        fillColor: Colors.white24,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );

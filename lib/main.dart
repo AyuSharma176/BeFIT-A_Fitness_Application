@@ -9,7 +9,7 @@
 // import 'package:befit/pages/home_page.dart';
 // import 'package:befit/pages/intake_page.dart';
 // import 'package:befit/pages/SignUp_screen.dart';
-
+import 'package:flutter/services.dart';
 //
 // void main() => runApp(BeFitApp());
 //
@@ -69,7 +69,7 @@
 //               fontSize: 30,
 //               fontWeight: FontWeight.w800,
 //               letterSpacing: 2,
-//               color: Colors.white,
+//               color: AppTheme.titleTextColor,
 //               fontFamily: 'Segoe UI',
 //             ),
 //           ),
@@ -91,7 +91,7 @@
 //         ),
 //         drawer: Drawer(
 //           child: Container(
-//             color: Colors.white,
+//             color: AppTheme.titleTextColor,
 //             child: ListView(
 //               padding: EdgeInsets.zero,
 //               children: [
@@ -109,7 +109,7 @@
 //                     child: Text(
 //                       'Welcome, Champ! 💪',
 //                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-//                         color: Colors.white,
+//                         color: AppTheme.titleTextColor,
 //                         fontWeight: FontWeight.bold,
 //                       ),
 //                     ),
@@ -212,6 +212,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   runApp(BeFitApp());
 }
 
@@ -220,7 +221,7 @@ class BeFitApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String userHex = "#236758";
+    String userHex = "#743452";
     Color userColor = Color(int.parse(userHex.replaceFirst('#', '0xff')));
     AppTheme.setCustomColor(userColor);
     return GetMaterialApp(
@@ -256,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
         behavior: HitTestBehavior.opaque,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Icon(isSelected ? activeIcon : icon, color: Colors.white)],
+          children: [Icon(isSelected ? activeIcon : icon, color: AppTheme.titleTextColor)],
         ),
       ),
     );
@@ -279,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
               isSelected ? activeIcon : icon,
               width: 24,
               height: 24,
-              color: Colors.white,
+              color: AppTheme.titleTextColor,
             ),
           ],
         ),
@@ -313,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
             fontSize: 30,
             fontWeight: FontWeight.w800,
             letterSpacing: 2,
-            color: Colors.white,
+            color: AppTheme.titleTextColor,
             fontFamily: 'Segoe UI',
           ),
         ),
@@ -365,17 +366,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Text(
                     'Welcome, Champ! 💪',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Colors.white,
+                      color: AppTheme.titleTextColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.monitor_heart, color: Colors.white),
+                leading: Icon(Icons.monitor_heart, color: AppTheme.titleTextColor),
                 title: Text(
                   'track Workout',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: AppTheme.titleTextColor),
                 ),
                 onTap: () => Navigator.push(
                   context,
@@ -383,10 +384,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.chat, color: Colors.white),
+                leading: Icon(Icons.chat, color: AppTheme.titleTextColor),
                 title: Text(
                   'ASK Be𝓯𝓲𝓽',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: AppTheme.titleTextColor),
                 ),
                 onTap: () => Navigator.push(
                   context,
@@ -394,8 +395,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.info_outline, color: Colors.white),
-                title: Text('About Us', style: TextStyle(color: Colors.white)),
+                leading: Icon(Icons.info_outline, color: AppTheme.titleTextColor),
+                title: Text('About Us', style: TextStyle(color: AppTheme.titleTextColor)),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Aboutpage()),
@@ -403,7 +404,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               ListTile(
                 leading: Icon(Icons.logout, color: Colors.redAccent),
-                title: Text('Logout', style: TextStyle(color: Colors.white)),
+                title: Text('Logout', style: TextStyle(color: AppTheme.titleTextColor)),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => SignInScreen()),
@@ -479,7 +480,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppTheme.titleTextColor,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),

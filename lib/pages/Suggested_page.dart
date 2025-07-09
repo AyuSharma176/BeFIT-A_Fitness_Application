@@ -377,7 +377,7 @@ class SuggestedPage extends StatelessWidget {
                   Text(
                     'Suggested Workouts',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: Colors.white,
+                      color: AppTheme.titleTextColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -385,7 +385,7 @@ class SuggestedPage extends StatelessWidget {
                   Text(
                     'Let\'s make you strong 💥',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white70,
+                      color: AppTheme.titleTextColor,
                       fontSize: 16,
                     ),
                   ),
@@ -436,7 +436,7 @@ class SuggestedPage extends StatelessWidget {
                         child: Text(
                           day,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppTheme.titleTextColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),

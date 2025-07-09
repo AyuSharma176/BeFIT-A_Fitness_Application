@@ -303,7 +303,7 @@ class _IntakeCalculatorScreenState extends State<IntakeCalculatorScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("OK"),
+            child: Text("OK", style: TextStyle(color: AppTheme.titleTextColor),),
           ),
         ],
       ),
@@ -456,7 +456,7 @@ class _IntakeCalculatorScreenState extends State<IntakeCalculatorScreen> {
               field: DropdownButtonFormField<String>(
                 value: activityLevel.isEmpty ? null : activityLevel,
                 style: TextStyle(color: AppTheme.textColor),
-                dropdownColor: Colors.grey.shade900,
+                dropdownColor: AppTheme.appBarBg,
                 decoration: buildDarkInputDecoration("Select Activity Level"),
                 items: ['Low', 'Moderate', 'High']
                     .map((v) => DropdownMenuItem(value: v, child: Text(v)))
@@ -469,7 +469,7 @@ class _IntakeCalculatorScreenState extends State<IntakeCalculatorScreen> {
               field: DropdownButtonFormField<String>(
                 value: goal.isEmpty ? null : goal,
                 style: TextStyle(color: AppTheme.textColor),
-                dropdownColor: Colors.grey.shade900,
+                dropdownColor: AppTheme.appBarBg,
                 decoration: buildDarkInputDecoration("Select your goal"),
                 items: ['Lose Weight', 'Maintain Weight', 'Gain Muscle']
                     .map((v) => DropdownMenuItem(value: v, child: Text(v)))
@@ -481,7 +481,7 @@ class _IntakeCalculatorScreenState extends State<IntakeCalculatorScreen> {
             ElevatedButton.icon(
               onPressed: calculateResult,
               icon: Icon(Icons.calculate),
-              label: Text("Calculate"),
+              label: Text("Calculate", style: TextStyle(color: AppTheme.titleTextColor)),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 14),
                 backgroundColor: AppTheme.appBarBg,
@@ -618,7 +618,7 @@ class _MealCalculatorScreenState extends State<MealCalculatorScreen> {
             ElevatedButton.icon(
               onPressed: calculateCalories,
               icon: Icon(Icons.calculate),
-              label: Text('Estimate Calories'),
+              label: Text('Estimate Calories', style: TextStyle(color: AppTheme.titleTextColor)),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 14),
                 backgroundColor: AppTheme.appBarBg,

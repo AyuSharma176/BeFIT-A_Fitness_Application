@@ -163,7 +163,7 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
             value: _darkMode,
             onChanged: (val) {
               setState(() {
-                _darkMode = val;
+                _darkMode = val!;
               });
             },
             secondary: Icon(Icons.dark_mode, color: AppTheme.titleTextColor),

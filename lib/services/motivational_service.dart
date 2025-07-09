@@ -21,7 +21,7 @@ class MotivationService {
       final content = [
         Content.text(
 
-          "Give me a fresh, powerful, one-sentence motivational quote related to fitness an d dont repeat any word",
+          "Give me a fresh, powerful, one-sentence motivational quote related to fitness and  dont repeat any word and do not use embrace",
         )
       ];
 

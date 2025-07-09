@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../services/app_theme.dart';
+import 'edit_profile_page.dart'; // Make sure to import the edit page
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -23,6 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     fetchUserData();
     fetchTodayStats();
+    fetchStreak();
   }
 
   Future<void> fetchUserData() async {
@@ -83,6 +85,29 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> fetchStreak() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final streakDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('activity_logs')
+            .doc('streak')
+            .get();
+
+        if (streakDoc.exists) {
+          final data = streakDoc.data();
+          setState(() {
+            streakCount = data?['streakCount'] ?? 0;
+          });
+        }
+      } catch (e) {
+        print("Error fetching streak: $e");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,7 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
               AppTheme.backgroundColor,
               AppTheme.appBarBg,
             ],
-            stops: [0.0, 1, 1.0],
+            stops: [0, 0.6, 1],
           ),
         ),
         child: SafeArea(
@@ -104,20 +129,42 @@ class _ProfilePageState extends State<ProfilePage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             child: Column(
               children: [
-                Text(
-                  "Your Profile",
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    shadows: [
-                      Shadow(
-                        blurRadius: 12,
-                        color: Colors.black45,
-                        offset: Offset(0, 2),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Your Profile",
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.titleTextColor,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 12,
+                              color: Colors.black45,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.edit, color: AppTheme.titleTextColor),
+                      onPressed: () async {
+                        final updated = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EditProfilePage(
+                              currentName: name,
+                              currentEmail: email,
+                              currentPhotoUrl: photoUrl,
+                            ),
+                          ),
+                        );
+                        if (updated == true) fetchUserData();
+                      },
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 24),
                 _buildProfileHeader(),
@@ -129,7 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white.withOpacity(0.95),
+                      color: AppTheme.titleTextColor,
                     ),
                   ),
                 ),
@@ -138,8 +185,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 16),
                 _buildStatCard(Icons.directions_walk, "Today's Steps", "$totalSteps", Colors.tealAccent),
                 const SizedBox(height: 16),
-                _buildStatCard(Icons.local_fire_department, "Calories Burned",
-                    "${calorieBurned.toStringAsFixed(1)} kcal", Colors.redAccent),
+                _buildStatCard(Icons.local_fire_department, "Calories Burned", "${calorieBurned.toStringAsFixed(1)} kcal", Colors.redAccent),
                 const SizedBox(height: 16),
                 _buildStatCard(Icons.local_drink, "Water Intake", "$waterCups cups", Colors.cyanAccent),
               ],
@@ -169,29 +215,23 @@ class _ProfilePageState extends State<ProfilePage> {
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.white24, width: 2),
+            border: Border.all(color: AppTheme.titleTextColor, width: 2),
           ),
-          child: CircleAvatar(
-            radius: 50,
-            backgroundImage: imageProvider,
-          ),
+          child: CircleAvatar(radius: 50, backgroundImage: imageProvider),
         ),
         const SizedBox(height: 12),
         Text(
           name,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: AppTheme.titleTextColor,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           email,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey.shade400,
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey.shade400),
         ),
       ],
     );
@@ -227,22 +267,14 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                Text(label,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    )),
                 const SizedBox(height: 4),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
-                ),
+                Text(value, style: const TextStyle(color: Colors.white70, fontSize: 14)),
               ],
             ),
           ),

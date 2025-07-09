@@ -10,10 +10,8 @@ class AuthenticationService {
     required String fullName,
   }) async {
     try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
 
       // Update the display name
       await userCredential.user!.updateDisplayName(fullName);

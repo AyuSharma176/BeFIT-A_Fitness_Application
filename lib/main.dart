@@ -9,7 +9,7 @@
 // import 'package:befit/pages/home_page.dart';
 // import 'package:befit/pages/intake_page.dart';
 // import 'package:befit/pages/SignUp_screen.dart';
-
+import 'package:flutter/services.dart';
 //
 // void main() => runApp(BeFitApp());
 //
@@ -69,7 +69,7 @@
 //               fontSize: 30,
 //               fontWeight: FontWeight.w800,
 //               letterSpacing: 2,
-//               color: Colors.white,
+//               color: AppTheme.titleTextColor,
 //               fontFamily: 'Segoe UI',
 //             ),
 //           ),
@@ -91,7 +91,7 @@
 //         ),
 //         drawer: Drawer(
 //           child: Container(
-//             color: Colors.white,
+//             color: AppTheme.titleTextColor,
 //             child: ListView(
 //               padding: EdgeInsets.zero,
 //               children: [
@@ -109,7 +109,7 @@
 //                     child: Text(
 //                       'Welcome, Champ! 💪',
 //                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-//                         color: Colors.white,
+//                         color: AppTheme.titleTextColor,
 //                         fontWeight: FontWeight.bold,
 //                       ),
 //                     ),
@@ -191,7 +191,7 @@
 //       ),
 //     );
 //   }
-// }
+// }-
 import 'package:befit/pages/SplashScreen.dart';
 import 'package:befit/pages/chat_page.dart';
 import 'package:befit/services/app_theme.dart';
@@ -208,11 +208,11 @@ import 'package:befit/pages/profile_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   runApp(BeFitApp());
 }
 
@@ -221,6 +221,9 @@ class BeFitApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String userHex = "#743452";
+    Color userColor = Color(int.parse(userHex.replaceFirst('#', '0xff')));
+    AppTheme.setCustomColor(userColor);
     return GetMaterialApp(
       title: 'Be 𝓯𝓲𝓽',
       debugShowCheckedModeBanner: false,
@@ -241,8 +244,12 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 2;
   bool _showSettings = false;
 
-  Widget _buildNavItem(IconData icon, IconData activeIcon, String label,
-      int index) {
+  Widget _buildNavItem(
+    IconData icon,
+    IconData activeIcon,
+    String label,
+    int index,
+  ) {
     final bool isSelected = index == _selectedIndex;
     return Expanded(
       child: GestureDetector(
@@ -250,19 +257,18 @@ class _HomeScreenState extends State<HomeScreen> {
         behavior: HitTestBehavior.opaque,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              isSelected ? activeIcon : icon,
-              color: Colors.white,
-            ),
-          ],
+          children: [Icon(isSelected ? activeIcon : icon, color: AppTheme.titleTextColor)],
         ),
       ),
     );
   }
 
-  Widget _buildSvgNavItem(String icon, String activeIcon, String label,
-      int index) {
+  Widget _buildSvgNavItem(
+    String icon,
+    String activeIcon,
+    String label,
+    int index,
+  ) {
     final bool isSelected = index == _selectedIndex;
     return Expanded(
       child: GestureDetector(
@@ -274,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
               isSelected ? activeIcon : icon,
               width: 24,
               height: 24,
-              color: Colors.white,
+              color: AppTheme.titleTextColor,
             ),
           ],
         ),
@@ -308,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
             fontSize: 30,
             fontWeight: FontWeight.w800,
             letterSpacing: 2,
-            color: Colors.white,
+            color: AppTheme.titleTextColor,
             fontFamily: 'Segoe UI',
           ),
         ),
@@ -334,7 +340,11 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppTheme.appBarBg, AppTheme.backgroundColor, AppTheme.appBarBg],
+              colors: [
+                AppTheme.appBarBg,
+                AppTheme.backgroundColor,
+                AppTheme.appBarBg,
+              ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -356,31 +366,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Text(
                     'Welcome, Champ! 💪',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Colors.white,
+                      color: AppTheme.titleTextColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.monitor_heart, color: Colors.white),
-                title: Text('Cardio. Section', style: TextStyle(color: Colors.white)),
+                leading: Icon(Icons.monitor_heart, color: AppTheme.titleTextColor),
+                title: Text(
+                  'track Workout',
+                  style: TextStyle(color: AppTheme.titleTextColor),
+                ),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Progresspage()),
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.chat, color: Colors.white),
-                title: Text('ASK Be𝓯𝓲𝓽', style: TextStyle(color: Colors.white)),
+                leading: Icon(Icons.chat, color: AppTheme.titleTextColor),
+                title: Text(
+                  'ASK Be𝓯𝓲𝓽',
+                  style: TextStyle(color: AppTheme.titleTextColor),
+                ),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ChatPage()),
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.info_outline, color: Colors.white),
-                title: Text('About Us', style: TextStyle(color: Colors.white)),
+                leading: Icon(Icons.info_outline, color: AppTheme.titleTextColor),
+                title: Text('About Us', style: TextStyle(color: AppTheme.titleTextColor)),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Aboutpage()),
@@ -388,7 +404,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               ListTile(
                 leading: Icon(Icons.logout, color: Colors.redAccent),
-                title: Text('Logout', style: TextStyle(color: Colors.white)),
+                title: Text('Logout', style: TextStyle(color: AppTheme.titleTextColor)),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => SignInScreen()),
@@ -414,24 +430,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 },
               ),
-              // child: Material(
-              //   elevation: 8,
-              //   borderRadius: BorderRadius.circular(8),
-              //   child: SettingsDropdown(
-              //     onClose: () {
-              //       setState(() {
-              //         _showSettings = false;
-              //       });
-              //     },
-              //   ),
-              // ),
             ),
         ],
       ),
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-        ),
+        decoration: BoxDecoration(color: Colors.transparent),
         padding: const EdgeInsets.symmetric(vertical: 8),
         height: 70,
         child: LayoutBuilder(
@@ -442,10 +445,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   children: [
                     _buildNavItem(
-                        Icons.calculate_outlined, Icons.calculate, 'Calculator',
-                        0),
+                      Icons.calculate_outlined,
+                      Icons.calculate,
+                      'Calculator',
+                      0,
+                    ),
                     _buildNavItem(
-                        Icons.egg_alt_outlined, Icons.egg_alt, 'Diet', 1),
+                      Icons.egg_alt_outlined,
+                      Icons.egg_alt,
+                      'Diet',
+                      1,
+                    ),
                     _buildNavItem(Icons.home_outlined, Icons.home, 'Home', 2),
                     _buildSvgNavItem(
                       'assets/navbar_icons/dumbell_outlined.svg',
@@ -454,7 +464,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       3,
                     ),
                     _buildNavItem(
-                        Icons.person_outline, Icons.person, 'Profile', 4),
+                      Icons.person_outline,
+                      Icons.person,
+                      'Profile',
+                      4,
+                    ),
                   ],
                 ),
                 AnimatedPositioned(
@@ -466,7 +480,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppTheme.titleTextColor,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),

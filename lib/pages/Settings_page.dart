@@ -5,7 +5,7 @@
 // import 'SignUp_screen.dart';
 //
 // class SettingsPage extends StatefulWidget {
-//   const SettingsPage({super.key});
+//   SettingsPage({super.key});
 //
 //   @override
 //   State<SettingsPage> createState() => _SettingsPageState();
@@ -105,14 +105,15 @@
 // }
 //above code saved as backup
 
+import 'package:befit/pages/forgot.dart';
+import 'package:befit/services/app_theme.dart';
 import 'package:befit/services/frostedGlassEffect.dart';
 import 'package:flutter/material.dart';
-import 'package:befit/services/app_theme.dart';
 import 'About_page.dart';
 import 'SignUp_screen.dart';
 
 class SettingsDropdown extends StatefulWidget {
-  const SettingsDropdown({super.key, required this.onClose});
+  SettingsDropdown({super.key, required this.onClose});
 
   final VoidCallback onClose;
 
@@ -130,7 +131,7 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
       height: 400,
       width: 400,
       // color: Colors.white.withOpacity(0.95),
-      // padding: const EdgeInsets.all(16),
+      // padding: EdgeInset s.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -138,54 +139,58 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: Text(
-                  'Settings',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Segoe UI',
-                  ),
+              SizedBox(height: 1, width: 50,),
+              Text(
+                'Settings',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Segoe UI',
+                  color: AppTheme.titleTextColor
                 ),
+                // textAlign: TextAlign.center,
               ),
               IconButton(
-                icon: const Icon(Icons.close),
+                icon: Icon(Icons.close),
                 onPressed: widget.onClose,
+                color: AppTheme.titleTextColor,
               ),
             ],
           ),
-          const Divider(),
+          Divider(),
           SwitchListTile(
-            title: const Text('Dark Mode'),
+            title: Text('Dark Mode', style: TextStyle(color: AppTheme.titleTextColor),),
             value: _darkMode,
             onChanged: (val) {
               setState(() {
-                _darkMode = val;
+                _darkMode = val!;
               });
             },
-            secondary: const Icon(Icons.dark_mode),
+            secondary: Icon(Icons.dark_mode, color: AppTheme.titleTextColor),
           ),
           SwitchListTile(
-            title: const Text('Notifications'),
+            title: Text('Notifications', style: TextStyle(color: AppTheme.titleTextColor),),
             value: _notifications,
             onChanged: (val) {
               setState(() {
                 _notifications = val;
               });
             },
-            secondary: const Icon(Icons.notifications),
+            secondary: Icon(Icons.notifications, color: AppTheme.titleTextColor),
           ),
           ListTile(
-            leading: const Icon(Icons.lock_outline),
-            title: const Text('Change Password'),
+            leading: Icon(Icons.lock_outline, color: AppTheme.titleTextColor),
+            title: Text('Change Password', style: TextStyle(color: AppTheme.titleTextColor),),
             onTap: () {
-              // Add your logic here
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Forgot()),
+              );
             },
           ),
           ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const Text('App Info'),
+            leading: Icon(Icons.info_outline, color: AppTheme.titleTextColor),
+            title: Text('App Info', style: TextStyle(color: AppTheme.titleTextColor),),
             onTap: () {
               Navigator.push(
                 context,
@@ -194,8 +199,8 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.logout, color: AppTheme.logoutColor),
-            title: const Text('Logout'),
+            leading: Icon(Icons.logout, color: AppTheme.titleTextColor),
+            title: Text('Logout', style: TextStyle(color: AppTheme.titleTextColor),),
             onTap: () {
               Navigator.push(
                 context,

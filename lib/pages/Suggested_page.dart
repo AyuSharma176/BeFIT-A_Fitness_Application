@@ -178,54 +178,179 @@ class SuggestedPage extends StatelessWidget {
   SuggestedPage({super.key});
 
   final List<String> days = [
-    'Monday', 'Tuesday', 'Wednesday',
-    'Thursday', 'Friday', 'Saturday', 'Sunday'
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
   ];
 
   final Map<String, List<Map<String, dynamic>>> workoutData = {
     'Monday': [
-      {'name': 'Bench Press', 'image': 'assets/SuggestedWorkout_images/bench.gif', 'reps': '× 15'},
-      {'name': 'Inclined Bench Press', 'image': 'assets/SuggestedWorkout_images/inclined.gif', 'reps': '× 15'},
-      {'name': 'Declined Bench Press', 'image': 'assets/SuggestedWorkout_images/declined.gif', 'reps': '× 15'},
-      {'name': 'Shoulder Press', 'image': 'assets/SuggestedWorkout_images/shoulder.gif', 'reps': '× 15'},
-      {'name': 'Side Raises', 'image': 'assets/SuggestedWorkout_images/sideraises.gif', 'reps': '× 15'},
-      {'name': 'Front Raises', 'image': 'assets/SuggestedWorkout_images/frontrases.gif', 'reps': '× 15'},
+      {
+        'name': 'Bench Press',
+        'image': 'assets/SuggestedWorkout_images/bench.gif',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Inclined Bench Press',
+        'image': 'assets/SuggestedWorkout_images/inclined.gif',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Declined Bench Press',
+        'image': 'assets/SuggestedWorkout_images/declined.gif',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Shoulder Press',
+        'image': 'assets/SuggestedWorkout_images/shoulder.gif',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Side Raises',
+        'image': 'assets/SuggestedWorkout_images/sideraises.gif',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Front Raises',
+        'image': 'assets/SuggestedWorkout_images/frontrases.gif',
+        'reps': '× 15',
+      },
     ],
     'Tuesday': [
-      {'name': 'Lat Pull Down', 'image': 'assets/SuggestedWorkout_images/img_2.png', 'reps': '× 15'},
-      {'name': 'Cable Push Down', 'image': 'assets/SuggestedWorkout_images/back.gif', 'reps': '× 15'},
-      {'name': 'Deadlifts', 'image': 'assets/SuggestedWorkout_images/deadlift.png', 'reps': '× 15'},
-      {'name': 'Rear Delt Fly', 'image': 'assets/SuggestedWorkout_images/img_3.png', 'reps': '× 15'},
+      {
+        'name': 'Lat Pull Down',
+        'image': 'assets/SuggestedWorkout_images/img_2.png',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Cable Push Down',
+        'image': 'assets/SuggestedWorkout_images/back.gif',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Deadlifts',
+        'image': 'assets/SuggestedWorkout_images/deadlift.png',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Rear Delt Fly',
+        'image': 'assets/SuggestedWorkout_images/img_3.png',
+        'reps': '× 15',
+      },
     ],
     'Wednesday': [
-      {'name': 'Bicep Curls', 'image': 'assets/SuggestedWorkout_images/bicepcurl.png', 'reps': '× 15'},
-      {'name': 'Hammer Curls', 'image': 'assets/SuggestedWorkout_images/hammercurl.png', 'reps': '× 15'},
-      {'name': 'Tricep Extensions', 'image': 'assets/SuggestedWorkout_images/tricepcurl.png', 'reps': '× 15'},
-      {'name': 'Skull Crushers', 'image': 'assets/SuggestedWorkout_images/skullcrusher.png', 'reps': '× 15'},
+      {
+        'name': 'Bicep Curls',
+        'image': 'assets/SuggestedWorkout_images/bicepcurl.png',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Hammer Curls',
+        'image': 'assets/SuggestedWorkout_images/hammercurl.png',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Tricep Extensions',
+        'image': 'assets/SuggestedWorkout_images/tricepcurl.png',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Skull Crushers',
+        'image': 'assets/SuggestedWorkout_images/skullcrusher.png',
+        'reps': '× 15',
+      },
     ],
     'Thursday': [
-      {'name': 'Squats', 'image': 'assets/SuggestedWorkout_images/squats.gif', 'reps': '× 15'},
-      {'name': 'Lunges', 'image': 'assets/SuggestedWorkout_images/lunges.png', 'reps': '× 15'},
-      {'name': 'Leg Press', 'image': 'assets/SuggestedWorkout_images/legpress.gif', 'reps': '× 15'},
-      {'name': 'Calf Raises', 'image': 'assets/SuggestedWorkout_images/calfraises.png', 'reps': '× 15'},
+      {
+        'name': 'Squats',
+        'image': 'assets/SuggestedWorkout_images/squats.gif',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Lunges',
+        'image': 'assets/SuggestedWorkout_images/lunges.png',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Leg Press',
+        'image': 'assets/SuggestedWorkout_images/legpress.gif',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Calf Raises',
+        'image': 'assets/SuggestedWorkout_images/calfraises.png',
+        'reps': '× 15',
+      },
     ],
     'Friday': [
-      {'name': 'Push-ups', 'image': 'assets/SuggestedWorkout_images/pushups.png', 'reps': '× 15'},
-      {'name': 'Pull-ups', 'image': 'assets/SuggestedWorkout_images/pullups.gif', 'reps': '× 15'},
-      {'name': 'Dips', 'image': 'assets/SuggestedWorkout_images/dips.png', 'reps': '× 15'},
-      {'name': 'Planks', 'image': 'assets/SuggestedWorkout_images/plank.png', 'reps': '× 15'},
+      {
+        'name': 'Push-ups',
+        'image': 'assets/SuggestedWorkout_images/pushups.png',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Pull-ups',
+        'image': 'assets/SuggestedWorkout_images/pullups.gif',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Dips',
+        'image': 'assets/SuggestedWorkout_images/dips.png',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Planks',
+        'image': 'assets/SuggestedWorkout_images/plank.png',
+        'reps': '× 15',
+      },
     ],
     'Saturday': [
-      {'name': 'Mountain Climbers', 'image': 'assets/SuggestedWorkout_images/mountainclimbers.png', 'reps': '× 15'},
-      {'name': 'Jumping Jacks', 'image': 'assets/SuggestedWorkout_images/jumpingjacks.png', 'reps': '× 15'},
-      {'name': 'Burpees', 'image': 'assets/SuggestedWorkout_images/burpees.png', 'reps': '× 15'},
-      {'name': 'High Knees', 'image': 'assets/SuggestedWorkout_images/highknees.png', 'reps': '× 15'},
+      {
+        'name': 'Mountain Climbers',
+        'image': 'assets/SuggestedWorkout_images/mountainclimbers.png',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Jumping Jacks',
+        'image': 'assets/SuggestedWorkout_images/jumpingjacks.png',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Burpees',
+        'image': 'assets/SuggestedWorkout_images/burpees.png',
+        'reps': '× 15',
+      },
+      {
+        'name': 'High Knees',
+        'image': 'assets/SuggestedWorkout_images/highknees.png',
+        'reps': '× 15',
+      },
     ],
     'Sunday': [
-      {'name': 'Yoga Stretch', 'image': 'assets/SuggestedWorkout_images/yogastrech.png', 'reps': '× 15'},
-      {'name': 'Breathing', 'image': 'assets/SuggestedWorkout_images/breathing.png', 'reps': '× 15'},
-      {'name': 'Foam Rolling', 'image': 'assets/SuggestedWorkout_images/foamrolling.png', 'reps': '× 15'},
-      {'name': 'Walking', 'image': 'assets/SuggestedWorkout_images/walking.png', 'reps': '× 15'},
+      {
+        'name': 'Yoga Stretch',
+        'image': 'assets/SuggestedWorkout_images/yogastrech.png',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Breathing',
+        'image': 'assets/SuggestedWorkout_images/breathing.png',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Foam Rolling',
+        'image': 'assets/SuggestedWorkout_images/foamrolling.png',
+        'reps': '× 15',
+      },
+      {
+        'name': 'Walking',
+        'image': 'assets/SuggestedWorkout_images/walking.png',
+        'reps': '× 15',
+      },
     ],
   };
 
@@ -252,7 +377,7 @@ class SuggestedPage extends StatelessWidget {
                   Text(
                     'Suggested Workouts',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: Colors.white,
+                      color: AppTheme.titleTextColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -260,7 +385,7 @@ class SuggestedPage extends StatelessWidget {
                   Text(
                     'Let\'s make you strong 💥',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white70,
+                      color: AppTheme.titleTextColor,
                       fontSize: 16,
                     ),
                   ),
@@ -311,7 +436,7 @@ class SuggestedPage extends StatelessWidget {
                         child: Text(
                           day,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppTheme.titleTextColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),

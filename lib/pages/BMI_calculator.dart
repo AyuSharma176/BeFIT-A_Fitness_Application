@@ -23,7 +23,7 @@ class _BMICalculatorState extends State<BMICalculator> {
   String gender = 'Male';
   String _displaytext = "";
   Color _color = Colors.transparent;
-  Image _image = Image.asset('assets/bmi_images/bmi1.png');
+  String _image = 'assets/bmi_images/bmi1.png';
   final TextEditingController _weightcontroller = TextEditingController();
   final TextEditingController _heightcontroller = TextEditingController();
   final TextEditingController result = TextEditingController();
@@ -46,31 +46,31 @@ class _BMICalculatorState extends State<BMICalculator> {
       return;
     }
 
-    double res = squareweight / (squareheight * squareheight);
+    double res = (squareweight*10000) / (squareheight * squareheight);
 
     setState(() {
       result.text = res.toStringAsFixed(2);
 
       if (res < 18.5) {
         _displaytext = "UNDERWEIGHT";
+        _image = 'assets/bmi_images/bmi1.png';
         _color = Colors.blueAccent;
-        _image = Image.asset('assets/bmi_images/bmi1.png');
       } else if (res <= 24.9) {
         _displaytext = "NORMAL";
         _color = Colors.green;
-        _image = Image.asset('assets/bmi_images/bmi2.png');
+        _image = 'assets/bmi_images/bmi2.png';
       } else if (res <= 29.9) {
         _displaytext = "OVERWEIGHT";
         _color = Colors.amber;
-        _image = Image.asset('assets/bmi_images/bmi3.png');
+        _image = 'assets/bmi_images/bmi3.png';
       } else if (res <= 39.9) {
         _displaytext = "OBESE";
         _color = Colors.deepOrange;
-        _image = Image.asset('assets/bmi_images/bmi4.png');
+        _image = 'assets/bmi_images/bmi4.png';
       } else {
-        _displaytext = "MORBIDITY OBESE";
+        _displaytext = "MORBIDlY OBESE";
         _color = Colors.red;
-        _image = Image.asset('assets/bmi_images/bmi5.png');
+        _image ='assets/bmi_images/bmi5.png';
       }
     });
   }
@@ -84,15 +84,15 @@ class _BMICalculatorState extends State<BMICalculator> {
         style: const TextStyle(color: Colors.black),
         decoration: InputDecoration(
           filled: true,
-          fillColor: Colors.white.withOpacity(0.95),
+          fillColor: Colors.grey.shade100.withOpacity(0.95),
           hintText: hint,
           contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: AppTheme.titleTextColor, width: 1.5),
             borderRadius: BorderRadius.circular(18),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.deepPurple, width: 1.5),
+            borderSide: BorderSide.none,
             borderRadius: BorderRadius.circular(18),
           ),
         ),
@@ -114,12 +114,12 @@ class _BMICalculatorState extends State<BMICalculator> {
             decoration: BoxDecoration(
               color: isSelected ? AppTheme.primaryColor : Colors.grey.shade200,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: isSelected ? AppTheme.primaryColor : Colors.grey),
+              border: Border.all(color: Colors.grey),
             ),
             child: Text(
               g,
               style: TextStyle(
-                color: isSelected ? Colors.white : Colors.black,
+                color: isSelected ? AppTheme.titleTextColor : Colors.black,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -155,59 +155,39 @@ class _BMICalculatorState extends State<BMICalculator> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 FrostedGlassBox(
+                  color: AppTheme.titleTextColor.withOpacity(0.35),
                   width: double.infinity,
                   height: 60,
-                  child: const Center(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: Center(
                     child: Text(
                       'BMI Calculator',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppTheme.titleTextColor,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.1,
+                        letterSpacing: 2,
                       ),
                     ),
                   ),
                 ),
-                // Container(
-                //   width: double.infinity,
-                //   padding: const EdgeInsets.symmetric(vertical: 14),
-                //   margin: const EdgeInsets.only(bottom: 16),
-                //   decoration: BoxDecoration(
-                //     color: Colors.black.withOpacity(0.7),
-                //     borderRadius: BorderRadius.circular(16),
-                //   ),
-                //   child: const Center(
-                //     child: Text(
-                //       'BMI Calculator',
-                //       style: TextStyle(
-                //         color: Colors.white,
-                //         fontSize: 20,
-                //         fontWeight: FontWeight.bold,
-                //         letterSpacing: 1.1,
-                //       ),
-                //     ),
-                //   ),
-                // ),
                 const SizedBox(height: 20),
-
                 Text(
                   'Please enter your details',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                      color: AppTheme.titleTextColor,
+                    letterSpacing: 1
                   ),
                 ),
-
+                SizedBox(height: 20,),
                 _customInputField(_weightcontroller, 'Enter your weight (kgs)'),
-                _customInputField(_heightcontroller, 'Enter your height (meters)'),
+                _customInputField(_heightcontroller, 'Enter your height (centi-meters)'),
                 _customInputField(null, 'Enter your age'),
-
                 const SizedBox(height: 10),
                 _genderSelector(),
                 const SizedBox(height: 30),
-
                 SizedBox(
                   height: 50,
                   width: double.infinity,
@@ -217,18 +197,33 @@ class _BMICalculatorState extends State<BMICalculator> {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                          backgroundColor: _color,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: BorderSide(color: _color.withOpacity(0.7),
+                                  strokeAlign: BorderSide.strokeAlignCenter,
+                                width: 6
+                              )),
+                          backgroundColor: AppTheme.primaryColor,
                           content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              _image,
-                              const SizedBox(height: 10),
+                              Container(
+                                  decoration: BoxDecoration(
+                                  ),
+                                  padding: EdgeInsets.all(16),
+                                  width: 250,
+                                  height: 200,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Image.asset(_image, fit: BoxFit.fill),
+                                  )
+                              ),
+                              // const SizedBox(height: 10),
                               Text(
                                 'Your calculated BMI is ${result.text}',
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: AppTheme.titleTextColor,
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -239,10 +234,33 @@ class _BMICalculatorState extends State<BMICalculator> {
                                   TyperAnimatedText(
                                     speed: Duration(milliseconds: 100),
                                     _displaytext,
-                                    textStyle: const TextStyle(
-                                      fontSize: 20,
+                                    textStyle: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 20,
+                                          offset: const Offset(0,-5),
+                                          color: _color
+                                        ),
+                                        Shadow(
+                                            blurRadius: 20,
+                                            offset: const Offset(-5,0),
+                                            color: _color
+                                        ),
+                                        Shadow(
+                                            blurRadius: 20,
+                                            offset: const Offset(0,5),
+                                            color: _color
+                                        ),
+                                        Shadow(
+                                            blurRadius: 20,
+                                            offset: const Offset(5,0),
+                                            color: _color
+                                        )
+                                      ],
+                                      fontSize: 24,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                      color: AppTheme.titleTextColor,
                                     ),
                                   ),
                                 ],
@@ -253,13 +271,19 @@ class _BMICalculatorState extends State<BMICalculator> {
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('Close', style: TextStyle(color: Colors.white)),
+                              child: Text('Close', style: TextStyle(color: AppTheme.titleTextColor, fontSize: 16
+                              )),
                             )
                           ],
                         ),
                       );
                     },
-                    child: const Text('Calculate', style: TextStyle(fontSize: 16)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.appBarBg.withOpacity(0.1)
+                    ),
+                    child: Text('Calculate',
+                        style: TextStyle(fontSize: 20, letterSpacing: 1, fontWeight: FontWeight.bold, color: AppTheme.titleTextColor
+                        )),
                   ),
                 ),
               ],

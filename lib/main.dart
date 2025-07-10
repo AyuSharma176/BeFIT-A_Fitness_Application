@@ -396,7 +396,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.info_outline, color: AppTheme.titleTextColor),
+                leading: Icon(Icons.fastfood_outlined, color: AppTheme.titleTextColor),
                 title: Text('Meal Generator', style: TextStyle(color: AppTheme.titleTextColor)),
                 onTap: () => Navigator.push(
                   context,

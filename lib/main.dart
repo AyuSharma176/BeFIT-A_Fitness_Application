@@ -9,6 +9,7 @@
 // import 'package:befit/pages/home_page.dart';
 // import 'package:befit/pages/intake_page.dart';
 // import 'package:befit/pages/SignUp_screen.dart';
+import 'package:befit/services/mealgeneration.dart';
 import 'package:flutter/services.dart';
 //
 // void main() => runApp(BeFitApp());
@@ -392,6 +393,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ChatPage()),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.info_outline, color: AppTheme.titleTextColor),
+                title: Text('Meal Generator', style: TextStyle(color: AppTheme.titleTextColor)),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MealChatPage()),
                 ),
               ),
               ListTile(

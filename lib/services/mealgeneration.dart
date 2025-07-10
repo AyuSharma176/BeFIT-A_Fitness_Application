@@ -6,7 +6,7 @@ import 'package:befit/services/app_theme.dart';
 
 // IMPORTANT: Replace 'YOUR_API_KEY_HERE' with your actual Gemini API Key.
 // You can get one from Google AI Studio: https://aistudio.google.com/
-const String GEMINI_API_KEY = 'AIzaSyAJW5GcxVy47pZmvq4KwdbmOnu8GEYzcMA'; // <--- PLACE YOUR API KEY HERE
+const String GEMINI_API_KEY = ''; // <--- PLACE YOUR API KEY HERE
 
 class MealChatPage extends StatefulWidget {
   const MealChatPage({super.key});
@@ -40,10 +40,8 @@ class _MealChatPageState extends State<MealChatPage> {
 
     try {
       // Construct the prompt for meal generation
-      final String mealPrompt = "Generate a concise and creative meal suggestion based on this request: \"${message.text}\". "
-          "Include main ingredients and a brief description. Do not include any introductory or "
-          "concluding phrases like \"Here is your meal idea\" or \"Enjoy your meal!\". "
-          "Just provide the meal idea.";
+      final String mealPrompt = "Generate a meal ricepe with full elaboration and also write a points how to make it: \"${message.text}\". ";
+
 
       final content = Content.text(mealPrompt);
       final response = await _session.sendMessage(content);

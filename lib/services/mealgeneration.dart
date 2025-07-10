@@ -4,8 +4,7 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 // Assuming app_theme.dart is in the services directory or accessible via this path
 import 'package:befit/services/app_theme.dart';
 
-// IMPORTANT: Replace 'YOUR_API_KEY_HERE' with your actual Gemini API Key.
-// You can get one from Google AI Studio: https://aistudio.google.com/
+
 const String GEMINI_API_KEY = ''; // <--- PLACE YOUR API KEY HERE
 
 class MealChatPage extends StatefulWidget {
@@ -27,7 +26,6 @@ class _MealChatPageState extends State<MealChatPage> {
   @override
   void initState() {
     super.initState();
-    // Initialize the GenerativeModel with your API Key
     _model = GenerativeModel(model: 'gemini-2.0-flash', apiKey: GEMINI_API_KEY);
     _session = _model.startChat();
   }
@@ -39,13 +37,14 @@ class _MealChatPageState extends State<MealChatPage> {
     });
 
     try {
-      // Construct the prompt for meal generation
-      final String mealPrompt = "Generate a meal ricepe with full elaboration and also write a points how to make it: \"${message.text}\". ";
+      final String mealPrompt = "Generate a meal ricepe with full elaboration and also write a points how to make it: \"${message
+          .text}\". ";
 
 
       final content = Content.text(mealPrompt);
       final response = await _session.sendMessage(content);
-      final reply = response.text ?? "⚠️ Gemini didn't return a meal suggestion.";
+      final reply = response.text ??
+          "⚠️ Gemini didn't return a meal suggestion.";
 
       setState(() {
         _messages.insert(
@@ -79,6 +78,24 @@ class _MealChatPageState extends State<MealChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Beƒιт AI Meal Generator',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -94,15 +111,7 @@ class _MealChatPageState extends State<MealChatPage> {
         child: SafeArea(
           child: Column(
             children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                width: double.infinity,
-                child: Text(
-                  'Beƒιт AI Meal Generator',
-                  style: Theme.of(context).appBarTheme.titleTextStyle,
-                  textAlign: TextAlign.center,
-                ),
-              ),
+              const SizedBox(height: 60), // Add space below app bar
               Expanded(
                 child: DashChat(
                   currentUser: _currentUser,

@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "1088757635375-u1211556me8oin96967aj4ppunt2q180.apps.googleusercontent.com",
+          "client_id": "1088757635375-mukb43ds2o81q5fphmb3lr5k133eh00r.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.befit",
-            "certificate_hash": "aa125af3a264eede08288dce4d199ab4b006fa51"
+            "certificate_hash": "3b92d619c0f8ee202a38d5a9e6df2f5b7ae0141f"
           }
         },
         {

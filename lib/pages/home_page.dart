@@ -4,17 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:befit/services/app_theme.dart';
-import '../main.dart'; // Assuming GEMINI_API_KEY is defined here
-import 'Suggested_page.dart'; // Assuming Progresspage is defined here
 import 'package:befit/services/motivational_service.dart';
-import 'chat_page.dart'; // Assuming this is not directly used in MainHomePage but might be part of the app
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import '../services/dark_mode_controller.dart';
+import 'chat_page.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'cardio_section.dart'; // Assuming this is not directly used in MainHomePage but might be part of the app
+import 'cardio_section.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-// Define GEMINI_API_KEY if it's not in main.dart or pass it as a constructor parameter
-// For this example, I'm assuming it's accessible globally or from main.dart
-// If not, you'll need to define: const String GEMINI_API_KEY = "YOUR_API_KEY_HERE";
 
 class MainHomePage extends StatefulWidget {
   @override
@@ -22,6 +19,7 @@ class MainHomePage extends StatefulWidget {
 }
 
 class _MainHomePageState extends State<MainHomePage> {
+  final ThemeController themeController = Get.find();
   final user = FirebaseAuth.instance.currentUser;
   late Future<String> _quoteFuture;
 
@@ -184,6 +182,9 @@ class _MainHomePageState extends State<MainHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    themeController.onThemeChanged = () {
+      if (mounted) setState(() {});
+    };
     return Scaffold(
       extendBody: true,
       body: Container(
@@ -428,18 +429,18 @@ class _MainHomePageState extends State<MainHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Display Protein from SharedPreferences
-                dailyGoalsTile('Protein', displayValue(proteinResult, fallback:'+/-'), Colors.teal.shade400),
+                dailyGoalsTile('Protein', displayValue(proteinResult, fallback:'+/-'), themeController.isDarkMode.value ? Color(0xFF000000): Colors.teal.shade400),
                 // Display Calories from SharedPreferences
-                dailyGoalsTile('Calories', displayValue(calorieResult, fallback:'+/-'), Colors.red.shade400),
+                dailyGoalsTile('Calories', displayValue(calorieResult, fallback:'+/-'), themeController.isDarkMode.value ? Color(0xFF000000): Colors.red.shade400),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Display Water from Firestore (waterCups)
-                dailyGoalsTile('Water', '${displayValue(waterIntake)} cups', Colors.blueAccent),
+                dailyGoalsTile('Water', '${displayValue(waterIntake)} cups', themeController.isDarkMode.value ? Color(0xFF000000): Colors.blueAccent),
                 // Display Steps from Firestore (stepCount)
-                dailyGoalsTile('Steps', displayValue(stepsCount), Colors.orange),
+                dailyGoalsTile('Steps', displayValue(stepsCount), themeController.isDarkMode.value ? Color(0xFF000000): Colors.orange),
               ],
             ),
           ],

@@ -1,4 +1,4 @@
-Befit - Your AI Fitness & Nutrition Coach 🏋️‍♂️🍎
+# Befit - Your AI Fitness & Nutrition Coach 🏋️‍♂️🍎
 Befit is an innovative Android application designed to bridge the gap between your workout and your diet. Built with cutting-edge AI, it acts as your personal fitness and nutrition coach, removing the guesswork so you can focus on achieving your results.
 
 <p align="center">

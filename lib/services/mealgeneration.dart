@@ -37,6 +37,7 @@ class _MealChatPageState extends State<MealChatPage> {
     });
 
     try {
+
       final String mealPrompt = "Generate a meal ricepe with full elaboration and also write a points how to make it: \"${message
           .text}\". ";
 

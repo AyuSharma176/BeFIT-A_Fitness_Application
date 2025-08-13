@@ -172,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Align(
                   alignment: Alignment.bottomLeft,
                   child: Text(
-                    'Welcome, Champ! 💪',
+                    'Welcome, Champ!  💪',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: AppTheme.titleTextColor,
                       fontWeight: FontWeight.bold,

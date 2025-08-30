@@ -133,15 +133,15 @@ class DietPage extends StatelessWidget {
                 ),
               ),
             ),
-            customCardButton(
-              icon: Icons.fastfood_rounded,
-              title: 'Meal Calculator',
-              subtitle: 'Check estimated calories in your meal.',
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => MealCalculatorScreen()),
-              ),
-            ),
+            // customCardButton(
+            //   icon: Icons.fastfood_rounded,
+            //   title: 'Meal Calculator',
+            //   subtitle: 'Check estimated calories in your meal.',
+            //   onTap: () => Navigator.push(
+            //     context,
+            //     MaterialPageRoute(builder: (_) => MealCalculatorScreen()),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -499,137 +499,137 @@ class _IntakeCalculatorScreenState extends State<IntakeCalculatorScreen> {
 
 // MealCalculatorScreen is unchanged; let me know if you want it updated with same dark style.
 
-class MealCalculatorScreen extends StatefulWidget {
-  @override
-  _MealCalculatorScreenState createState() => _MealCalculatorScreenState();
-}
-
-class _MealCalculatorScreenState extends State<MealCalculatorScreen> {
-  final TextEditingController quantityController = TextEditingController();
-  final TextEditingController foodController = TextEditingController();
-
-  final Map<String, double> foodCaloriesPer100g = {
-    'rice': 130,
-    'chapati': 104,
-    'egg': 155,
-    'milk': 42,
-    'chicken': 165,
-    'banana': 89,
-    'apple': 52,
-    'paneer': 265,
-    'dal': 116,
-    'potato': 77,
-  };
-
-  void calculateCalories() {
-    String food = foodController.text.trim().toLowerCase();
-    double quantity = double.tryParse(quantityController.text.trim()) ?? 0;
-
-    if (!foodCaloriesPer100g.containsKey(food)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Food not found. Try rice, dal, egg...')),
-      );
-      return;
-    }
-
-    double calPer100g = foodCaloriesPer100g[food]!;
-    double estimatedCalories = (calPer100g / 100) * quantity;
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Estimated Calories"),
-        content: Text(
-          "$quantity g of $food ≈ ${estimatedCalories.toStringAsFixed(1)} kcal",
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text("OK"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Meal Calculator")),
-      body: Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [AppTheme.appBarBg, AppTheme.backgroundColor],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: ListView(
-          children: [
-            Text(
-              "Estimate Calories in Your Meal",
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(color: AppTheme.textColor),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 24),
-            DropdownButtonFormField<String>(
-              value: foodController.text.isEmpty ? null : foodController.text,
-              items: foodCaloriesPer100g.keys.map((food) {
-                return DropdownMenuItem(
-                  value: food,
-                  child: Text(food[0].toUpperCase() + food.substring(1)),
-                );
-              }).toList(),
-              onChanged: (val) {
-                setState(() => foodController.text = val!);
-              },
-              decoration: InputDecoration(
-                labelText: 'Select Food Item',
-                labelStyle: TextStyle(
-                  color: AppTheme.textColor.withOpacity(0.7),
-                ),
-                filled: true,
-                fillColor: AppTheme.textColor.withAlpha(26),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: quantityController,
-              decoration: InputDecoration(
-                labelText: 'Quantity in grams',
-                labelStyle: TextStyle(
-                  color: AppTheme.textColor.withOpacity(0.7),
-                ),
-                filled: true,
-                fillColor: AppTheme.textColor.withAlpha(26),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              keyboardType: TextInputType.number,
-            ),
-            SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: calculateCalories,
-              icon: Icon(Icons.calculate),
-              label: Text('Estimate Calories', style: TextStyle(color: AppTheme.titleTextColor)),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 14),
-                backgroundColor: AppTheme.appBarBg,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// class MealCalculatorScreen extends StatefulWidget {
+//   @override
+//   _MealCalculatorScreenState createState() => _MealCalculatorScreenState();
+// }
+//
+// class _MealCalculatorScreenState extends State<MealCalculatorScreen> {
+//   final TextEditingController quantityController = TextEditingController();
+//   final TextEditingController foodController = TextEditingController();
+//
+//   final Map<String, double> foodCaloriesPer100g = {
+//     'rice': 130,
+//     'chapati': 104,
+//     'egg': 155,
+//     'milk': 42,
+//     'chicken': 165,
+//     'banana': 89,
+//     'apple': 52,
+//     'paneer': 265,
+//     'dal': 116,
+//     'potato': 77,
+//   };
+//
+//   void calculateCalories() {
+//     String food = foodController.text.trim().toLowerCase();
+//     double quantity = double.tryParse(quantityController.text.trim()) ?? 0;
+//
+//     if (!foodCaloriesPer100g.containsKey(food)) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Food not found. Try rice, dal, egg...')),
+//       );
+//       return;
+//     }
+//
+//     double calPer100g = foodCaloriesPer100g[food]!;
+//     double estimatedCalories = (calPer100g / 100) * quantity;
+//
+//     showDialog(
+//       context: context,
+//       builder: (context) => AlertDialog(
+//         title: Text("Estimated Calories"),
+//         content: Text(
+//           "$quantity g of $food ≈ ${estimatedCalories.toStringAsFixed(1)} kcal",
+//         ),
+//         actions: [
+//           TextButton(
+//             onPressed: () => Navigator.pop(context),
+//             child: Text("OK"),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: Text("Meal Calculator")),
+//       body: Container(
+//         padding: const EdgeInsets.all(24),
+//         decoration: BoxDecoration(
+//           gradient: LinearGradient(
+//             colors: [AppTheme.appBarBg, AppTheme.backgroundColor],
+//             begin: Alignment.topCenter,
+//             end: Alignment.bottomCenter,
+//           ),
+//         ),
+//         child: ListView(
+//           children: [
+//             Text(
+//               "Estimate Calories in Your Meal",
+//               style: Theme.of(
+//                 context,
+//               ).textTheme.headlineSmall?.copyWith(color: AppTheme.textColor),
+//               textAlign: TextAlign.center,
+//             ),
+//             SizedBox(height: 24),
+//             DropdownButtonFormField<String>(
+//               value: foodController.text.isEmpty ? null : foodController.text,
+//               items: foodCaloriesPer100g.keys.map((food) {
+//                 return DropdownMenuItem(
+//                   value: food,
+//                   child: Text(food[0].toUpperCase() + food.substring(1)),
+//                 );
+//               }).toList(),
+//               onChanged: (val) {
+//                 setState(() => foodController.text = val!);
+//               },
+//               decoration: InputDecoration(
+//                 labelText: 'Select Food Item',
+//                 labelStyle: TextStyle(
+//                   color: AppTheme.textColor.withOpacity(0.7),
+//                 ),
+//                 filled: true,
+//                 fillColor: AppTheme.textColor.withAlpha(26),
+//                 border: OutlineInputBorder(
+//                   borderRadius: BorderRadius.circular(12),
+//                 ),
+//               ),
+//             ),
+//             SizedBox(height: 16),
+//             TextField(
+//               controller: quantityController,
+//               decoration: InputDecoration(
+//                 labelText: 'Quantity in grams',
+//                 labelStyle: TextStyle(
+//                   color: AppTheme.textColor.withOpacity(0.7),
+//                 ),
+//                 filled: true,
+//                 fillColor: AppTheme.textColor.withAlpha(26),
+//                 border: OutlineInputBorder(
+//                   borderRadius: BorderRadius.circular(12),
+//                 ),
+//               ),
+//               keyboardType: TextInputType.number,
+//             ),
+//             SizedBox(height: 24),
+//             ElevatedButton.icon(
+//               onPressed: calculateCalories,
+//               icon: Icon(Icons.calculate),
+//               label: Text('Estimate Calories', style: TextStyle(color: AppTheme.titleTextColor)),
+//               style: ElevatedButton.styleFrom(
+//                 padding: EdgeInsets.symmetric(vertical: 14),
+//                 backgroundColor: AppTheme.appBarBg,
+//                 shape: RoundedRectangleBorder(
+//                   borderRadius: BorderRadius.circular(12),
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

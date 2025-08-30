@@ -4,17 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:befit/services/app_theme.dart';
-import '../main.dart'; // Assuming GEMINI_API_KEY is defined here
-import 'Suggested_page.dart'; // Assuming Progresspage is defined here
 import 'package:befit/services/motivational_service.dart';
-import 'chat_page.dart'; // Assuming this is not directly used in MainHomePage but might be part of the app
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import '../services/dark_mode_controller.dart';
+import 'chat_page.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'cardio_section.dart'; // Assuming this is not directly used in MainHomePage but might be part of the app
+import 'cardio_section.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// IMPORTANT: Ensure GEMINI_API_KEY is defined in main.dart or accessible here.
-// For example, if it's a top-level constant in main.dart:
-// const String GEMINI_API_KEY = "YOUR_API_KEY_HERE";
 
 class MainHomePage extends StatefulWidget {
   const MainHomePage({super.key}); // Added key for best practice
@@ -22,9 +20,13 @@ class MainHomePage extends StatefulWidget {
   @override
   State<MainHomePage> createState() => _MainHomePageState();
 }
-
 class _MainHomePageState extends State<MainHomePage> {
+
+  final ThemeController themeController = Get.find();
+  final user = FirebaseAuth.instance.currentUser;
+
   final User? _user = FirebaseAuth.instance.currentUser; // Use _user for consistency
+
   late Future<String> _quoteFuture;
 
   String _name = 'Loading...'; // Use _name for state variables
@@ -189,6 +191,9 @@ class _MainHomePageState extends State<MainHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    themeController.onThemeChanged = () {
+      if (mounted) setState(() {});
+    };
     return Scaffold(
       extendBody: true,
       body: Container(
@@ -425,18 +430,22 @@ class _MainHomePageState extends State<MainHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Display Protein from SharedPreferences
-                _dailyGoalsTile('Protein', _displayValue(_proteinResult, fallback:'+/-'), Colors.teal.shade400),
+
+                dailyGoalsTile('Protein', displayValue(proteinResult, fallback:'+/-'), themeController.isDarkMode.value ? Color(0xFF000000): Colors.teal.shade400),
                 // Display Calories from SharedPreferences
-                _dailyGoalsTile('Calories', _displayValue(_calorieResult, fallback:'+/-'), Colors.red.shade400),
+                dailyGoalsTile('Calories', displayValue(calorieResult, fallback:'+/-'), themeController.isDarkMode.value ? Color(0xFF000000): Colors.red.shade400),
+
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Display Water from Firestore (waterCups)
-                _dailyGoalsTile('Water', '${_displayValue(_waterIntake)} cups', Colors.blueAccent),
+
+                dailyGoalsTile('Water', '${displayValue(waterIntake)} cups', themeController.isDarkMode.value ? Color(0xFF000000): Colors.blueAccent),
                 // Display Steps from Firestore (stepCount)
-                _dailyGoalsTile('Steps', _displayValue(_stepsCount), Colors.orange),
+                dailyGoalsTile('Steps', displayValue(stepsCount), themeController.isDarkMode.value ? Color(0xFF000000): Colors.orange),
+
               ],
             ),
           ],

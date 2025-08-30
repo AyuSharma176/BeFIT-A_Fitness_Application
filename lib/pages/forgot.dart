@@ -34,6 +34,15 @@ class _ForgotState extends State<Forgot> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       backgroundColor: Colors.transparent,
       body: Container(
         decoration: BoxDecoration(
@@ -55,7 +64,7 @@ class _ForgotState extends State<Forgot> {
                 child: IntrinsicHeight(
                   child: Column(
                     children: [
-                      // Header
+                      const SizedBox(height: 100), // To make space below AppBar
                       Stack(
                         children: [
                           Container(height: 200, color: Colors.transparent),
@@ -118,7 +127,7 @@ class _ForgotState extends State<Forgot> {
                                 ),
                                 style: const TextStyle(color: Colors.white),
                                 validator: (value) =>
-                                    value == null || value.isEmpty
+                                value == null || value.isEmpty
                                     ? 'Enter email'
                                     : null,
                               ),

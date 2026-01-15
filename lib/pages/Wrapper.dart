@@ -96,6 +96,33 @@ class _VerifyState extends State<Verify> {
                 ),
                 child: Text('I Have Verified', style: TextStyle(fontSize: 16)),
               ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0, // important so border is clearly visible
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    side: const BorderSide(
+                      color: Colors.deepPurple, // change to your desired color
+                      width: 2,
+                    ),
+                  ),
+                ),
+                child: const Text(
+                  'Skip Verification',
+                  style: TextStyle(fontSize: 16, color: Colors.black),
+                ),
+              ),
             ],
           ),
         ),

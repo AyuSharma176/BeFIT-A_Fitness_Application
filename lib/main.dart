@@ -51,7 +51,7 @@ class BeFitApp extends StatelessWidget {
         title: 'Be 𝓯𝓲𝓽',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.theme,
-        home: SplashScreen(),
+        home: SignInScreen(),
       );
     });
   }

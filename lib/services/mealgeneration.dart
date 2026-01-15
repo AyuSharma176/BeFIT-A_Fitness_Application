@@ -5,7 +5,7 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:befit/services/app_theme.dart';
 
 
-const String GEMINI_API_KEY = ''; // <--- PLACE YOUR API KEY HERE
+const String GEMINI_API_KEY = ''; 
 
 class MealChatPage extends StatefulWidget {
   const MealChatPage({super.key});

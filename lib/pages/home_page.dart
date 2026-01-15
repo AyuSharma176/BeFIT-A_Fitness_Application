@@ -13,24 +13,23 @@ import 'package:google_fonts/google_fonts.dart';
 import 'cardio_section.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class MainHomePage extends StatefulWidget {
   const MainHomePage({super.key}); // Added key for best practice
 
   @override
   State<MainHomePage> createState() => _MainHomePageState();
 }
-class _MainHomePageState extends State<MainHomePage> {
 
+class _MainHomePageState extends State<MainHomePage> {
   final ThemeController themeController = Get.find();
   final user = FirebaseAuth.instance.currentUser;
 
-  final User? _user = FirebaseAuth.instance.currentUser; // Use _user for consistency
+  final User? _user =
+      FirebaseAuth.instance.currentUser; // Use _user for consistency
 
   late Future<String> _quoteFuture;
 
   String _name = 'Loading...'; // Use _name for state variables
-  String _chatResponse = ''; // Not directly used in this snippet, but kept from original
   String? _calorieResult; // From SharedPreferences
   String? _proteinResult; // From SharedPreferences
   String? _waterIntake; // Fetched from Firestore
@@ -56,13 +55,18 @@ class _MainHomePageState extends State<MainHomePage> {
   Future<void> _loadUserData() async {
     if (_user != null) {
       try {
-        final doc = await FirebaseFirestore.instance.collection('users').doc(_user!.uid).get();
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(_user.uid)
+            .get();
         final data = doc.data();
         setState(() {
-          _name = data?['name'] ?? _user!.displayName ?? 'User';
+          _name = data?['name'] ?? _user.displayName ?? 'User';
         });
       } catch (e) {
-        debugPrint("Error fetching user data: $e"); // Use debugPrint for Flutter logs
+        debugPrint(
+          "Error fetching user data: $e",
+        ); // Use debugPrint for Flutter logs
         setState(() {
           _name = 'User'; // Fallback name on error
         });
@@ -90,15 +94,20 @@ class _MainHomePageState extends State<MainHomePage> {
       try {
         // Format today's date to match the Firestore document ID format (e.g., "2025-07-06")
         final today = DateTime.now();
-        final formattedDate = "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+        final formattedDate =
+            "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
 
-        debugPrint('Attempting to load daily activity for user: ${_user!.uid} on date: $formattedDate');
+        debugPrint(
+          'Attempting to load daily activity for user: ${_user.uid} on date: $formattedDate',
+        );
 
         // Construct the Firestore path to the daily activity document
         final docSnapshot = await FirebaseFirestore.instance
             .collection('users')
-            .doc(_user!.uid)
-            .collection('activity_logs') // Corrected from 'dailyActivity' as per previous discussion
+            .doc(_user.uid)
+            .collection(
+              'activity_logs',
+            ) // Corrected from 'dailyActivity' as per previous discussion
             .doc(formattedDate)
             .get();
 
@@ -113,10 +122,14 @@ class _MainHomePageState extends State<MainHomePage> {
             _waterIntake = data?['waterCups']?.toString() ?? '0';
             _calorieBurnedToday = data?['calorieBurned']?.toString() ?? '0';
           });
-          debugPrint('Steps loaded: $_stepsCount, Water loaded: $_waterIntake, Calories Burned loaded: $_calorieBurnedToday');
+          debugPrint(
+            'Steps loaded: $_stepsCount, Water loaded: $_waterIntake, Calories Burned loaded: $_calorieBurnedToday',
+          );
         } else {
           // If the document does not exist for today, set default '0' values
-          debugPrint("No daily activity data found for today: $formattedDate (Document does not exist)");
+          debugPrint(
+            "No daily activity data found for today: $formattedDate (Document does not exist)",
+          );
           setState(() {
             _stepsCount = '0';
             _waterIntake = '0';
@@ -151,7 +164,8 @@ class _MainHomePageState extends State<MainHomePage> {
   }
 
   /// Returns a greeting based on the current time of day.
-  String _getGreeting() { // Changed to private method
+  String _getGreeting() {
+    // Changed to private method
     final hour = DateTime.now().hour;
     if (hour < 12) return 'Good morning';
     if (hour < 17) return 'Good afternoon';
@@ -159,19 +173,21 @@ class _MainHomePageState extends State<MainHomePage> {
   }
 
   /// Helper function to display 'NA' for null, empty, or '0' values.
-  String _displayValue(String? value, {String? fallback}) { // Changed to private method
+  String _displayValue(String? value, {String? fallback}) {
+    // Changed to private method
     if (value == null || value.isEmpty || value == '0') {
       return fallback ?? 'NA'; // Use fallback if provided, else default to 'NA'
     }
     return value;
   }
 
-  Future<void> _loadStreakCount() async { // Changed to private method
+  Future<void> _loadStreakCount() async {
+    // Changed to private method
     if (_user == null) return;
 
     final doc = await FirebaseFirestore.instance
         .collection('users')
-        .doc(_user!.uid)
+        .doc(_user.uid)
         .collection('activity_logs') // Assuming streak is stored here
         .doc('streak') // Assuming a specific document for streak
         .get();
@@ -182,7 +198,7 @@ class _MainHomePageState extends State<MainHomePage> {
         _streakCount = data?['streakCount'] ?? 0;
       });
     } else {
-      debugPrint("No streak document found for user: ${_user!.uid}");
+      debugPrint("No streak document found for user: ${_user.uid}");
       setState(() {
         _streakCount = 0; // Reset to 0 if no streak document
       });
@@ -199,7 +215,11 @@ class _MainHomePageState extends State<MainHomePage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppTheme.appBarBg, AppTheme.backgroundColor, AppTheme.appBarBg],
+            colors: [
+              AppTheme.appBarBg,
+              AppTheme.backgroundColor,
+              AppTheme.appBarBg,
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -231,7 +251,8 @@ class _MainHomePageState extends State<MainHomePage> {
                         decoration: BoxDecoration(
                           color: AppTheme.appBarBg.withOpacity(0.85),
                           borderRadius: BorderRadius.circular(20),
-                          boxShadow: const [ // Changed to const for optimization
+                          boxShadow: const [
+                            // Changed to const for optimization
                             BoxShadow(
                               color: Colors.black38,
                               blurRadius: 8,
@@ -253,7 +274,10 @@ class _MainHomePageState extends State<MainHomePage> {
                               ),
                             ),
                             IconButton(
-                              icon: Icon(Icons.refresh, color: AppTheme.titleTextColor),
+                              icon: Icon(
+                                Icons.refresh,
+                                color: AppTheme.titleTextColor,
+                              ),
                               onPressed: _refreshQuote,
                               tooltip: "Refresh Quote",
                             ),
@@ -312,16 +336,27 @@ class _MainHomePageState extends State<MainHomePage> {
                     width: MediaQuery.of(context).size.width * 0.75,
                     height: 50,
                     child: ElevatedButton(
-                      style: ButtonStyle( // Removed const here as WidgetStateProperty.all might not be const callable
-                        backgroundColor: WidgetStateProperty.all(AppTheme.appBarBg), // Changed from WidgetStatePropertyAll
-                        elevation: WidgetStateProperty.all(6), // Changed from WidgetStatePropertyAll
+                      style: ButtonStyle(
+                        // Removed const here as WidgetStateProperty.all might not be const callable
+                        backgroundColor: WidgetStateProperty.all(
+                          AppTheme.appBarBg,
+                        ), // Changed from WidgetStatePropertyAll
+                        elevation: WidgetStateProperty.all(
+                          6,
+                        ), // Changed from WidgetStatePropertyAll
                       ),
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => Progresspage()),
                       ),
-                      child: Text('Start Workout',
-                          style: TextStyle(color: AppTheme.titleTextColor, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                      child: Text(
+                        'Start Workout',
+                        style: TextStyle(
+                          color: AppTheme.titleTextColor,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -334,7 +369,8 @@ class _MainHomePageState extends State<MainHomePage> {
   }
 
   /// Builds the workout streak display.
-  Widget _buildWorkoutStreak() { // Changed to private method
+  Widget _buildWorkoutStreak() {
+    // Changed to private method
     return Center(
       child: Container(
         width: MediaQuery.of(context).size.width * 0.88,
@@ -366,19 +402,20 @@ class _MainHomePageState extends State<MainHomePage> {
               width: double.infinity,
               height: 60,
               color: AppTheme.titleTextColor.withOpacity(0.15),
-              padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(7, (index) {
-                  return index < _streakCount // Use private _streakCount
-                      ? const Text(
-                    '🔥',
-                    style: TextStyle(fontSize: 28),
-                  )
+                  return index <
+                          _streakCount // Use private _streakCount
+                      ? const Text('🔥', style: TextStyle(fontSize: 28))
                       : Text(
-                    '◯',
-                    style: TextStyle(fontSize: 28, color: AppTheme.titleTextColor),
-                  );
+                          '◯',
+                          style: TextStyle(
+                            fontSize: 28,
+                            color: AppTheme.titleTextColor,
+                          ),
+                        );
                 }),
               ),
             ),
@@ -388,9 +425,9 @@ class _MainHomePageState extends State<MainHomePage> {
     );
   }
 
-
   /// Builds the daily goals display, including data from SharedPreferences and Firestore.
-  Widget _buildDailyGoals() { // Changed to private method
+  Widget _buildDailyGoals() {
+    // Changed to private method
     return Align(
       alignment: Alignment.center,
       child: Container(
@@ -430,22 +467,42 @@ class _MainHomePageState extends State<MainHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Display Protein from SharedPreferences
-
-                dailyGoalsTile('Protein', displayValue(proteinResult, fallback:'+/-'), themeController.isDarkMode.value ? Color(0xFF000000): Colors.teal.shade400),
+                _dailyGoalsTile(
+                  'Protein',
+                  _displayValue(_proteinResult, fallback: '+/-'),
+                  themeController.isDarkMode.value
+                      ? Color(0xFF000000)
+                      : Colors.teal.shade400,
+                ),
                 // Display Calories from SharedPreferences
-                dailyGoalsTile('Calories', displayValue(calorieResult, fallback:'+/-'), themeController.isDarkMode.value ? Color(0xFF000000): Colors.red.shade400),
-
+                _dailyGoalsTile(
+                  'Calories',
+                  _displayValue(_calorieResult, fallback: '+/-'),
+                  themeController.isDarkMode.value
+                      ? Color(0xFF000000)
+                      : Colors.red.shade400,
+                ),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Display Water from Firestore (waterCups)
-
-                dailyGoalsTile('Water', '${displayValue(waterIntake)} cups', themeController.isDarkMode.value ? Color(0xFF000000): Colors.blueAccent),
+                _dailyGoalsTile(
+                  'Water',
+                  '${_displayValue(_waterIntake)} cups',
+                  themeController.isDarkMode.value
+                      ? Color(0xFF000000)
+                      : Colors.blueAccent,
+                ),
                 // Display Steps from Firestore (stepCount)
-                dailyGoalsTile('Steps', displayValue(stepsCount), themeController.isDarkMode.value ? Color(0xFF000000): Colors.orange),
-
+                _dailyGoalsTile(
+                  'Steps',
+                  _displayValue(_stepsCount),
+                  themeController.isDarkMode.value
+                      ? Color(0xFF000000)
+                      : Colors.orange,
+                ),
               ],
             ),
           ],
@@ -455,7 +512,8 @@ class _MainHomePageState extends State<MainHomePage> {
   }
 
   /// A reusable tile widget for displaying daily goals.
-  Widget _dailyGoalsTile(String title, String value, Color color) { // Changed to private method
+  Widget _dailyGoalsTile(String title, String value, Color color) {
+    // Changed to private method
     double height = 120;
     double radius = height / 2;
     return Container(
@@ -475,11 +533,14 @@ class _MainHomePageState extends State<MainHomePage> {
         borderRadius: BorderRadius.circular(radius),
         child: BackdropFilter(
           blendMode: BlendMode.luminosity,
-          filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0), // Sigma values are 0.0, so blur is effectively off.
+          filter: ImageFilter.blur(
+            sigmaX: 0.0,
+            sigmaY: 0.0,
+          ), // Sigma values are 0.0, so blur is effectively off.
           child: Container(
             decoration: BoxDecoration(
               color: Colors.grey.shade300.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(radius+2),
+              borderRadius: BorderRadius.circular(radius + 2),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -487,18 +548,18 @@ class _MainHomePageState extends State<MainHomePage> {
                 Text(
                   title,
                   style: GoogleFonts.notoSans(
-                      color: AppTheme.textColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold
+                    color: AppTheme.textColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 5),
                 Text(
                   value,
                   style: GoogleFonts.notoSans(
-                      color: AppTheme.textColor,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold
+                    color: AppTheme.textColor,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
